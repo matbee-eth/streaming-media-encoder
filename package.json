@@ -1,0 +1,17 @@
+{
+  "name": "matbee-video-profiles",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.3",
+    "fluent-ffmpeg": "^2.0.1",
+    "node-uuid": "^1.4.7",
+    "range-parser": "^1.0.3"
+  }
+}
