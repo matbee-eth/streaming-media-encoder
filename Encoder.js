@@ -48,6 +48,9 @@ Encoder.encode = function(engine, options, cb) {
     engine.getFFmpegOutputOptions(Encoder.getUrl(engine.id), function (err, outputOptions) {
       console.log(err, outputOptions);
       var command = ffmpeg(Encoder.getUrl(engine.id))
+      if (options.startTime) {
+        command.seekInput(options.startTime);
+      }
       .on('start', function (commandLine) {
           console.log('Spawned Ffmpeg with command: ' + commandLine);
       })
