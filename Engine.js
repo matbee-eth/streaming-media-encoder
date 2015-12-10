@@ -68,6 +68,16 @@ Engine.prototype.canPlay = function(cb) {
     }
 };
 
+Engine.prototype.analyze = function(cb) {
+    if (!this.hasProbed) {
+        this.probe(function (err, metadata) {
+            this.analyze(cb);
+        }.bind(this))
+    } else {
+        this._profile.transcodeNeeded(this._probeData, cb);
+    }
+};
+
 Engine.prototype.probe = function(cb) {
     if (this.hasProbed) {
         cb && cb(null, this._probeData);
