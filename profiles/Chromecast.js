@@ -77,7 +77,7 @@ var transcodeNeeded = function(probeData, cb) {
     var isVideoMedia = isVideo(probeData);
     var audioNeedsTranscoding = false;
     var videoNeedsTranscoding = false;
-    var needsTranscode = true;
+    var needsTranscoding = true;
     var videoNeedsTranscoding = validFormats.indexOf(probeData.format.format_name) > -1;
     if (isAudioMedia) {
         // Audio-only.
@@ -91,15 +91,15 @@ var transcodeNeeded = function(probeData, cb) {
     }
     if (isAudioMedia) {
         if (!audioNeedsTranscoding || !videoNeedsTranscoding) {
-            needsTranscode = true;
+            needsTranscoding = true;
         } else {
-            needsTranscode = false;
+            needsTranscoding = false;
         }
     } else if (isVideoMedia) {
         if (!videoNeedsTranscoding || !audioNeedsTranscoding || !videoNeedsTranscoding) {
-            needsTranscode = true;
+            needsTranscoding = true;
         } else {
-            needsTranscode = false;
+            needsTranscoding = false;
         }
     }
     
@@ -108,7 +108,7 @@ var transcodeNeeded = function(probeData, cb) {
         {   
             isAudioMedia: isAudioMedia,
             isVideoMedia: isVideoMedia,
-            needsTranscode: needsTranscode,
+            needsTranscoding: needsTranscoding,
             videoNeedsTranscoding: videoNeedsTranscoding,
             audioNeedsTranscoding: audioNeedsTranscoding,
             videoNeedsTranscoding: videoNeedsTranscoding
@@ -122,7 +122,7 @@ var canPlayContainer = function (probeData, cb) {
 
 var getFFmpegFlags = function (probeData, cb) {
     transcodeNeeded(probeData, function (err, obj) {
-        var canPlay = obj.needsTranscode;
+        var canPlay = obj.needsTranscoding;
         var formatNeedsTranscoding = obj.formatNeedsTranscoding;
         var audioNeedsTranscoding = obj.audioNeedsTranscoding;
         var videoNeedsTranscoding = obj.videoNeedsTranscoding;
@@ -160,7 +160,7 @@ var getFFmpegFlags = function (probeData, cb) {
 
 var canPlay = function (probeData, cb) {
     transcodeNeeded(probeData, function (err, obj) {
-        cb && cb(!obj.needsTranscode);
+        cb && cb(!obj.needsTranscoding);
     });
 }
 
