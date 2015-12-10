@@ -15,8 +15,7 @@ Encoder.profiles = {
     "CHROMECAST": require('./profiles/Chromecast.js'),
     // "DLNA": require('./profiles/DLNA.js'),
     // "APPLETV": require('./profiles/AppleTV.js')
-}
-
+};
 /*
 * Valid Options
 * ...
@@ -34,26 +33,25 @@ Encoder.profile = function (profile, fileSize) {
 * location: URL (this webserver) or file path.
 */
 Encoder.probe = function (engine, options, cb) {
-  ffmpeg.ffprobe(this.getUrl(engine.id), function(err, metadata) {
-      console.info(err, metadata);
+  ffmpeg.ffprobe(Encoder.getUrl(engine.id), function(err, metadata) {
+      engine.setProbeData(metadata);
       cb && cb(err, metadata);
   });
 }
 
 Encoder.encode = function(engine, options, cb) {
-  console.log("Encoder.encode", engine);
-
-  var command = ffmpeg(this.getUrl(engine.id))
-  .audioCodec('copy')
-  .videoCodec('copy')
-  .format('matroska')
-  .on('error', function(err) {
-    console.log('An error occurred: ' + err.message);
-  })
-  .on('end', function() {
-    console.log('Processing finished !');
-  })
-  cb(command);
+  if (!engine.hasProbed) {
+    Encoder.probe(engine, {}, function (err, metadata) {
+      Encoder.encode(engine, options, cb);
+    });
+  } else {
+    engine.getFFmpegOutputOptions(Encoder.getUrl(engine.id), function (err, outputOptions) {
+      console.log(err, outputOptions);
+      var command = ffmpeg(Encoder.getUrl(engine.id))
+      command.outputOptions(outputOptions)
+      cb(command);
+    });
+  }
 };
 
 Encoder.getUrl = function(fileId) {

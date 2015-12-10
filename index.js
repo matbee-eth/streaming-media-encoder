@@ -35,15 +35,7 @@ getPort(function (port) {
       ready();
     });
 })
-// encoder.probe(file, function (err, probeData) {
-//     encoder.profiles.CHROMECAST.canPlay(probeData, function (canPlay) {
-//         if (canPlay) {
-//             // send video data, no need to encode.
-//         } else {
-//             // encode video data, put through engine.
-//         }
-//     });
-// });
+
 var ready = function () {
   app.get("/request-from-chromecast", function (req, res) {
       var engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
@@ -65,13 +57,24 @@ var ready = function () {
           res.end();
       });
 
-      encoder.encode(engine, {
-        startTime: "00:00"
-      }, function (stream) {
-        stream.pipe(res, {end: true});
-        stream.on("end", function () {
-          console.log("stream ended");
-          res.end();
+      encoder.probe(engine, {}, function (err, metadata) {
+        console.log("Probe", err, metadata);
+        engine.canPlay(function (canPlay) {
+          console.log("engine.canPlay", canPlay);
+          if (canPlay) {
+            // just send file. DO IT YOUR OWN WAY BITCH
+          }
+          else {
+            encoder.encode(engine, {
+              startTime: "00:00"
+            }, function (stream) {
+              stream.pipe(res, {end: true});
+              stream.on("end", function () {
+                console.log("stream ended");
+                res.end();
+              });
+            });
+          }
         });
       });
   }); 
