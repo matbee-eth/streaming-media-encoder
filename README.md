@@ -1,6 +1,6 @@
 # streaming-media-encoder
 
-A dead simple way to deliver Chromecast formatted media to the Chromecast. Supports any media that supports ReadStreams.
+A dead simple way to deliver media correctly formatted to streaming devices. Supports any media that supports ReadStreams.
 
 `npm install streaming-media-encoder`
 
@@ -35,4 +35,3 @@ encoder.encode(engine, {
      }
 );
 ```
->>>>>>> e69c2b061e3f665d3cac04827674826d240755c9
