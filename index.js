@@ -60,22 +60,19 @@ var ready = function () {
           res.writeHeader(headerInfo);
       });
 
-      // Video data. Just write it.
-      engine.on("data", function (data) {
-          res.send(data);
-      });
-
       // Video encoding finished, it's time to end.
       engine.once("end", function () {
           res.end();
       });
 
-      encoder.probe(engine, {
-          startTime: "00:00"
-      }, function (err, data) {
-        console.log(err, data);
-        res.send(data);
-        res.end();
+      encoder.encode(engine, {
+        startTime: "00:00"
+      }, function (stream) {
+        stream.pipe(res, {end: true});
+        stream.on("end", function () {
+          console.log("stream ended");
+          res.end();
+        });
       });
   }); 
 }

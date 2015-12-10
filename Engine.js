@@ -3,10 +3,11 @@ const EventEmitter = require('events');
 var pump = require('pump');
 var rangeParser = require('range-parser');
 
-var Engine = function (profile, fileSize) {
+var Engine = function (profile, fileSize, id) {
     EventEmitter.call(this);
     this._profile = profile;
     this._fileSize = fileSize;
+    this.id = id;
 }
 util.inherits(Engine, EventEmitter);
 

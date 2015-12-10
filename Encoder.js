@@ -24,7 +24,9 @@ Encoder.profiles = {
 */
 Encoder.profile = function (profile, fileSize) {
   // generate ID
-  var engine = new Engine(profile, fileSize);
+  var id = uuid.v4();
+  var engine = new Engine(profile, fileSize, id);
+  uuidRequest[id] = engine;
   return engine;
 }
 
@@ -32,22 +34,26 @@ Encoder.profile = function (profile, fileSize) {
 * location: URL (this webserver) or file path.
 */
 Encoder.probe = function (engine, options, cb) {
-  var id = uuid.v4();
-  uuidRequest[id] = engine;
-  console.log(this.getUrl(id));
-  ffmpeg.ffprobe(this.getUrl(id), function(err, metadata) {
+  ffmpeg.ffprobe(this.getUrl(engine.id), function(err, metadata) {
       console.info(err, metadata);
       cb && cb(err, metadata);
   });
 }
 
 Encoder.encode = function(engine, options, cb) {
-  var id = uuid.v4();
   console.log("Encoder.encode", engine);
-  uuidRequest[id] = engine.onRequest.bind(engine);
-  ffmpeg.encode(this.getUrl(id), function (err) {
 
-  });
+  var command = ffmpeg(this.getUrl(engine.id))
+  .audioCodec('copy')
+  .videoCodec('copy')
+  .format('matroska')
+  .on('error', function(err) {
+    console.log('An error occurred: ' + err.message);
+  })
+  .on('end', function() {
+    console.log('Processing finished !');
+  })
+  cb(command);
 };
 
 Encoder.getUrl = function(fileId) {
