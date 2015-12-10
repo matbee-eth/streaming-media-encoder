@@ -47,14 +47,9 @@ var ready = function () {
           cb(fs.createReadStream(file, {start: startByte, end: endByte}));
       });
 
-      // Certain devices need specific HTTP Headers in order to decode the video. Use these headers.
+      // Certain devices need specific HTTP Headers in order to decode the video. Use these headers. (DLNA ETC...)
       engine.once("httpHeaders", function (headerInfo) {
           res.writeHeader(headerInfo);
-      });
-
-      // Video encoding finished, it's time to end.
-      engine.once("end", function () {
-          res.end();
       });
 
       encoder.probe(engine, {}, function (err, metadata) {
@@ -77,5 +72,6 @@ var ready = function () {
           }
         });
       });
+
   }); 
 }
