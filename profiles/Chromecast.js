@@ -50,9 +50,15 @@ var isVideo = function(probeData) {
     return false;
 };
 var canPlayAudio = function (audioTracks) {
+    if (audioTracks.length == 0) {
+        return true;
+    }
     return audioNeedsTranscodingCodecs.indexOf(audioTracks[0].codec_name) > -1;
 };
 var canPlayVideo = function (videoTracks) {
+    if (videoTracks.length == 0) {
+        return true;
+    }
     if (videoNeedsTranscodingCodecs.indexOf(videoTracks[0].codec_name) > -1) {
         if (videoTracks[0].codec_name == "h264" || videoTracks[0].codec_name == "x264") {
             if (videoTracks[0].profile && videoTracks[0].profile.toLowerCase() == "high") {
@@ -84,23 +90,15 @@ var transcodeNeeded = function(probeData, cb) {
         audioNeedsTranscoding = canPlayAudio(getAudioTracks(probeData));
     } else if (isVideoMedia) {
         // Video file.
-        audioNeedsTranscoding = canPlayAudio(getAudioTracks(probeData));
-        videoNeedsTranscoding = canPlayVideo(getVideoTracks(probeData));
+        audioNeedsTranscoding = !canPlayAudio(getAudioTracks(probeData));
+        videoNeedsTranscoding = !canPlayVideo(getVideoTracks(probeData));
     } else {
         return cb && cb("invalid");
     }
     if (isAudioMedia) {
-        if (!audioNeedsTranscoding || !videoNeedsTranscoding) {
-            needsTranscoding = true;
-        } else {
-            needsTranscoding = false;
-        }
+        needsTranscoding = audioNeedsTranscoding || videoNeedsTranscoding;
     } else if (isVideoMedia) {
-        if (!formatNeedsTranscoding || !audioNeedsTranscoding || !videoNeedsTranscoding) {
-            needsTranscoding = true;
-        } else {
-            needsTranscoding = false;
-        }
+        needsTranscoding = formatNeedsTranscoding || audioNeedsTranscoding || videoNeedsTranscoding;
     }
     
     
