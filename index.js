@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var encoder = require('./Encoder');
-var file = "Last.Knights.2015.1080p.BluRay.x264.YIFY.mp4"
+var file = "Zero.Tolerance.2015.HDRip.XviD.AC3-EVO.avi"
 var fs = require('fs');
 var stats = fs.statSync(file);
 
