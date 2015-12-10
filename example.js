@@ -1,10 +1,10 @@
-var express = require('express');
-var app = express();
-var encoder = require('./Encoder');
-var fs = require('fs');
-var net = require('net');
-var port = 8989
-var expressServer;
+var express = require('express'),
+    app = express(),
+    encoder = require('./Encoder'),
+    fs = require('fs'),
+    net = require('net'),
+    port = 8989,
+    expressServer;
 
 /**
  * This example starts an express server and serves one url: "/request-from-chromecast"
@@ -16,25 +16,36 @@ expressServer = app.listen(port, function() {
     var host = expressServer.address().address;
     var port = expressServer.address().port;
 
-    console.log('FFmpeg Webserver listening at http://%s:%s', host, port);
+    console.log('streaming-media-encoder Webserver listening at http://%s:%s', host, port);
 });
 
+/**
+ * Define a request to serve a video file (do this your own way ofcourse)
+ * If you implement seeking using a scrubber bar, just re-call this url with a timestamp
+ * like /request-from-chromecast?start=00:14:43
+ */
 app.get("/request-from-chromecast", function(req, res) {
-    var file = "Zero.Tolerance.2015.HDRip.XviD.AC3-EVO.avi"
+    var file = "Zero.Tolerance.2015.HDRip.XviD.AC3-EVO.avi";
     var stats = fs.statSync(file);
     var engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
     console.log("Engine::", engine);
-    // Sometimes FFmpeg may need to seek throughout a file to encode the video, or probe.
+
+    /**
+     * feed ffmpeg new data when it requires it.
+     * this is where the vide or audio file is actually read.
+     */
     engine.on("streamNeeded", function(startByte, endByte, cb) {
-        // <Error?> Stream.
-        console.info("streamNeeded", startByte, endByte);
         cb(fs.createReadStream(file, {
             start: startByte,
             end: endByte
         }));
     });
 
-    // Certain devices need specific HTTP Headers in order to decode the video. Use these headers. (DLNA ETC...)
+    /**
+     * Certain devices need specific HTTP Headers in order to decode the video.
+     * Use these headers. (DLNA ETC...)
+     * Hooking up this event makes sure they're passed to the client.
+     */
     engine.once("httpHeaders", function(headerInfo) {
         res.writeHeader(headerInfo);
     });
@@ -51,32 +62,33 @@ app.get("/request-from-chromecast", function(req, res) {
      * }
      */
     engine.analyze(function(mediaInfo) {
+        /**
+         * for this simple example, we always pipe content through the encoder
+         * even if the audioNeedsTranscoding or videoNeedsTranscoding are both false
+         */
+        if (mediaInfo.isAudioMedia || mediaInfo.isVideoMedia) {
+            startEncoder(res.query.startTime);
+        }
+    });
 
-        console.log("mediaInfo", mediaInfo);
-        // you can skip the unneeded transcode if you care about performance or
-        // flexibility. 
-        if (mediaInfo.formatNeedsTranscoding) {
-            encoder.encode(engine, {
-                startTime: "00:00"
-            }, function(stream) {
-                stream.pipe(res, {
-                    end: true
-                });
-                stream.on("end", function() {
-                    console.log("stream ended");
-                    res.end();
-                });
-            });
-        } else {
-            // would this do? it wouldnt right? range request n shit?
+    /**
+     * Start a new transcoding process (any leftovers will automatically die off)
+     * @param  {timestamp} time starttime to play at hh:mm:ss
+     * @return void
+     */
+    function startEncoder(time) {
+        encoder.encode(engine, {
+            force: true,
+            startTime: time || "00:00:00",
+        }, function(stream) {
             stream.pipe(res, {
                 end: true
             });
             stream.on("end", function() {
-                console.log("stream ended");
+                console.log("stream ended, nothing more to do.");
                 res.end();
             });
-        }
-    });
+        });
+    }
 
 });
