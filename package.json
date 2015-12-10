@@ -1,12 +1,13 @@
 {
   "name": "streaming-media-encoder",
+  "homepage": "https://github.com/acidhax/streaming-media-encoder",
   "version": "1.0.5",
   "description": "",
   "main": "Encoder.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "acidhax",
   "license": "ISC",
   "dependencies": {
     "express": "^4.13.3",
