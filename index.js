@@ -1,9 +1,7 @@
 var express = require('express');
 var app = express();
 var encoder = require('./Encoder');
-var file = "Zero.Tolerance.2015.HDRip.XviD.AC3-EVO.avi"
 var fs = require('fs');
-var stats = fs.statSync(file);
 
 var express = require('express');
 var net = require('net');
@@ -38,6 +36,8 @@ getPort(function (port) {
 
 var ready = function () {
   app.get("/request-from-chromecast", function (req, res) {
+      var file = "Zero.Tolerance.2015.HDRip.XviD.AC3-EVO.avi"
+      var stats = fs.statSync(file);
       var engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
       console.log("Engine::", engine);
       // Sometimes FFmpeg may need to seek throughout a file to encode the video, or probe.
