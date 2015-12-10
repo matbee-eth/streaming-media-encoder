@@ -96,7 +96,7 @@ var transcodeNeeded = function(probeData, cb) {
             needsTranscoding = false;
         }
     } else if (isVideoMedia) {
-        if (!videoNeedsTranscoding || !audioNeedsTranscoding || !videoNeedsTranscoding) {
+        if (!formatNeedsTranscoding || !audioNeedsTranscoding || !videoNeedsTranscoding) {
             needsTranscoding = true;
         } else {
             needsTranscoding = false;
