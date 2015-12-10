@@ -1,7 +1,7 @@
 {
   "name": "streaming-media-encoder",
   "homepage": "https://github.com/acidhax/streaming-media-encoder",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "",
   "main": "Encoder.js",
   "scripts": {
