@@ -1,10 +1,10 @@
-var validAudioCodecs = [
+var audioNeedsTranscodingCodecs = [
     "aac",
     "mp3",
     "vorbis",
 ]
 
-var validVideoCodecs = [
+var videoNeedsTranscodingCodecs = [
     "h264",
     "x264",
     "vp8"
@@ -50,10 +50,10 @@ var isVideo = function(probeData) {
     return false;
 };
 var canPlayAudio = function (audioTracks) {
-    return validAudioCodecs.indexOf(audioTracks[0].codec_name) > -1;
+    return audioNeedsTranscodingCodecs.indexOf(audioTracks[0].codec_name) > -1;
 };
 var canPlayVideo = function (videoTracks) {
-    if (validVideoCodecs.indexOf(videoTracks[0].codec_name) > -1) {
+    if (videoNeedsTranscodingCodecs.indexOf(videoTracks[0].codec_name) > -1) {
         if (videoTracks[0].codec_name == "h264" || videoTracks[0].codec_name == "x264") {
             if (videoTracks[0].profile && videoTracks[0].profile.toLowerCase() == "high") {
                 if (videoTracks[0].level >= 30 && (videoTracks[0].level == 50 || videoTracks[0].level <= 42)) {
@@ -75,28 +75,28 @@ var canPlayVideo = function (videoTracks) {
 var transcodeNeeded = function(probeData, cb) {
     var isAudioMedia = isAudio(probeData);
     var isVideoMedia = isVideo(probeData);
-    var validAudio = false;
-    var validVideo = false;
+    var audioNeedsTranscoding = false;
+    var videoNeedsTranscoding = false;
     var needsTranscode = true;
-    var validFormat = validFormats.indexOf(probeData.format.format_name) > -1;
+    var videoNeedsTranscoding = validFormats.indexOf(probeData.format.format_name) > -1;
     if (isAudioMedia) {
         // Audio-only.
-        validAudio = canPlayAudio(getAudioTracks(probeData));
+        audioNeedsTranscoding = canPlayAudio(getAudioTracks(probeData));
     } else if (isVideoMedia) {
         // Video file.
-        validAudio = canPlayAudio(getAudioTracks(probeData));
-        validVideo = canPlayVideo(getVideoTracks(probeData));
+        audioNeedsTranscoding = canPlayAudio(getAudioTracks(probeData));
+        videoNeedsTranscoding = canPlayVideo(getVideoTracks(probeData));
     } else {
         return cb && cb("invalid");
     }
     if (isAudioMedia) {
-        if (!validAudio || !validFormat) {
+        if (!audioNeedsTranscoding || !videoNeedsTranscoding) {
             needsTranscode = true;
         } else {
             needsTranscode = false;
         }
     } else if (isVideoMedia) {
-        if (!validFormat || !validAudio || !validVideo) {
+        if (!videoNeedsTranscoding || !audioNeedsTranscoding || !videoNeedsTranscoding) {
             needsTranscode = true;
         } else {
             needsTranscode = false;
@@ -109,9 +109,9 @@ var transcodeNeeded = function(probeData, cb) {
             isAudioMedia: isAudioMedia,
             isVideoMedia: isVideoMedia,
             needsTranscode: needsTranscode,
-            validFormat: validFormat,
-            validAudio: validAudio,
-            validVideo: validVideo
+            videoNeedsTranscoding: videoNeedsTranscoding,
+            audioNeedsTranscoding: audioNeedsTranscoding,
+            videoNeedsTranscoding: videoNeedsTranscoding
         }
     );
 };
@@ -123,19 +123,19 @@ var canPlayContainer = function (probeData, cb) {
 var getFFmpegFlags = function (probeData, cb) {
     transcodeNeeded(probeData, function (err, obj) {
         var canPlay = obj.needsTranscode;
-        var validFormat = obj.validFormat;
-        var validAudio = obj.validAudio;
-        var validVideo = obj.validVideo;
+        var videoNeedsTranscoding = obj.videoNeedsTranscoding;
+        var audioNeedsTranscoding = obj.audioNeedsTranscoding;
+        var videoNeedsTranscoding = obj.videoNeedsTranscoding;
 
         var outputOptions = [];
 
         if (obj.isVideoMedia) {
-            if (!validAudio) {
+            if (!audioNeedsTranscoding) {
                 outputOptions.push("-acodec libfdk_aac");
             } else {
                 outputOptions.push("-acodec copy");
             }
-            if (!validVideo) {
+            if (!videoNeedsTranscoding) {
                 outputOptions.push("-vcodec libx264");
             } else {
                 outputOptions.push("-vcodec copy");
@@ -145,8 +145,8 @@ var getFFmpegFlags = function (probeData, cb) {
             outputOptions.push("-tune zerolatency");
             outputOptions.push("-f matroska");
         } else if (obj.isAudioMedia) {
-            console.log("VALID AUDIO?", validAudio);
-            if (!validAudio) {
+            console.log("VALID AUDIO?", audioNeedsTranscoding);
+            if (!audioNeedsTranscoding) {
                 outputOptions.push("-acodec libvorbis");
                 outputOptions.push("-f ogg");
             } else {
