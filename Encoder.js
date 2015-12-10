@@ -73,7 +73,7 @@ var Encoder = {
     },
 
     getUrl: function(fileId) {
-        return "http://localhost:" + ffmpegServer.address().port + "/" + fileId;
+        return "http://127.0.0.1:" + ffmpegServer.address().port + "/" + fileId;
     }
 
 };
