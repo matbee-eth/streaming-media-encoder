@@ -52,6 +52,7 @@ var ready = function () {
           res.writeHeader(headerInfo);
       });
 
+      // encoder.probe is currently needed before canPlay, will figure it out.
       encoder.probe(engine, {}, function (err, metadata) {
         console.log("Probe", err, metadata);
         engine.canPlay(function (canPlay) {
