@@ -123,7 +123,7 @@ var canPlayContainer = function (probeData, cb) {
 var getFFmpegFlags = function (probeData, cb) {
     transcodeNeeded(probeData, function (err, obj) {
         var canPlay = obj.needsTranscode;
-        var videoNeedsTranscoding = obj.videoNeedsTranscoding;
+        var formatNeedsTranscoding = obj.formatNeedsTranscoding;
         var audioNeedsTranscoding = obj.audioNeedsTranscoding;
         var videoNeedsTranscoding = obj.videoNeedsTranscoding;
 
