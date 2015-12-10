@@ -129,7 +129,7 @@ var getFFmpegFlags = function (probeData, cb) {
 
         var outputOptions = [];
 
-        if (obj.isVideo) {
+        if (obj.isVideoMedia) {
             if (!validAudio) {
                 outputOptions.push("-acodec libfdk_aac");
             } else {
@@ -144,7 +144,7 @@ var getFFmpegFlags = function (probeData, cb) {
             outputOptions.push("-preset ultrafast");
             outputOptions.push("-tune zerolatency");
             outputOptions.push("-f matroska");
-        } else if (obj.isAudio) {
+        } else if (obj.isAudioMedia) {
             console.log("VALID AUDIO?", validAudio);
             if (!validAudio) {
                 outputOptions.push("-acodec libvorbis");
