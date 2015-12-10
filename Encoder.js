@@ -48,6 +48,12 @@ Encoder.encode = function(engine, options, cb) {
     engine.getFFmpegOutputOptions(Encoder.getUrl(engine.id), function (err, outputOptions) {
       console.log(err, outputOptions);
       var command = ffmpeg(Encoder.getUrl(engine.id))
+      .on('start', function (commandLine) {
+          console.log('Spawned Ffmpeg with command: ' + commandLine);
+      })
+      .on('error', function () {
+        console.error(arguments);
+      })
       command.outputOptions(outputOptions)
       cb(command);
     });

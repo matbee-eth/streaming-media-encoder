@@ -48,7 +48,7 @@ Engine.prototype.getFFmpegOutputOptions = function(host, cb) {
     console.log("Engine.getFFmpegOutputOptions");
     this._profile.getFFmpegFlags(this._probeData, function (err, outputOptions) {
         console.log("getFFmpegFlags", outputOptions);
-        cb(outputOptions);
+        cb(err, outputOptions);
     });
 };
 
