@@ -4,12 +4,13 @@ var pump = require('pump');
 var rangeParser = require('range-parser');
 var ffmpeg = require('fluent-ffmpeg');
 
-var Engine = function (profile, fileSize, id) {
+var Engine = function (profile, fileSize, id, url) {
     EventEmitter.call(this);
     console.log("Engine", profile, id);
     this._profile = profile;
     this._fileSize = fileSize;
     this.id = id;
+    this.url = url;
     this.hasProbed = false;
 }
 util.inherits(Engine, EventEmitter);
@@ -58,7 +59,24 @@ Engine.prototype.setProbeData = function(metadata) {
 };
 
 Engine.prototype.canPlay = function(cb) {
-    this._profile.canPlay(this._probeData, cb);
+    if (!this.hasProbed) {
+        this.probe(function (err, metadata) {
+            this.canPlay(cb);
+        }.bind(this))
+    } else {
+        this._profile.canPlay(this._probeData, cb);
+    }
+};
+
+Engine.prototype.probe = function(cb) {
+    if (this.hasProbed) {
+        cb && cb(null, this._probeData);
+    } else {
+        ffmpeg.ffprobe(this.url, function(err, metadata) {
+          this.setProbeData(metadata);
+          cb && cb(err, metadata);
+        }.bind(this));
+    }
 };
 
 module.exports = Engine;

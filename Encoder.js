@@ -24,7 +24,7 @@ Encoder.profiles = {
 Encoder.profile = function (profile, fileSize) {
   // generate ID
   var id = uuid.v4();
-  var engine = new Engine(profile, fileSize, id);
+  var engine = new Engine(profile, fileSize, id, this.getUrl(id));
   uuidRequest[id] = engine;
   return engine;
 }
@@ -51,7 +51,7 @@ Encoder.encode = function(engine, options, cb) {
       if (options.startTime) {
         command.seekInput(options.startTime);
       }
-      .on('start', function (commandLine) {
+      command.on('start', function (commandLine) {
           console.log('Spawned Ffmpeg with command: ' + commandLine);
       })
       .on('error', function () {

@@ -30,26 +30,22 @@ app.get("/request-from-chromecast", function (req, res) {
         res.writeHeader(headerInfo);
     });
 
-    // encoder.probe is currently needed before canPlay, will figure it out.
-    encoder.probe(engine, {}, function (err, metadata) {
-      console.log("Probe", err, metadata);
-      engine.canPlay(function (canPlay) {
-        console.log("engine.canPlay", canPlay);
-        if (canPlay) {
-          // just send file. DO IT YOUR OWN WAY BITCH
-        }
-        else {
-          encoder.encode(engine, {
-            startTime: "00:00"
-          }, function (stream) {
-            stream.pipe(res, {end: true});
-            stream.on("end", function () {
-              console.log("stream ended");
-              res.end();
-            });
+    engine.canPlay(function (canPlay) {
+      console.log("engine.canPlay", canPlay);
+      if (canPlay) {
+        // just send file. DO IT YOUR OWN WAY BITCH
+      }
+      else {
+        encoder.encode(engine, {
+          startTime: "00:00"
+        }, function (stream) {
+          stream.pipe(res, {end: true});
+          stream.on("end", function () {
+            console.log("stream ended");
+            res.end();
           });
-        }
-      });
+        });
+      }
     });
 
 }); 
