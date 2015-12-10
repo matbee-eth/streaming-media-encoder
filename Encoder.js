@@ -5,6 +5,7 @@ var Engine = require('./Engine');
 var uuid = require('node-uuid');
 var net = require('net');
 var app = express();
+var ffmpeg = require('fluent-ffmpeg');
 function Encoder(options) {
     EventEmitter.call(this);
 }
@@ -21,42 +22,55 @@ Encoder.profiles = {
 * ...
 * options also supplied to Profile constructor.
 */
-Encoder.prototype.profile = function (profile, fileSize) {
+Encoder.profile = function (profile, fileSize) {
   // generate ID
-  var engine = new Engine(profile, app, fileSize);
+  var engine = new Engine(profile, fileSize);
   return engine;
 }
 
 /*
 * location: URL (this webserver) or file path.
 */
-Encoder.prototype.probe = function (engine, cb) {
-  var uuid = uuid.v4();
-  uuidRequest[uuid] = engine.onRequest.bind(engine);
-
-  ffmpeg.ffprobe(this.getUrl(uuid), function(err, metadata) {
-      console.dir(metadata);
+Encoder.probe = function (engine, options, cb) {
+  var id = uuid.v4();
+  uuidRequest[id] = engine;
+  console.log(this.getUrl(id));
+  ffmpeg.ffprobe(this.getUrl(id), function(err, metadata) {
+      console.info(err, metadata);
       cb && cb(err, metadata);
   });
 }
 
-Encoder.prototype.encode = function(options, cb) {
-  var uuid = uuid.v4();
-  uuidRequest[uuid] = engine.onRequest.bind(engine);
+Encoder.encode = function(engine, options, cb) {
+  var id = uuid.v4();
+  console.log("Encoder.encode", engine);
+  uuidRequest[id] = engine.onRequest.bind(engine);
+  ffmpeg.encode(this.getUrl(id), function (err) {
+
+  });
 };
 
-Encoder.prototype.getUrl = function(fileId) {
-  return "http://localhost"+server.address().port+"/"+fileId;
+Encoder.getUrl = function(fileId) {
+  return "http://localhost:"+ffmpegServer.address().port+"/"+fileId;
 };
 
 var uuidRequest = {};
 app.get('/:fileId', function (req, res) {
   if (uuidRequest[req.params.fileId]) {
-    uuidRequest[req.params.fileId](req, res);
+    uuidRequest[req.params.fileId].onRequest(req, res);
   } else {
     res.end();
   }
 });
+
+app.head('/:fileId', function (req, res) {
+  if (uuidRequest[req.params.fileId]) {
+    uuidRequest[req.params.fileId].onHeadRequest(req, res);
+  } else {
+    res.end();
+  }
+});
+
 
 var portrange = 3000
 
@@ -75,12 +89,14 @@ function getPort (cb) {
     getPort(cb)
   })
 };
-
+var ffmpegServer;
 getPort(function (port) {
-  var server = app.listen(port, function () {
-    var host = server.address().address;
-    var port = server.address().port;
+  ffmpegServer = app.listen(port, function () {
+    var host = ffmpegServer.address().address;
+    var port = ffmpegServer.address().port;
 
     console.log('FFmpeg Webserver listening at http://%s:%s', host, port);
   });
 });
+
+module.exports = Encoder;

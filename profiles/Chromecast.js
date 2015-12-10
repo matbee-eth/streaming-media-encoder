@@ -37,7 +37,7 @@ function getFFMpegFlags (probeData) {
     
 }
 
-return {
+module.exports = {
     canPlay: canPlay,
     canPlayAudio: canPlayAudio,
     canPlayVideo: canPlayVideo,

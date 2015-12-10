@@ -1,9 +1,15 @@
-var encoder = require('./Encoder');
-var file = "/home/matbee/luigi-is-pretty.mkv"
 var express = require('express');
 var app = express();
+var encoder = require('./Encoder');
+var file = "Last.Knights.2015.1080p.BluRay.x264.YIFY.mp4"
+var fs = require('fs');
+var stats = fs.statSync(file);
 
+var express = require('express');
+var net = require('net');
+var app = express();
 var portrange = 3000
+var expressServer;
 
 function getPort (cb) {
   var port = portrange
@@ -21,11 +27,12 @@ function getPort (cb) {
   })
 };
 getPort(function (port) {
-    var server = app.listen(port, function () {
-      var host = server.address().address;
-      var port = server.address().port;
+    expressServer = app.listen(port, function () {
+      var host = expressServer.address().address;
+      var port = expressServer.address().port;
 
       console.log('FFmpeg Webserver listening at http://%s:%s', host, port);
+      ready();
     });
 })
 // encoder.probe(file, function (err, probeData) {
@@ -37,32 +44,38 @@ getPort(function (port) {
 //         }
 //     });
 // });
+var ready = function () {
+  app.get("/request-from-chromecast", function (req, res) {
+      var engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
+      console.log("Engine::", engine);
+      // Sometimes FFmpeg may need to seek throughout a file to encode the video, or probe.
+      engine.on("streamNeeded", function (startByte, endByte, cb) {
+          // <Error?> Stream.
+          console.info("streamNeeded", startByte, endByte);
+          cb(fs.createReadStream(file, {start: startByte, end: endByte}));
+      });
 
-expressServer.GET("/request-from-chromecast", function (req, res) {
-    var engine = encoder.profile(encoder.Profiles.CHROMECAST, file.length);
+      // Certain devices need specific HTTP Headers in order to decode the video. Use these headers.
+      engine.once("httpHeaders", function (headerInfo) {
+          res.writeHeader(headerInfo);
+      });
 
-    // Sometimes FFmpeg may need to seek throughout a file to encode the video, or probe.
-    engine.on("streamNeeded", function (startByte, endByte, cb) {
-        // <Error?> Stream.
-        cb(null, fs.createReadStream(file, {start: startByte, end: endByte}));
-    });
+      // Video data. Just write it.
+      engine.on("data", function (data) {
+          res.send(data);
+      });
 
-    // Certain devices need specific HTTP Headers in order to decode the video. Use these headers.
-    engine.once("httpHeaders", function (headerInfo) {
-        res.writeHeader(headerInfo);
-    });
+      // Video encoding finished, it's time to end.
+      engine.once("end", function () {
+          res.end();
+      });
 
-    // Video data. Just write it.
-    engine.on("data", function (data) {
+      encoder.probe(engine, {
+          startTime: "00:00"
+      }, function (err, data) {
+        console.log(err, data);
         res.send(data);
-    });
-
-    // Video encoding finished, it's time to end.
-    engine.once("end", function () {
         res.end();
-    });
-
-    engine.encode({
-        startTime: "00:00"
-    });
-});
+      });
+  }); 
+}

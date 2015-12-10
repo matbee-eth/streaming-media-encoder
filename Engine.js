@@ -1,13 +1,14 @@
 const util = require('util');
 const EventEmitter = require('events');
+var pump = require('pump');
 var rangeParser = require('range-parser');
 
-var Engine = function (profile, server, fileSize) {
+var Engine = function (profile, fileSize) {
     EventEmitter.call(this);
     this._profile = profile;
-    this._server = server;
     this._fileSize = fileSize;
 }
+util.inherits(Engine, EventEmitter);
 
 Engine.prototype.getVideoTracks = function(probeData) {
     var out = [];
@@ -30,16 +31,18 @@ Engine.prototype.getAudioTracks = function(probeData) {
     }
     return out;
 };
+Engine.prototype.onHeadRequest = function (req, res) {
+    console.log("onHeadRequest", req, res);
+    res.end();
+}
 Engine.prototype.onRequest = function(req, res) {
-    var range = rangeParser(this._fileSize, req.headers.range)[0];
-    console.debug('range %s', JSON.stringify(range));
     res.setHeader('Accept-Ranges', 'bytes')
-    res.setHeader('Content-Type', "video/mp4")
+    res.setHeader('Content-Type', "video/matroska")
     res.statusCode = 200;
     if (req.headers.range) {
-        res.statusCode = 206
-        // no support for multi-range reqs
-        range = rangeParser(this._fileSize, req.headers.range)[0]
+        console.log("onRequest", this._fileSize, req.headers.range);
+        var range = rangeParser(this._fileSize, req.headers.range)[0];
+        console.info('range %s', req.headers.range, JSON.stringify(range));
         res.setHeader(
           'Content-Range',
           'bytes ' + range.start + '-' + range.end + '/' + this._fileSize
@@ -48,8 +51,17 @@ Engine.prototype.onRequest = function(req, res) {
     } else {
         res.setHeader('Content-Length', this._fileSize);
     }
+    console.log(res);
     this.emit("streamNeeded", range.start, range.end, function (stream) {
-        res.write(stream);
+        stream.pipe(res);
+        stream.on('end', function () {
+            res.end();
+        });
     });
 };
-util.inherits(Engine, EventEmitter);
+
+Engine.prototype.encode = function(obj) {
+    console.info("TODO:: Engine.encode");
+};
+
+module.exports = Engine;
