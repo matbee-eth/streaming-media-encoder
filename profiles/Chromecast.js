@@ -169,5 +169,6 @@ module.exports = {
     canPlayAudio: canPlayAudio,
     canPlayVideo: canPlayVideo,
     canPlayContainer: canPlayContainer,
-    getFFmpegFlags: getFFmpegFlags
+    getFFmpegFlags: getFFmpegFlags,
+    transcodeNeeded: transcodeNeeded
 }
