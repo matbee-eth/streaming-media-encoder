@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width" charset="utf-8">
+    <title>streaming-media-encoder</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/cayman.min.css">
+    <link rel="stylesheet" href="../css/prism.min.css">
+    <link rel="stylesheet" href="../css/index.min.css">
+    <link rel="stylesheet" href="../css/docs.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-responsive.min.css">
+  </head>
+  <body data-spy="scroll" data-target=".scrollspy">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container"><a class="brand">Mr. Doc</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav pull-right sponsored"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <header id="overview" class="jumbotron subhead">
+      <div class="container">
+        <h1>streaming-media-encoder</h1>
+        <p class="lead"></p>
+      </div>
+    </header>
+    <div class="container">
+      <div class="row">
+        <div class="span3 bs-docs-sidebar">
+          <ul class="nav nav-list bs-docs-sidenav affix-top">
+            <li><a href="../index.html">Main</a></li>
+            <li><a href="../Encoder.js.html">Encoder.js</a></li>
+            <li><a href="../Engine.js.html">Engine.js</a></li>
+            <li><a href="../example-extended.js.html">example-extended.js</a></li>
+            <li><a href="../example.js.html">example.js</a></li>
+            <li><a href="../profiles/AppleTV.js.html">profiles/AppleTV.js</a></li>
+            <li class="active"><a href="../profiles/Chromecast.js.html">profiles/Chromecast.js</a></li>
+            <li><a href="../profiles/DLNA.js.html">profiles/DLNA.js</a></li>
+          </ul>
+          <div class="scrollspy">
+            <ul class="nav nav-list bs-docs-sidenav affix-top">
+              <li><a href="#audioNeedsTranscodingCodecs"><i class="alert alert-success"></i><span>audioNeedsTranscodingCodecs</span></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="span9">
+          <section id="audioNeedsTranscodingCodecs">
+            <h1>audioNeedsTranscodingCodecs</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>&nbsp;</span><span>audioNeedsTranscodingCodecs</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"></div>
+          <pre><code class="language-javascript">var audioNeedsTranscodingCodecs = [
+    &quot;aac&quot;,
+    &quot;mp3&quot;,
+    &quot;vorbis&quot;,
+]
+
+var videoNeedsTranscodingCodecs = [
+    &quot;h264&quot;,
+    &quot;x264&quot;,
+    &quot;vp8&quot;
+]
+
+var validFormats = [
+    &quot;matroska,webm&quot;,
+    &quot;mov,mp4,m4a,3gp,3g2,mj2&quot;,
+    &quot;mp3&quot;,
+    &quot;ogg&quot;
+]
+
+var getVideoTracks = function(probeData) {
+    var out = [];
+    for (var i = 0; i &lt; probeData.streams.length; i++) {
+        var stream = probeData.streams[i];
+        if (stream.codec_type == &quot;video&quot; &amp;&amp; stream.disposition.attached_pic == 0) {
+            out.push(stream);
+        }
+    }
+    return out;
+};
+var getAudioTracks = function(probeData) {
+    var out = [];
+    for (var i = 0; i &lt; probeData.streams.length; i++) {
+        var stream = probeData.streams[i];
+        if (stream.codec_type == &quot;audio&quot;) {
+            out.push(stream);
+        }
+    }
+    return out;
+};
+var isAudio = function(probeData) {
+    if (getAudioTracks(probeData).length &gt; 0 &amp;&amp; getVideoTracks(probeData).length == 0) {
+        return true;
+    }
+    return false;
+};
+var isVideo = function(probeData) {
+    if (getVideoTracks(probeData).length &gt; 0) {
+        return true;
+    }
+    return false;
+};
+var canPlayAudio = function (audioTracks) {
+    if (audioTracks.length == 0) {
+        return true;
+    }
+    return audioNeedsTranscodingCodecs.indexOf(audioTracks[0].codec_name) &gt; -1;
+};
+var canPlayVideo = function (videoTracks) {
+    if (videoTracks.length == 0) {
+        return true;
+    }
+    if (videoNeedsTranscodingCodecs.indexOf(videoTracks[0].codec_name) &gt; -1) {
+        if (videoTracks[0].codec_name == &quot;h264&quot; || videoTracks[0].codec_name == &quot;x264&quot;) {
+            if (videoTracks[0].profile &amp;&amp; videoTracks[0].profile.toLowerCase() == &quot;high&quot;) {
+                if (videoTracks[0].level &gt;= 30 &amp;&amp; (videoTracks[0].level == 50 || videoTracks[0].level &lt;= 42)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+};
+
+var transcodeNeeded = function(probeData, cb) {
+    var isAudioMedia = isAudio(probeData);
+    var isVideoMedia = isVideo(probeData);
+    var audioNeedsTranscoding = false;
+    var videoNeedsTranscoding = false;
+    var needsTranscoding = true;
+    var formatNeedsTranscoding = !validFormats.indexOf(probeData.format.format_name) &gt; -1;
+    if (isAudioMedia) {
+        // Audio-only.
+        audioNeedsTranscoding = !canPlayAudio(getAudioTracks(probeData));
+    } else if (isVideoMedia) {
+        // Video file.
+        audioNeedsTranscoding = !canPlayAudio(getAudioTracks(probeData));
+        videoNeedsTranscoding = !canPlayVideo(getVideoTracks(probeData));
+    } else {
+        return cb &amp;&amp; cb(&quot;invalid&quot;);
+    }
+    if (isAudioMedia) {
+        needsTranscoding = audioNeedsTranscoding || videoNeedsTranscoding;
+    } else if (isVideoMedia) {
+        needsTranscoding = formatNeedsTranscoding || audioNeedsTranscoding || videoNeedsTranscoding;
+    }
+    
+    
+    cb &amp;&amp; cb(null,
+        {   
+            isAudioMedia: isAudioMedia,
+            isVideoMedia: isVideoMedia,
+            needsTranscoding: needsTranscoding,
+            videoNeedsTranscoding: videoNeedsTranscoding,
+            audioNeedsTranscoding: audioNeedsTranscoding,
+            videoNeedsTranscoding: videoNeedsTranscoding
+        }
+    );
+};
+
+var canPlayContainer = function (probeData, cb) {
+
+};
+
+var getFFmpegFlags = function (probeData, cb) {
+    transcodeNeeded(probeData, function (err, obj) {
+        var canPlay = obj.needsTranscoding;
+        var formatNeedsTranscoding = obj.formatNeedsTranscoding;
+        var audioNeedsTranscoding = obj.audioNeedsTranscoding;
+        var videoNeedsTranscoding = obj.videoNeedsTranscoding;
+
+        var outputOptions = [];
+
+        if (obj.isVideoMedia) {
+            if (audioNeedsTranscoding) {
+                outputOptions.push(&quot;-acodec libfdk_aac&quot;);
+            } else {
+                outputOptions.push(&quot;-acodec copy&quot;);
+            }
+            if (videoNeedsTranscoding) {
+                outputOptions.push(&quot;-vcodec libx264&quot;);
+            } else {
+                outputOptions.push(&quot;-vcodec copy&quot;);
+            }
+            outputOptions.push(&quot;-copyts&quot;);
+            outputOptions.push(&quot;-preset ultrafast&quot;);
+            outputOptions.push(&quot;-tune zerolatency&quot;);
+            outputOptions.push(&quot;-f matroska&quot;);
+        } else if (obj.isAudioMedia) {
+            console.log(&quot;VALID AUDIO?&quot;, audioNeedsTranscoding);
+            if (audioNeedsTranscoding) {
+                outputOptions.push(&quot;-acodec libvorbis&quot;);
+                outputOptions.push(&quot;-f ogg&quot;);
+            } else {
+                outputOptions.push(&quot;-f &quot; + probeData.format.format_name);
+            }
+        }
+        cb &amp;&amp; cb(null, outputOptions);
+        return outputOptions;
+    })
+};
+
+var canPlay = function (probeData, cb) {
+    transcodeNeeded(probeData, function (err, obj) {
+        cb &amp;&amp; cb(!obj.needsTranscoding);
+    });
+}
+
+module.exports = {
+    canPlay: canPlay,
+    canPlayAudio: canPlayAudio,
+    canPlayVideo: canPlayVideo,
+    canPlayContainer: canPlayContainer,
+    getFFmpegFlags: getFFmpegFlags,
+    transcodeNeeded: transcodeNeeded
+}</code></pre>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <p>Documentation generated with <a href="https://github.com/mr-doc/mr-doc">Mr. Doc </a> created by <a href="https://twitter.com/FGRibreau" data-show-count="false" class="twitter-follow-button">Francois-Guillaume Ribreau </a></p>
+        <p>Mr. Doc is sponsored by <a href="http://bringr.net/?btt" title="Outil d'analyse des réseaux sociaux" class="bringr">Bringr </a> and <a href="https://redsmin.com/?btt" title="Full Redis GUI" class="redsmin">Redsmin</a></p>
+        <p>Theme borrowed from Twitter Bootstrap</p>
+      </div>
+    </footer>
+    <script src="../js/twitter-widget.min.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap-transition.min.js"></script>
+    <script src="../js/bootstrap-scrollspy.min.js"></script>
+    <script src="../js/bootstrap-dropdown.min.js"></script>
+    <script src="../js/bootstrap-collapse.min.js"></script>
+    <script src="../js/bootstrap-affix.min.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <script src="../js/index.min.js"></script>
+  </body>
+</html>

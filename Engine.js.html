@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width" charset="utf-8">
+    <title>streaming-media-encoder</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/cayman.min.css">
+    <link rel="stylesheet" href="css/prism.min.css">
+    <link rel="stylesheet" href="css/index.min.css">
+    <link rel="stylesheet" href="css/docs.min.css">
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+  </head>
+  <body data-spy="scroll" data-target=".scrollspy">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container"><a class="brand">Mr. Doc</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav pull-right sponsored"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <header id="overview" class="jumbotron subhead">
+      <div class="container">
+        <h1>streaming-media-encoder</h1>
+        <p class="lead"></p>
+      </div>
+    </header>
+    <div class="container">
+      <div class="row">
+        <div class="span3 bs-docs-sidebar">
+          <ul class="nav nav-list bs-docs-sidenav affix-top">
+            <li><a href="index.html">Main</a></li>
+            <li><a href="Encoder.js.html">Encoder.js</a></li>
+            <li class="active"><a href="Engine.js.html">Engine.js</a></li>
+            <li><a href="example-extended.js.html">example-extended.js</a></li>
+            <li><a href="example.js.html">example.js</a></li>
+            <li><a href="profiles/AppleTV.js.html">profiles/AppleTV.js</a></li>
+            <li><a href="profiles/Chromecast.js.html">profiles/Chromecast.js</a></li>
+            <li><a href="profiles/DLNA.js.html">profiles/DLNA.js</a></li>
+          </ul>
+          <div class="scrollspy">
+            <ul class="nav nav-list bs-docs-sidenav affix-top">
+              <li><a href="#util"><i class="alert alert-success"></i><span>util</span></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="span9">
+          <section id="util">
+            <h1>util</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>&nbsp;</span><span>util</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"></div>
+          <pre><code class="language-javascript">const util = require('util');
+const EventEmitter = require('events');
+var pump = require('pump');
+var rangeParser = require('range-parser');
+var ffmpeg = require('fluent-ffmpeg');
+
+var Engine = function (profile, fileSize, id, url) {
+    EventEmitter.call(this);
+    console.log(&quot;Engine&quot;, profile, id);
+    this._profile = profile;
+    this._fileSize = fileSize;
+    this.id = id;
+    this.url = url;
+    this.hasProbed = false;
+}
+util.inherits(Engine, EventEmitter);
+
+Engine.prototype.onHeadRequest = function (req, res) {
+    console.log(&quot;onHeadRequest&quot;, req, res);
+    res.end();
+}
+Engine.prototype.onRequest = function(req, res) {
+    res.setHeader('Accept-Ranges', 'bytes')
+    res.setHeader('Content-Type', &quot;video/matroska&quot;)
+    res.statusCode = 200;
+    if (req.headers.range) {
+        var range = rangeParser(this._fileSize, req.headers.range)[0];
+        res.setHeader(
+          'Content-Range',
+          'bytes ' + range.start + '-' + range.end + '/' + this._fileSize
+        )
+        res.setHeader('Content-Length', range.end - range.start + 1)
+    } else {
+        res.setHeader('Content-Length', this._fileSize);
+    }
+    this.emit(&quot;streamNeeded&quot;, range.start, range.end, function (stream) {
+        stream.pipe(res);
+        stream.on('end', function () {
+            res.end();
+        });
+    });
+};
+
+Engine.prototype.getFFmpegOutputOptions = function(host, cb) {
+    if (!this.hasProbed) {
+        console.error(&quot;NO PROBE HAS BEEN DONE NOOB&quot;);
+        return;
+    }
+    console.log(&quot;Engine.getFFmpegOutputOptions&quot;);
+    this._profile.getFFmpegFlags(this._probeData, function (err, outputOptions) {
+        console.log(&quot;getFFmpegFlags&quot;, outputOptions);
+        cb(err, outputOptions);
+    });
+};
+
+Engine.prototype.setProbeData = function(metadata) {
+    this.hasProbed = true;
+    this._probeData = metadata;
+};
+
+Engine.prototype.canPlay = function(cb) {
+    if (!this.hasProbed) {
+        this.probe(function (err, metadata) {
+            this.canPlay(cb);
+        }.bind(this))
+    } else {
+        this._profile.canPlay(this._probeData, cb);
+    }
+};
+
+Engine.prototype.analyze = function(cb) {
+    if (!this.hasProbed) {
+        this.probe(function (err, metadata) {
+            this.analyze(cb);
+        }.bind(this))
+    } else {
+        this._profile.transcodeNeeded(this._probeData, cb);
+    }
+};
+
+Engine.prototype.probe = function(cb) {
+    if (this.hasProbed) {
+        cb &amp;&amp; cb(null, this._probeData);
+    } else {
+        ffmpeg.ffprobe(this.url, function(err, metadata) {
+          this.setProbeData(metadata);
+          cb &amp;&amp; cb(err, metadata);
+        }.bind(this));
+    }
+};
+
+module.exports = Engine;</code></pre>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <p>Documentation generated with <a href="https://github.com/mr-doc/mr-doc">Mr. Doc </a> created by <a href="https://twitter.com/FGRibreau" data-show-count="false" class="twitter-follow-button">Francois-Guillaume Ribreau </a></p>
+        <p>Mr. Doc is sponsored by <a href="http://bringr.net/?btt" title="Outil d'analyse des réseaux sociaux" class="bringr">Bringr </a> and <a href="https://redsmin.com/?btt" title="Full Redis GUI" class="redsmin">Redsmin</a></p>
+        <p>Theme borrowed from Twitter Bootstrap</p>
+      </div>
+    </footer>
+    <script src="js/twitter-widget.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap-transition.min.js"></script>
+    <script src="js/bootstrap-scrollspy.min.js"></script>
+    <script src="js/bootstrap-dropdown.min.js"></script>
+    <script src="js/bootstrap-collapse.min.js"></script>
+    <script src="js/bootstrap-affix.min.js"></script>
+    <script src="js/prism.min.js"></script>
+    <script src="js/index.min.js"></script>
+  </body>
+</html>
