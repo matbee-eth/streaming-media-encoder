@@ -6,11 +6,7 @@ var uuid = require('node-uuid');
 var net = require('net');
 var app = express();
 var ffmpeg = require('fluent-ffmpeg');
-function Encoder(options) {
-    EventEmitter.call(this);
-}
-util.inherits(Encoder, EventEmitter);
-
+var Encoder = {};
 Encoder.profiles = {
     "CHROMECAST": require('./profiles/Chromecast.js'),
     // "DLNA": require('./profiles/DLNA.js'),
