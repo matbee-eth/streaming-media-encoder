@@ -115,7 +115,7 @@ function findOpenPort(port, cb) {
 
 findOpenPort(3001, function(port) {
     ffmpegServer = app.listen(port, function() {
-        console.log('FFmpeg Webserver listening at %s', Encoder.getUrl());
+        console.log('FFmpeg Webserver listening at %s', Encoder.getUrl(''));
     });
 });
 
