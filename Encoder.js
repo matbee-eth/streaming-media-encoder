@@ -11,19 +11,23 @@ var util = require('util'),
 
 /**
  * The encoder is where the magic happens.
- * This communicates via an express server with with ffmpeg.
+ * Communicates with a device specific profile via an express server with ffmpeg
+ * provides streamable output that can be piped directly into (for instance) Express
  */
 var Encoder = {
+    debug: false,
 
     profiles: {
         "CHROMECAST": require('./profiles/Chromecast.js'),
         // "DLNA": require('./profiles/DLNA.js'),
         // "APPLETV": require('./profiles/AppleTV.js')
     },
-    /*
-     * Valid Options
-     * ...
-     * options also supplied to Profile constructor.
+
+    /**
+     * build a decoding engine for a device profile
+     * @param  {Profile} profile  one of encoder.profiles
+     * @param  {int} fileSize size of the file to process
+     * @return {Engine} engine that knows how to decode video for device profile
      */
     profile: function(profile, fileSize) {
         // generate ID
@@ -33,10 +37,17 @@ var Encoder = {
         return engine;
     },
 
-    /*
-     * location: URL (this webserver) or file path.
+    /**
+     * ffprobe gathers information from multimedia streams and prints it in human- and machine-readable fashion.
+     * this is needed by the engine to determine format info.
+     * @param  {Engine}   engine  encoding engine to pass data to
+     * @param  {object}   options ffprobe options, currently unused
+     * @param  {Function} cb callback when probe is ready
      */
     probe: function(engine, options, cb) {
+        if (this.debug) {
+            console.log("probing engine for data", engine, options);
+        }
         ffmpeg.ffprobe(Encoder.getUrl(engine.id), function(err, metadata) {
             engine.setProbeData(metadata);
             if (cb) {
@@ -45,6 +56,12 @@ var Encoder = {
         });
     },
 
+    /**
+     * Fetch probe media for info and start transcoding via ffmpeg
+     * @param  {Engine}   engine  device specific engine to use
+     * @param  {object}   options Options: (currently only startTime and force )
+     * @param  {Function} cb      callback to execute on encoding progress
+     */
     encode: function(engine, options, cb) {
         if (!engine.hasProbed) {
             Encoder.probe(engine, {}, function(err, metadata) {
@@ -52,14 +69,19 @@ var Encoder = {
             });
         } else {
             engine.getFFmpegOutputOptions(Encoder.getUrl(engine.id), function(err, outputOptions) {
-                console.log(err, outputOptions);
+                if (Encoder.debug) {
+                    console.log(err, outputOptions);
+                }
+
                 var command = ffmpeg(Encoder.getUrl(engine.id));
                 if (options.startTime) {
                     command.seekInput(options.startTime);
                 }
 
                 command.on('start', function(commandLine) {
-                    console.log('Spawned Ffmpeg with command: ' + commandLine);
+                    if (Encoder.debug) {
+                        console.log('Spawned Ffmpeg with command: ' + commandLine);
+                    }
                 })
 
                 .on('error', function() {
@@ -72,8 +94,13 @@ var Encoder = {
         }
     },
 
+    /**
+     * Fetch loopback url for file or return base url
+     * @param  {string} fileId Optional fileId to append
+     * @return {string} url
+     */
     getUrl: function(fileId) {
-        return "http://127.0.0.1:" + ffmpegServer.address().port + "/" + fileId;
+        return "http://127.0.0.1:" + ffmpegServer.address().port + "/" + (fileId || '');
     }
 
 };
@@ -115,7 +142,7 @@ function findOpenPort(port, cb) {
 
 findOpenPort(3001, function(port) {
     ffmpegServer = app.listen(port, function() {
-        console.log('FFmpeg Webserver listening at %s', Encoder.getUrl(''));
+        console.log('FFmpeg Webserver listening at %s', Encoder.getUrl());
     });
 });
 
