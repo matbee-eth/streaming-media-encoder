@@ -6,33 +6,16 @@ var fs = require('fs');
 var express = require('express');
 var net = require('net');
 var app = express();
-var portrange = 3000
+var port = 8989
 var expressServer;
 
-function getPort (cb) {
-  var port = portrange
-  portrange += 1
+expressServer = app.listen(port, function () {
+  var host = expressServer.address().address;
+  var port = expressServer.address().port;
 
-  var server = net.createServer()
-  server.listen(port, function (err) {
-    server.once('close', function () {
-      cb(port)
-    })
-    server.close();
-  })
-  server.on('error', function (err) {
-    getPort(cb)
-  })
-};
-getPort(function (port) {
-    expressServer = app.listen(port, function () {
-      var host = expressServer.address().address;
-      var port = expressServer.address().port;
-
-      console.log('FFmpeg Webserver listening at http://%s:%s', host, port);
-      ready();
-    });
-})
+  console.log('FFmpeg Webserver listening at http://%s:%s', host, port);
+  ready();
+});
 
 var ready = function () {
   app.get("/request-from-chromecast", function (req, res) {
