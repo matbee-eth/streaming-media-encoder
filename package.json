@@ -1,8 +1,8 @@
 {
-  "name": "matbee-video-profiles",
-  "version": "1.0.0",
+  "name": "streaming-media-encoder",
+  "version": "1.0.2",
   "description": "",
-  "main": "index.js",
+  "main": "Encoder.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
