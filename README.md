@@ -19,10 +19,25 @@ engine.on("streamNeeded", function (startByte, endByte, cb) {
 ```
 
 ## Detecting if Transcoding is even necessary
-If isSupported is true, then you can just send the file to the streaming device.
-If isSupported is false, you will have to encode the media.
 ```
-engine.canPlay(function (isSupported));
+/**
+ * analyze the file stream to see what type of media we're dealing with and if it's playable
+ *
+ * the mediaInfo object tells you all you need: {
+ *      isAudioMedia: boolean,
+ *      isVideoMedia: boolean,
+ *      audioNeedsTranscoding: boolean
+ *      videoNeedsTranscoding: boolean
+ *      formatNeedsTranscoding: boolean,
+ * }
+ */
+engine.analyze(function(mediaInfo) {
+	if(mediaInfo.formatNeedsTranscoding) {
+		// start engine encoding
+    } else { 
+    	// pass through the regular 'express' way 
+    }
+});
 ```
 
 ## Optionally you can supply startTime to the encode function, to seek.
