@@ -2,10 +2,7 @@ var express = require('express');
 var app = express();
 var encoder = require('./Encoder');
 var fs = require('fs');
-
-var express = require('express');
 var net = require('net');
-var app = express();
 var port = 8989
 var expressServer;
 
