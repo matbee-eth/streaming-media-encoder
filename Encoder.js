@@ -6,13 +6,12 @@ var util = require('util'),
     net = require('net'),
     uuid = require('node-uuid'),
     app = express(),
-    ffmpegServer;
+    ffmpegServer,
+    uuidRequest = {};
 
 /**
  * The encoder is where the magic happens.
- * This class starts an HTTP server that communicates with ffmpeg.
- *
- * @param {[type]} options [description]
+ * This communicates via an express server with with ffmpeg.
  */
 var Encoder = {
 
@@ -79,7 +78,6 @@ var Encoder = {
 
 };
 
-var uuidRequest = {};
 app.get('/:fileId', function(req, res) {
     if (uuidRequest[req.params.fileId]) {
         uuidRequest[req.params.fileId].onRequest(req, res);
@@ -96,13 +94,13 @@ app.head('/:fileId', function(req, res) {
     }
 });
 
-
-var portrange = 3000;
-
-function getPort(cb) {
-    var port = portrange;
-    portrange += 1;
-
+/**
+ * scan the port range from the start port until we have an open port.
+ * executes callback with the port number when we found one.
+ * @param  {int}   port portnumber to start at
+ * @param  {Function} cb   callback to execute when port found.
+ */
+function findOpenPort(port, cb) {
     var server = net.createServer();
     server.listen(port, function(err) {
         server.once('close', function() {
@@ -111,15 +109,13 @@ function getPort(cb) {
         server.close();
     });
     server.on('error', function(err) {
-        getPort(cb);
+        findOpenPort(port + 1, cb);
     });
 }
 
-getPort(function(port) {
+findOpenPort(3001, function(port) {
     ffmpegServer = app.listen(port, function() {
-        var host = ffmpegServer.address().address;
-        var port = ffmpegServer.address().port;
-        console.log('FFmpeg Webserver listening at http://%s:%s', host, port);
+        console.log('FFmpeg Webserver listening at %s', Encoder.getUrl());
     });
 });
 
