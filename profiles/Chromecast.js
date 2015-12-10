@@ -128,12 +128,12 @@ var getFFmpegFlags = function (probeData, cb) {
         var outputOptions = [];
 
         if (obj.isVideoMedia) {
-            if (!audioNeedsTranscoding) {
+            if (audioNeedsTranscoding) {
                 outputOptions.push("-acodec libfdk_aac");
             } else {
                 outputOptions.push("-acodec copy");
             }
-            if (!videoNeedsTranscoding) {
+            if (videoNeedsTranscoding) {
                 outputOptions.push("-vcodec libx264");
             } else {
                 outputOptions.push("-vcodec copy");
@@ -144,7 +144,7 @@ var getFFmpegFlags = function (probeData, cb) {
             outputOptions.push("-f matroska");
         } else if (obj.isAudioMedia) {
             console.log("VALID AUDIO?", audioNeedsTranscoding);
-            if (!audioNeedsTranscoding) {
+            if (audioNeedsTranscoding) {
                 outputOptions.push("-acodec libvorbis");
                 outputOptions.push("-f ogg");
             } else {
