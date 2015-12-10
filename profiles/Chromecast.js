@@ -87,7 +87,7 @@ var transcodeNeeded = function(probeData, cb) {
     var formatNeedsTranscoding = validFormats.indexOf(probeData.format.format_name) > -1;
     if (isAudioMedia) {
         // Audio-only.
-        audioNeedsTranscoding = canPlayAudio(getAudioTracks(probeData));
+        audioNeedsTranscoding = !canPlayAudio(getAudioTracks(probeData));
     } else if (isVideoMedia) {
         // Video file.
         audioNeedsTranscoding = !canPlayAudio(getAudioTracks(probeData));
