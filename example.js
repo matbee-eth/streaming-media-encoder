@@ -11,7 +11,6 @@ expressServer = app.listen(port, function () {
   var port = expressServer.address().port;
 
   console.log('FFmpeg Webserver listening at http://%s:%s', host, port);
-  ready();
 });
 
 app.get("/request-from-chromecast", function (req, res) {
