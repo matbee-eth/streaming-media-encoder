@@ -6,7 +6,7 @@ var net = require('net');
 var rangeParser = require('range-parser');
 var pump = require('pump');
 var mime = require('mime');
-var port = 9090
+var port = 9090;
 var expressServer;
 
 expressServer = app.listen(port, function() {
@@ -24,7 +24,7 @@ function mediaSelected(filePath) {
     engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
 }
 
-// mediaSelected("file.mp4");
+mediaSelected("../demo.mkv");
 
 app.get("/stream-no-transcode", function (req, res) {
     // Send file as is.
@@ -39,28 +39,28 @@ app.get("/stream-no-transcode", function (req, res) {
         var range;
         var filename = require('path').basename(filePath);
 
-        res.setHeader('Accept-Ranges', 'bytes')
-        res.setHeader('Content-Type', mime.lookup(filename))
+        res.setHeader('Accept-Ranges', 'bytes');
+        res.setHeader('Content-Type', mime.lookup(filename));
         res.statusCode = 200;
 
         if (req.headers.range) {
             range = rangeParser(filesize, req.headers.range)[0];
-            res.statusCode = 206
+            res.statusCode = 206;
             // no support for multi-range reqs
-            range = rangeParser(filesize, req.headers.range)[0]
-            console.debug('range %s', JSON.stringify(range))
+            range = rangeParser(filesize, req.headers.range)[0];
+            console.log('range %s', JSON.stringify(range));
             res.setHeader(
               'Content-Range',
               'bytes ' + range.start + '-' + range.end + '/' + filesize
-            )
-            res.setHeader('Content-Length', range.end - range.start + 1)
+            );
+            res.setHeader('Content-Length', range.end - range.start + 1);
         } else {
             res.setHeader('Content-Length', filesize);
         }
 
-        console.debug("Streaming Video Data", res.headers);
+        console.log("Streaming Video Data", res.headers);
         // Stream the video into the video tag
-        pump(fs.createReadStream(filePath, range), res)
+        pump(fs.createReadStream(filePath, range), res);
     }
 });
 
