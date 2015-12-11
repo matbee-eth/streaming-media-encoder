@@ -69,6 +69,7 @@ app.get("/stream-with-transcode", function(req, res) {
     var stats = fs.statSync(activeFile);
     encoder.profiles.CHROMECAST.debug = true;
     var engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
+   // engine.rescale(180);
     res.setHeader('Content-Type', "video/mp4");
     // Sometimes FFmpeg may need to seek throughout a file to encode the video, or probe.
     function streamNeeded (startByte, endByte, cb) {

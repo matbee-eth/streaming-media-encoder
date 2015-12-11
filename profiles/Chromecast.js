@@ -2,20 +2,22 @@ var audioNeedsTranscodingCodecs = [
     "aac",
     "mp3",
     "vorbis",
-]
+];
 
 var videoNeedsTranscodingCodecs = [
     "h264",
     "x264",
     "vp8"
-]
+];
 
 var validFormats = [
     "matroska,webm",
     "mov,mp4,m4a,3gp,3g2,mj2",
     "mp3",
     "ogg"
-]
+];
+
+var rescaleVideo = false;
 
 var getVideoTracks = function(probeData) {
     var out = [];
@@ -133,7 +135,11 @@ var getFFmpegFlags = function (probeData, forceTranscode, cb) {
             } else {
                 outputOptions.push("-acodec copy");
             }
-            if (videoNeedsTranscoding) {
+
+            if (videoNeedsTranscoding || rescaleVideo) {
+                if(rescaleVideo) {
+                    outputOptions.push(rescaleVideo);
+                }
                 outputOptions.push("-vcodec libx264");
             } else {
                 outputOptions.push("-vcodec copy");
@@ -162,11 +168,16 @@ var canPlay = function (probeData, cb) {
     });
 }
 
+var rescale = function(size) {
+   rescaleVideo = '-vf scale=trunc(oh*a/2)*2:'+size+'';
+};
+
 module.exports = {
     canPlay: canPlay,
     canPlayAudio: canPlayAudio,
     canPlayVideo: canPlayVideo,
     canPlayContainer: canPlayContainer,
     getFFmpegFlags: getFFmpegFlags,
-    transcodeNeeded: transcodeNeeded
+    transcodeNeeded: transcodeNeeded,
+    rescale: rescale
 }

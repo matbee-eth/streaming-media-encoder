@@ -79,6 +79,10 @@ Engine.prototype.canPlay = function(cb) {
     }
 };
 
+Engine.prototype.rescale = function(size) {
+    this._profile.rescale(size);
+};
+
 Engine.prototype.analyze = function(cb) {
     if (!this.hasProbed) {
         this.probe(function (err, metadata) {
