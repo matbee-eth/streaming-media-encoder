@@ -82,12 +82,16 @@ var Encoder = {
      */
     probe: function(engine, options, cb) {
         _log("probing engine for data", engine, options);
-        ffmpeg.ffprobe(Encoder.getUrl(engine.id), function(err, metadata) {
-            engine.setProbeData(metadata);
-            if (cb) {
-                cb(err, metadata);
-            }
-        });
+        if (engine.hasProbed) {
+          cb && cb(null, engine.probeData);
+        } else {
+          ffmpeg.ffprobe(Encoder.getUrl(engine.id), function(err, metadata) {
+              engine.setProbeData(metadata);
+              if (cb) {
+                  cb(err, metadata);
+              }
+          });
+        }
     },
 
     /**
