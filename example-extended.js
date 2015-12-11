@@ -24,7 +24,9 @@ function mediaSelected(filePath) {
     engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
 }
 
-mediaSelected("../demo.mkv");
+app.get("/stream", function (req, res) {
+    res.send('<html><body><video controls autoplay><source src="http://127.0.0.1:9090/stream-with-transcode" type="video/mp4"></source></video></body></html>');
+});
 
 app.get("/stream-no-transcode", function (req, res) {
     // Send file as is.
@@ -65,6 +67,7 @@ app.get("/stream-no-transcode", function (req, res) {
 });
 
 app.get("/stream-with-transcode", function(req, res) {
+    res.setHeader('Content-Type', "video/mp4");
     // Sometimes FFmpeg may need to seek throughout a file to encode the video, or probe.
     engine.on("streamNeeded", function(startByte, endByte, cb) {
         cb(fs.createReadStream(activeFile, {
@@ -85,3 +88,6 @@ app.get("/stream-with-transcode", function(req, res) {
         });
     });
 });
+
+
+mediaSelected("../demo.mp4");
