@@ -29,10 +29,16 @@ function findOpenPort(port, cb) {
     });
 }
 
+_log = function() {
+  if(Encoder.debug) {
+    console.log.apply(this, arguments);
+  }
+};
+
 findOpenPort(3001, function(port) {
     ffmpegPort = port;
     ffmpegServer = app.listen(port, function() {
-        console.log('FFmpeg Webserver listening at %s', Encoder.getUrl());
+        _log('FFmpeg Webserver listening at %s', Encoder.getUrl());
     });
 });
 
@@ -44,6 +50,8 @@ findOpenPort(3001, function(port) {
  */
 var Encoder = {
     debug: false,
+
+    
 
     profiles: {
         "CHROMECAST": require('./profiles/Chromecast.js'),
@@ -73,9 +81,7 @@ var Encoder = {
      * @param  {Function} cb callback when probe is ready
      */
     probe: function(engine, options, cb) {
-        if (this.debug) {
-            console.log("probing engine for data", engine, options);
-        }
+        _log("probing engine for data", engine, options);
         ffmpeg.ffprobe(Encoder.getUrl(engine.id), function(err, metadata) {
             engine.setProbeData(metadata);
             if (cb) {
@@ -98,9 +104,7 @@ var Encoder = {
             });
         } else {
             engine.getFFmpegOutputOptions(Encoder.getUrl(engine.id), function(err, outputOptions) {
-                if (Encoder.debug) {
-                    console.log(err, outputOptions);
-                }
+                _log('Got FFmpeg output options :', err, outputOptions);
 
                 var command = ffmpeg(Encoder.getUrl(engine.id));
                 if (options.startTime) {
@@ -108,9 +112,7 @@ var Encoder = {
                 }
 
                 command.on('start', function(commandLine) {
-                    if (Encoder.debug) {
-                        console.log('Spawned Ffmpeg with command: ' + commandLine);
-                    }
+                   _log('Spawned Ffmpeg with command: ', commandLine);
                 })
 
                 .on('error', function() {

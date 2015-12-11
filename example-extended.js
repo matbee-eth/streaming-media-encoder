@@ -9,6 +9,8 @@ var mime = require('mime');
 var port = 9090;
 var expressServer;
 
+encoder.debug = true;
+
 expressServer = app.listen(port, function() {
     var host = expressServer.address().address;
     var port = expressServer.address().port;
