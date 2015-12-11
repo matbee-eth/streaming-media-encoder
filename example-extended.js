@@ -67,6 +67,7 @@ app.get("/stream-no-transcode", function (req, res) {
 
 app.get("/stream-with-transcode", function(req, res) {
     var stats = fs.statSync(activeFile);
+    encoder.profiles.CHROMECAST.debug = true;
     var engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
     res.setHeader('Content-Type', "video/mp4");
     // Sometimes FFmpeg may need to seek throughout a file to encode the video, or probe.
@@ -99,4 +100,4 @@ app.get("/stream-with-transcode", function(req, res) {
 });
 
 
-mediaSelected("../demo.mp4");
+mediaSelected(fs.existsSync("../demo.mp4") ? '../demo.mp4' : '../demo.mkv');
