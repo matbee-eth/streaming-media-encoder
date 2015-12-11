@@ -7,7 +7,35 @@ var util = require('util'),
     uuid = require('node-uuid'),
     app = express(),
     ffmpegServer,
+    ffmpegPort = 3001,
     uuidRequest = {};
+
+/**
+ * scan the port range from the start port until we have an open port.
+ * executes callback with the port number when we found one.
+ * @param  {int}   port portnumber to start at
+ * @param  {Function} cb   callback to execute when port found.
+ */
+function findOpenPort(port, cb) {
+    var server = net.createServer();
+    server.listen(port, function(err) {
+        server.once('close', function() {
+            cb(port);
+        });
+        server.close();
+    });
+    server.on('error', function(err) {
+        findOpenPort(port + 1, cb);
+    });
+}
+
+findOpenPort(3001, function(port) {
+    ffmpegPort = port;
+    ffmpegServer = app.listen(port, function() {
+        console.log('FFmpeg Webserver listening at %s', Encoder.getUrl());
+    });
+});
+
 
 /**
  * The encoder is where the magic happens.
@@ -101,7 +129,7 @@ var Encoder = {
      * @return {string} url
      */
     getUrl: function(fileId) {
-        return "http://127.0.0.1:" + ffmpegServer.address().port + "/" + (fileId || '');
+        return "http://127.0.0.1:" + ffmpegPort + "/" + (fileId || '');
     }
 
 };
@@ -122,29 +150,5 @@ app.head('/:fileId', function(req, res) {
     }
 });
 
-/**
- * scan the port range from the start port until we have an open port.
- * executes callback with the port number when we found one.
- * @param  {int}   port portnumber to start at
- * @param  {Function} cb   callback to execute when port found.
- */
-function findOpenPort(port, cb) {
-    var server = net.createServer();
-    server.listen(port, function(err) {
-        server.once('close', function() {
-            cb(port);
-        });
-        server.close();
-    });
-    server.on('error', function(err) {
-        findOpenPort(port + 1, cb);
-    });
-}
-
-findOpenPort(3001, function(port) {
-    ffmpegServer = app.listen(port, function() {
-        console.log('FFmpeg Webserver listening at %s', Encoder.getUrl());
-    });
-});
 
 module.exports = Encoder;
