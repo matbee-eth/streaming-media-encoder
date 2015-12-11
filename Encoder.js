@@ -31,6 +31,7 @@ function findOpenPort(port, cb) {
 
 _log = function() {
   if(Encoder.debug) {
+    console.log("ENCODER: ");
     console.log.apply(this, arguments);
   }
 };
