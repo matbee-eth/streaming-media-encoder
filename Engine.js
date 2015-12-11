@@ -12,6 +12,7 @@ var Engine = function (profile, fileSize, id, url) {
     this.id = id;
     this.url = url;
     this.hasProbed = false;
+    this.forceTranscode = false;
 }
 util.inherits(Engine, EventEmitter);
 
@@ -47,7 +48,7 @@ Engine.prototype.getFFmpegOutputOptions = function(host, cb) {
         return;
     }
     console.log("Engine.getFFmpegOutputOptions");
-    this._profile.getFFmpegFlags(this._probeData, function (err, outputOptions) {
+    this._profile.getFFmpegFlags(this._probeData, this.forceTranscode, function (err, outputOptions) {
         console.log("getFFmpegFlags", outputOptions);
         cb(err, outputOptions);
     });

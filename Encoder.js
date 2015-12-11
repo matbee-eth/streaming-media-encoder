@@ -63,6 +63,7 @@ var Encoder = {
      * @param  {Function} cb      callback to execute on encoding progress
      */
     encode: function(engine, options, cb) {
+        engine.forceTranscode = options.force;
         if (!engine.hasProbed) {
             Encoder.probe(engine, {}, function(err, metadata) {
                 Encoder.encode(engine, options, cb);
