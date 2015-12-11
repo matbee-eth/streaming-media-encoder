@@ -19,11 +19,8 @@ expressServer = app.listen(port, function() {
 });
 
 var activeFile;
-var engine;
 function mediaSelected(filePath) {
     activeFile = filePath;
-    var stats = fs.statSync(filePath);
-    engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
 }
 
 app.get("/stream", function (req, res) {
@@ -69,14 +66,18 @@ app.get("/stream-no-transcode", function (req, res) {
 });
 
 app.get("/stream-with-transcode", function(req, res) {
+    var stats = fs.statSync(activeFile);
+    var engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
     res.setHeader('Content-Type', "video/mp4");
     // Sometimes FFmpeg may need to seek throughout a file to encode the video, or probe.
-    engine.on("streamNeeded", function(startByte, endByte, cb) {
+    function streamNeeded (startByte, endByte, cb) {
+        console.info("streamNeeded", startByte, endByte);
         cb(fs.createReadStream(activeFile, {
             start: startByte,
             end: endByte
         }));
-    });
+    }
+    engine.on("streamNeeded", streamNeeded);
 
     // Certain devices need specific HTTP Headers in order to decode the video. Use these headers. (DLNA ETC...)
     engine.once("httpHeaders", function(headerInfo) {
@@ -88,6 +89,12 @@ app.get("/stream-with-transcode", function(req, res) {
         stream.pipe(res, {
             end: true
         });
+        function endStream () {
+            console.log("stream ended, nothing more to do.");
+            engine.removeAllListeners();
+            res.end();
+        }
+        stream.on("end", endStream);
     });
 });
 
