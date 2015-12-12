@@ -83,6 +83,11 @@ Engine.prototype.rescale = function(size) {
     this._profile.rescale(size);
 };
 
+Engine.prototype.loadSubtitle = function(path) {
+    this._profile.loadSubtitle(path);
+};
+
+
 Engine.prototype.analyze = function(cb) {
     if (!this.hasProbed) {
         this.probe(function (err, metadata) {

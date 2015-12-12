@@ -18,6 +18,7 @@ var validFormats = [
 ];
 
 var rescaleVideo = false;
+var subtitle = false;
 
 var getVideoTracks = function(probeData) {
     return (probeData.streams || []).filter(function(stream) {
@@ -64,7 +65,7 @@ var transcodeNeeded = function(probeData, cb) {
     var videoNeedsTranscoding = false;
     var needsTranscoding = true;
     var formatNeedsTranscoding = validFormats.indexOf(probeData.format.format_name) === -1;
-    if (!isAudioMedia || isVideoMedia) {
+    if (!isAudioMedia && !isVideoMedia) {
         throw new Error("Invalid media. Not video or audio.");
     }
     if (isAudioMedia) {
@@ -105,7 +106,11 @@ var getFFmpegFlags = function (probeData, forceTranscode, cb) {
                 outputOptions.push("-acodec copy");
             }
 
-            if (videoNeedsTranscoding || rescaleVideo) {
+            
+            if (videoNeedsTranscoding || rescaleVideo || subtitle) {
+                if(subtitle) {
+                    outputOptions.push(subtitle);
+                }
                 if(rescaleVideo) {
                     outputOptions.push(rescaleVideo);
                 }
@@ -117,6 +122,7 @@ var getFFmpegFlags = function (probeData, forceTranscode, cb) {
             outputOptions.push("-preset ultrafast");
             outputOptions.push("-tune zerolatency");
             outputOptions.push("-f matroska");
+            
         } else if (obj.isAudioMedia) {
             console.log("VALID AUDIO?", audioNeedsTranscoding);
             if (audioNeedsTranscoding) {
@@ -141,6 +147,10 @@ var rescale = function(size) {
    rescaleVideo = '-vf scale=trunc(oh*a/2)*2:'+size;
 };
 
+var loadSubtitle = function(path) {
+    subtitle = '-vf subtitles='+path;
+};
+
 module.exports = {
     canPlay: canPlay,
     canPlayAudio: canPlayAudio,
@@ -148,5 +158,6 @@ module.exports = {
     canPlayContainer: canPlayContainer,
     getFFmpegFlags: getFFmpegFlags,
     transcodeNeeded: transcodeNeeded,
-    rescale: rescale
+    rescale: rescale,
+    loadSubtitle: loadSubtitle
 }
