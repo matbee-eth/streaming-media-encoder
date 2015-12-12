@@ -27,8 +27,8 @@ function mediaSelected(filePath) {
 var chromecasts = require('chromecasts')()
 
 chromecasts.on('update', function (player) {
-  player.play('http://'+ip()+':9090/stream-with-transcode', {title: '#ripmatbee', type: 'video/mp4'})
-})
+  player.play('http://'+ip()+':9090/stream-with-transcode', {title: '#ripmatbee', type: 'video/mp4'});
+});
 
 
 app.get("/stream-no-transcode", function (req, res) {
@@ -73,7 +73,7 @@ app.get("/stream-with-transcode", function(req, res) {
     var stats = fs.statSync(activeFile);
     encoder.profiles.CHROMECAST.debug = true;
     var engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
-   // engine.rescale(180);
+    engine.rescale(720);
     res.setHeader('Content-Type', "video/mp4");
     // Sometimes FFmpeg may need to seek throughout a file to encode the video, or probe.
     function streamNeeded (startByte, endByte, cb) {

@@ -20,64 +20,41 @@ var validFormats = [
 var rescaleVideo = false;
 
 var getVideoTracks = function(probeData) {
-    var out = [];
-    for (var i = 0; i < probeData.streams.length; i++) {
-        var stream = probeData.streams[i];
-        if (stream.codec_type == "video" && stream.disposition.attached_pic == 0) {
-            out.push(stream);
-        }
-    }
-    return out;
+    return (probeData.streams || []).filter(function(stream) {
+        return stream.codec_type == "video" && stream.disposition.attached_pic === 0;
+    });
 };
 var getAudioTracks = function(probeData) {
-    var out = [];
-    for (var i = 0; i < probeData.streams.length; i++) {
-        var stream = probeData.streams[i];
-        if (stream.codec_type == "audio") {
-            out.push(stream);
-        }
-    }
-    return out;
+    return (probeData.streams || []).filter(function(stream) {
+        return stream.codec_type == "audio";
+    });
 };
 var isAudio = function(probeData) {
-    if (getAudioTracks(probeData).length > 0 && getVideoTracks(probeData).length == 0) {
-        return true;
-    }
-    return false;
+    return getAudioTracks(probeData).length > 0 && getVideoTracks(probeData).length === 0;
 };
+
 var isVideo = function(probeData) {
-    if (getVideoTracks(probeData).length > 0) {
-        return true;
-    }
-    return false;
+    return getVideoTracks(probeData).length > 0;
 };
+
 var canPlayAudio = function (audioTracks) {
-    if (audioTracks.length == 0) {
+    if (audioTracks.length === 0) {
         return true;
     }
     return audioNeedsTranscodingCodecs.indexOf(audioTracks[0].codec_name) > -1;
 };
+
 var canPlayVideo = function (videoTracks) {
-    if (videoTracks.length == 0) {
+    if (videoTracks.length === 0) {
         return true;
     }
-    if (videoNeedsTranscodingCodecs.indexOf(videoTracks[0].codec_name) > -1) {
-        if (videoTracks[0].codec_name == "h264" || videoTracks[0].codec_name == "x264") {
-            if (videoTracks[0].profile && videoTracks[0].profile.toLowerCase() == "high") {
-                if (videoTracks[0].level >= 30 && (videoTracks[0].level == 50 || videoTracks[0].level <= 42)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    } else {
-        return false;
-    }
+    var track = videoTracks[0];
+    if (videoNeedsTranscodingCodecs.indexOf(track.codec_name) > -1 && ["h264", "x264"].indexOf(track.codec_name) > -1) {
+        if (track.profile && track.profile.toLowerCase() == "high") {
+            return (track.level >= 30 && (track.level == 50 || track.level <= 42));
+        } 
+    } 
+    return false;
 };
 
 var transcodeNeeded = function(probeData, cb) {
@@ -86,34 +63,26 @@ var transcodeNeeded = function(probeData, cb) {
     var audioNeedsTranscoding = false;
     var videoNeedsTranscoding = false;
     var needsTranscoding = true;
-    var formatNeedsTranscoding = !validFormats.indexOf(probeData.format.format_name) > -1;
-    if (isAudioMedia) {
-        // Audio-only.
-        audioNeedsTranscoding = !canPlayAudio(getAudioTracks(probeData));
-    } else if (isVideoMedia) {
-        // Video file.
-        audioNeedsTranscoding = !canPlayAudio(getAudioTracks(probeData));
-        videoNeedsTranscoding = !canPlayVideo(getVideoTracks(probeData));
-    } else {
-        return cb && cb("invalid");
+    var formatNeedsTranscoding = validFormats.indexOf(probeData.format.format_name) === -1;
+    if (!isAudioMedia || isVideoMedia) {
+        throw new Error("Invalid media. Not video or audio.");
     }
     if (isAudioMedia) {
+        audioNeedsTranscoding = !canPlayAudio(getAudioTracks(probeData));
         needsTranscoding = audioNeedsTranscoding || videoNeedsTranscoding;
     } else if (isVideoMedia) {
+        audioNeedsTranscoding = !canPlayAudio(getAudioTracks(probeData));
+        videoNeedsTranscoding = !canPlayVideo(getVideoTracks(probeData));
         needsTranscoding = formatNeedsTranscoding || audioNeedsTranscoding || videoNeedsTranscoding;
     }
     
-    
-    cb && cb(null,
-        {   
+    cb && cb(null, {   
             isAudioMedia: isAudioMedia,
             isVideoMedia: isVideoMedia,
             needsTranscoding: needsTranscoding,
             videoNeedsTranscoding: videoNeedsTranscoding,
             audioNeedsTranscoding: audioNeedsTranscoding,
-            videoNeedsTranscoding: videoNeedsTranscoding
-        }
-    );
+        });
 };
 
 var canPlayContainer = function (probeData, cb) {
@@ -131,7 +100,7 @@ var getFFmpegFlags = function (probeData, forceTranscode, cb) {
 
         if (obj.isVideoMedia) {
             if (audioNeedsTranscoding) {
-                outputOptions.push("-acodec libfdk_aac");
+                outputOptions.push("-acodec aac"); // "-acodec libfdk_aac" -> requires custom ffmpeg build from src!
             } else {
                 outputOptions.push("-acodec copy");
             }
@@ -159,17 +128,17 @@ var getFFmpegFlags = function (probeData, forceTranscode, cb) {
         }
         cb && cb(null, outputOptions);
         return outputOptions;
-    })
+    });
 };
 
 var canPlay = function (probeData, cb) {
     transcodeNeeded(probeData, function (err, obj) {
         cb && cb(!obj.needsTranscoding);
     });
-}
+};
 
 var rescale = function(size) {
-   rescaleVideo = '-vf scale=trunc(oh*a/2)*2:'+size+'';
+   rescaleVideo = '-vf scale=trunc(oh*a/2)*2:'+size;
 };
 
 module.exports = {
