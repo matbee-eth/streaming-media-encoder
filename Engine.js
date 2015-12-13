@@ -35,8 +35,9 @@ Engine.prototype.onRequest = function(req, res) {
     res.setHeader('Accept-Ranges', 'bytes');
     res.setHeader('Content-Type', "video/matroska");
     res.statusCode = 200;
+    var range;
     if (req.headers.range) {
-        var range = rangeParser(this._fileSize, req.headers.range)[0];
+        range = rangeParser(this._fileSize, req.headers.range)[0];
         res.setHeader(
           'Content-Range',
           'bytes ' + range.start + '-' + range.end + '/' + this._fileSize
@@ -53,14 +54,14 @@ Engine.prototype.onRequest = function(req, res) {
     });
 };
 
-Engine.prototype.getFFmpegOutputOptions = function(host, cb) {
+Engine.prototype.getFFmpegOptions = function(host, cb) {
     if (!this.hasProbed) {
-        throw "NO PROBE HAS BEEN DONE NOOB";
+        throw new Error("NO PROBE HAS BEEN DONE NOOB!");
     }
-    this._log("Engine.getFFmpegOutputOptions");
-    this._profile.getFFmpegFlags(this._probeData, this.forceTranscode, function (err, outputOptions) {
-        this._log("getFFmpegFlags", outputOptions);
-        cb(err, outputOptions);
+    this._log("Engine.getFFmpegOptions");
+    this._profile.getFFmpegFlags(this._probeData, this.forceTranscode, function (err, inputOptions, outputOptions) {
+        this._log("getFFmpegFlags", inputOptions, outputOptions);
+        cb(err, inputOptions, outputOptions);
     }.bind(this));
 };
 
@@ -78,15 +79,6 @@ Engine.prototype.canPlay = function(cb) {
         this._profile.canPlay(this._probeData, cb);
     }
 };
-
-Engine.prototype.rescale = function(size) {
-    this._profile.rescale(size);
-};
-
-Engine.prototype.loadSubtitle = function(path) {
-    this._profile.loadSubtitle(path);
-};
-
 
 Engine.prototype.analyze = function(cb) {
     if (!this.hasProbed) {
@@ -107,6 +99,18 @@ Engine.prototype.probe = function(cb) {
           cb && cb(err, metadata);
         }.bind(this));
     }
+};
+
+Engine.prototype.rescale = function(size) {
+    this._profile.rescale(size);
+};
+
+Engine.prototype.hardCodeSubtitle = function(path) {
+    this._profile.hardCodeSubtitle(path);
+};
+
+Engine.prototype.correctAudioOffset = function(seconds) {
+    this._profile.correctAudioOffset(seconds);
 };
 
 module.exports = Engine;

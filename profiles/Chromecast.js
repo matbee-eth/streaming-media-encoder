@@ -17,8 +17,9 @@ var validFormats = [
     "ogg"
 ];
 
-var rescaleVideo = false;
-var subtitle = false;
+var rescaleVideo = false,
+    subtitle = false,
+    audioShiftCorrect = false;
 
 var getVideoTracks = function(probeData) {
     return (probeData.streams || []).filter(function(stream) {
@@ -92,20 +93,22 @@ var canPlayContainer = function (probeData, cb) {
 
 var getFFmpegFlags = function (probeData, forceTranscode, cb) {
     transcodeNeeded(probeData, function (err, obj) {
-        var canPlay = obj.needsTranscoding;
-        var formatNeedsTranscoding = obj.formatNeedsTranscoding;
-        var audioNeedsTranscoding = obj.audioNeedsTranscoding;
-        var videoNeedsTranscoding = obj.videoNeedsTranscoding;
-
-        var outputOptions = [];
+        var canPlay = obj.needsTranscoding,
+            formatNeedsTranscoding = obj.formatNeedsTranscoding,
+            audioNeedsTranscoding = obj.audioNeedsTranscoding,
+            videoNeedsTranscoding = obj.videoNeedsTranscoding,
+            outputOptions = [],
+            inputOptions = [];
 
         if (obj.isVideoMedia) {
-            if (audioNeedsTranscoding) {
+            if (audioNeedsTranscoding || audioShiftCorrect) {
+                if(audioShiftCorrect) {
+                    inputOptions.push(audioShiftCorrect);
+                }
                 outputOptions.push("-acodec aac"); // "-acodec libfdk_aac" -> requires custom ffmpeg build from src!
             } else {
                 outputOptions.push("-acodec copy");
             }
-
             
             if (videoNeedsTranscoding || rescaleVideo || subtitle) {
                 if(subtitle) {
@@ -132,7 +135,7 @@ var getFFmpegFlags = function (probeData, forceTranscode, cb) {
                 outputOptions.push("-f " + probeData.format.format_name);
             }
         }
-        cb && cb(null, outputOptions);
+        cb && cb(null, inputOptions, outputOptions);
         return outputOptions;
     });
 };
@@ -147,8 +150,12 @@ var rescale = function(size) {
    rescaleVideo = '-vf scale=trunc(oh*a/2)*2:'+size;
 };
 
-var loadSubtitle = function(path) {
+var hardCodeSubtitle = function(path) {
     subtitle = '-vf subtitles='+path;
+};
+
+var correctAudioOffset = function(time) {
+    audioShiftCorrect = '-itsoffset '+time;
 };
 
 module.exports = {
@@ -159,5 +166,6 @@ module.exports = {
     getFFmpegFlags: getFFmpegFlags,
     transcodeNeeded: transcodeNeeded,
     rescale: rescale,
-    loadSubtitle: loadSubtitle
-}
+    hardCodeSubtitle: hardCodeSubtitle,
+    correctAudioOffset: correctAudioOffset
+};

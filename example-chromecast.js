@@ -24,50 +24,12 @@ function mediaSelected(filePath) {
     activeFile = filePath;
 }
 
-var chromecasts = require('chromecasts')()
+var chromecasts = require('chromecasts')();
 
 chromecasts.on('update', function (player) {
   player.play('http://'+ip()+':9090/stream-with-transcode', {title: '#ripmatbee', type: 'video/mp4'});
 });
 
-
-app.get("/stream-no-transcode", function (req, res) {
-    // Send file as is.
-    req.connection.setTimeout(Number.MAX_SAFE_INTEGER);
-
-    fs.stat(activeFile, function (err, stats) {
-        var filesize = stats.size;
-
-        sendFile(activeFile, filesize);
-    });
-    function sendFile (filePath, filesize) {
-        var range;
-        var filename = require('path').basename(filePath);
-
-        res.setHeader('Accept-Ranges', 'bytes');
-        res.setHeader('Content-Type', mime.lookup(filename));
-        res.statusCode = 200;
-
-        if (req.headers.range) {
-            range = rangeParser(filesize, req.headers.range)[0];
-            res.statusCode = 206;
-            // no support for multi-range reqs
-            range = rangeParser(filesize, req.headers.range)[0];
-            console.log('range %s', JSON.stringify(range));
-            res.setHeader(
-              'Content-Range',
-              'bytes ' + range.start + '-' + range.end + '/' + filesize
-            );
-            res.setHeader('Content-Length', range.end - range.start + 1);
-        } else {
-            res.setHeader('Content-Length', filesize);
-        }
-
-        console.log("Streaming Video Data", res.headers);
-        // Stream the video into the video tag
-        pump(fs.createReadStream(filePath, range), res);
-    }
-});
 
 app.get("/stream-with-transcode", function(req, res) {
     var stats = fs.statSync(activeFile);

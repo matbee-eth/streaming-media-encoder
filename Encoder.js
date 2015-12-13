@@ -108,8 +108,8 @@ var Encoder = {
                 Encoder.encode(engine, options, cb);
             });
         } else {
-            engine.getFFmpegOutputOptions(Encoder.getUrl(engine.id), function(err, outputOptions) {
-                _log('Got FFmpeg output options :', err, outputOptions);
+            engine.getFFmpegOptions(Encoder.getUrl(engine.id), function(err, inputOptions, outputOptions) {
+                _log('Got FFmpeg options :', inputOptions, outputOptions, 'Error: ', err);
 
                 var command = ffmpeg(Encoder.getUrl(engine.id));
                 if (options.startTime) {
@@ -123,7 +123,7 @@ var Encoder = {
                 .on('error', function() {
                     console.error(arguments);
                 });
-
+                command.inputOptions(inputOptions);
                 command.outputOptions(outputOptions);
                 cb(command);
             });
