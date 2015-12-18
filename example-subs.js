@@ -34,7 +34,7 @@ app.get("/stream-with-transcode", function(req, res) {
    // engine.rescale(180);
     engine.hardCodeSubtitle('../demo.srt');
     //engine.correctAudioOffset(30.5);
-    res.setHeader('Content-Type', "video/mp4");
+    res.setHeader('Content-Type',  'video/vnd.dlna.mpeg-tts');
     // Sometimes FFmpeg may need to seek throughout a file to encode the video, or probe.
     function streamNeeded (startByte, endByte, cb) {
         console.info("streamNeeded", startByte, endByte);

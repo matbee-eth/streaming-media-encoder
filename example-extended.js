@@ -40,8 +40,11 @@ app.get("/stream-no-transcode", function (req, res) {
         var range;
         var filename = require('path').basename(filePath);
 
-        res.setHeader('Accept-Ranges', 'bytes');
-        res.setHeader('Content-Type', mime.lookup(filename));
+        //res.setHeader('Accept-Ranges', 'bytes');
+        res.setHeader('Content-Type',  'video/mpeg');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('transferMode.dlna.org', 'Streaming');
+         res.setHeader('contentFeatures.dlna.org',     'DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=017000 00000000000000000000000000');
         res.statusCode = 200;
 
         if (req.headers.range) {
@@ -50,6 +53,7 @@ app.get("/stream-no-transcode", function (req, res) {
             // no support for multi-range reqs
             range = rangeParser(filesize, req.headers.range)[0];
             console.log('range %s', JSON.stringify(range));
+
             res.setHeader(
               'Content-Range',
               'bytes ' + range.start + '-' + range.end + '/' + filesize
@@ -59,7 +63,7 @@ app.get("/stream-no-transcode", function (req, res) {
             res.setHeader('Content-Length', filesize);
         }
 
-        console.log("Streaming Video Data", res.headers);
+        console.log("Streaming Video Data", res);
         // Stream the video into the video tag
         pump(fs.createReadStream(filePath, range), res);
     }
@@ -70,7 +74,15 @@ app.get("/stream-with-transcode", function(req, res) {
     encoder.profiles.CHROMECAST.debug = true;
     var engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
    // engine.rescale(180);
-    res.setHeader('Content-Type', "video/mp4");
+    res.setHeader('Content-Type',  'video/mpeg');
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('protocolInfo', 'http-get:*:video/mp4:*');
+     res.setHeader('Access-Control-Allow-Origin', '*');
+     res.setHeader('transferMode.dlna.org', 'Streaming');
+
+    res.setHeader('contentFeatures.dlna.org',     'DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=017000 00000000000000000000000000');
+
+
     // Sometimes FFmpeg may need to seek throughout a file to encode the video, or probe.
     function streamNeeded (startByte, endByte, cb) {
         console.info("streamNeeded", startByte, endByte);
@@ -93,8 +105,8 @@ app.get("/stream-with-transcode", function(req, res) {
         });
         function endStream () {
             console.log("stream ended, nothing more to do.");
-            engine.removeAllListeners();
-            res.end();
+            //engine.removeAllListeners();
+            //res.end();
         }
         stream.on("end", endStream);
     });

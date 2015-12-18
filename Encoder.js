@@ -1,7 +1,9 @@
 var util = require('util'),
+    Promise = require('bluebird'),
     express = require('express'),
     EventEmitter = require('events'),
     Engine = require('./Engine'),
+    findOpenPort = require('./find-open-port'),
     ffmpeg = require('fluent-ffmpeg'),
     net = require('net'),
     uuid = require('node-uuid'),
@@ -10,33 +12,8 @@ var util = require('util'),
     ffmpegPort = 3001,
     uuidRequest = {};
 
-/**
- * scan the port range from the start port until we have an open port.
- * executes callback with the port number when we found one.
- * @param  {int}   port portnumber to start at
- * @param  {Function} cb   callback to execute when port found.
- */
-function findOpenPort(port, cb) {
-    var server = net.createServer();
-    server.listen(port, function(err) {
-        server.once('close', function() {
-            cb(port);
-        });
-        server.close();
-    });
-    server.on('error', function(err) {
-        findOpenPort(port + 1, cb);
-    });
-}
 
-_log = function() {
-  if(Encoder.debug) {
-    console.log("ENCODER: ");
-    console.log.apply(this, arguments);
-  }
-};
-
-findOpenPort(3001, function(port) {
+findOpenPort(3001).then(function(port) {
     ffmpegPort = port;
     ffmpegServer = app.listen(port, function() {
         _log('FFmpeg Webserver listening at %s', Encoder.getUrl());
@@ -49,16 +26,14 @@ findOpenPort(3001, function(port) {
  * Communicates with a device specific profile via an express server with ffmpeg
  * provides streamable output that can be piped directly into (for instance) Express
  */
-var Encoder = {
-    debug: false,
+function Encoder() {
+    this.debug = false;
 
-    
-
-    profiles: {
+    this.profiles = {
         "CHROMECAST": require('./profiles/Chromecast.js'),
-        // "DLNA": require('./profiles/DLNA.js'),
+        "DLNA": require('./profiles/DLNA.js'),
         // "APPLETV": require('./profiles/AppleTV.js')
-    },
+    };
 
     /**
      * build a decoding engine for a device profile
@@ -66,13 +41,13 @@ var Encoder = {
      * @param  {int} fileSize size of the file to process
      * @return {Engine} engine that knows how to decode video for device profile
      */
-    profile: function(profile, fileSize) {
+    this.profile = function(profile, fileSize) {
         // generate ID
         var id = uuid.v4();
         var engine = new Engine(profile, fileSize, id, this.getUrl(id));
         uuidRequest[id] = engine;
         return engine;
-    },
+    };
 
     /**
      * ffprobe gathers information from multimedia streams and prints it in human- and machine-readable fashion.
@@ -81,19 +56,19 @@ var Encoder = {
      * @param  {object}   options ffprobe options, currently unused
      * @param  {Function} cb callback when probe is ready
      */
-    probe: function(engine, options, cb) {
+    this.probe = function(engine, options, cb) {
         _log("probing engine for data", engine, options);
-        if (engine.hasProbed) {
-          cb && cb(null, engine.probeData);
-        } else {
-          ffmpeg.ffprobe(Encoder.getUrl(engine.id), function(err, metadata) {
-              engine.setProbeData(metadata);
-              if (cb) {
-                  cb(err, metadata);
-              }
-          });
-        }
-    },
+        return new Promise(function(resolve, reject) {
+          if(engine.hasProbed) {
+            resolve(engine.probeData);
+          } else {
+            ffmpeg.ffprobe(Encoder.getUrl(engine.id), function(err, metadata) {
+                engine.setProbeData(metadata);
+                resolve(metadata);
+            });
+          }
+        });
+    };
 
     /**
      * Fetch probe media for info and start transcoding via ffmpeg
@@ -101,16 +76,16 @@ var Encoder = {
      * @param  {object}   options Options: (currently only startTime and force )
      * @param  {Function} cb      callback to execute on encoding progress
      */
-    encode: function(engine, options, cb) {
+    this.encode = function(engine, options) {
         engine.forceTranscode = options.force;
         if (!engine.hasProbed) {
-            Encoder.probe(engine, {}, function(err, metadata) {
-                Encoder.encode(engine, options, cb);
+            return Encoder.probe(engine, {}).then(function(metadata) {
+              return Encoder.encode(engine, options);
             });
         } else {
-            engine.getFFmpegOptions(Encoder.getUrl(engine.id), function(err, inputOptions, outputOptions) {
-                _log('Got FFmpeg options :', inputOptions, outputOptions, 'Error: ', err);
-
+            return engine.getFFmpegOptions(Encoder.getUrl(engine.id)).then(function(inputOptions, outputOptions) {
+                _log('Got FFmpeg options :', inputOptions, outputOptions);
+                
                 var command = ffmpeg(Encoder.getUrl(engine.id));
                 if (options.startTime) {
                     command.seekInput(options.startTime);
@@ -118,14 +93,16 @@ var Encoder = {
 
                 command.on('start', function(commandLine) {
                    _log('Spawned Ffmpeg with command: ', commandLine);
-                })
-
-                .on('error', function() {
+                }).on('error', function() {
                     console.error(arguments);
                 });
+
                 command.inputOptions(inputOptions);
                 command.outputOptions(outputOptions);
-                cb(command);
+
+                return command;
+            }, function(err) {
+              throw new Error('Encoder: Error on getting FFmpegOptions: ', err);
             });
         }
     },
@@ -135,12 +112,17 @@ var Encoder = {
      * @param  {string} fileId Optional fileId to append
      * @return {string} url
      */
-    getUrl: function(fileId) {
+    this.getUrl = function(fileId) {
         return "http://127.0.0.1:" + ffmpegPort + "/" + (fileId || '');
     }
 
 };
 
+/**
+ * ffmpeg passthrough for GET requests to fetch a file
+ * @param  {Request} req httprequest
+ * @param  {Response} res http response
+ */
 app.get('/:fileId', function(req, res) {
     if (uuidRequest[req.params.fileId]) {
         uuidRequest[req.params.fileId].onRequest(req, res);
@@ -149,13 +131,25 @@ app.get('/:fileId', function(req, res) {
     }
 });
 
+/**
+ * ffmpeg passthrough for HEAD requests to fetch a file
+ * @param  {Request} req httprequest
+ * @param  {Response} res http response
+ */
 app.head('/:fileId', function(req, res) {
     if (uuidRequest[req.params.fileId]) {
         uuidRequest[req.params.fileId].onHeadRequest(req, res);
     } else {
         res.end();
     }
-});
+}); 
 
+_log = function() {
+  if(encoder.debug) {
+    console.log("ENCODER: ");
+    console.log.apply(this, arguments);
+  }
+};
 
-module.exports = Encoder;
+var encoder = new Encoder();
+module.exports = encoder;
