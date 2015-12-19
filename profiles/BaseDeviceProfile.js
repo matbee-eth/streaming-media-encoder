@@ -183,4 +183,4 @@ var isVideo = function(probeData) {
 };
 
 
-module.exports = BaseDeviceRemote;
+module.exports = BaseDeviceProfile;
