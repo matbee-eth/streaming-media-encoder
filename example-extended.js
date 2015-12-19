@@ -41,7 +41,7 @@ app.get("/stream-no-transcode", function (req, res) {
         var filename = require('path').basename(filePath);
 
         //res.setHeader('Accept-Ranges', 'bytes');
-        res.setHeader('Content-Type',  'video/mpeg');
+        res.setHeader('Content-Type',  'video/mp4');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('transferMode.dlna.org', 'Streaming');
          res.setHeader('contentFeatures.dlna.org',     'DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=017000 00000000000000000000000000');
@@ -73,13 +73,12 @@ app.get("/stream-with-transcode", function(req, res) {
     var stats = fs.statSync(activeFile);
     encoder.profiles.CHROMECAST.debug = true;
     var engine = encoder.profile(encoder.profiles.CHROMECAST, stats.size);
-   // engine.rescale(180);
-    res.setHeader('Content-Type',  'video/mpeg');
+   
+    res.setHeader('Content-Type',  'video/mp4');
     res.setHeader('Accept-Ranges', 'bytes');
     res.setHeader('protocolInfo', 'http-get:*:video/mp4:*');
-     res.setHeader('Access-Control-Allow-Origin', '*');
-     res.setHeader('transferMode.dlna.org', 'Streaming');
-
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('transferMode.dlna.org', 'Streaming');
     res.setHeader('contentFeatures.dlna.org',     'DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=017000 00000000000000000000000000');
 
 
