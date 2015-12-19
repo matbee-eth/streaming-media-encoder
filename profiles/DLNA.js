@@ -179,18 +179,18 @@ function DLNAProfile() {
         // DLNA.ORG_FLAGS, padded with 24 trailing 0s
 
         var dlna_flags = {
-          senderPaced               : (1 << 31), // 80000000
-          lsopTimeBasedSeekSupported            : (1 << 30), // 40000000
-          lsopByteBasedSeekSupported            : (1 << 29), // 20000000
-          playcontainerSupported             : (1 << 28), // 10000000
-          s0IncreasingSupported                : (1 << 27), // 8000000
-          sNIncreasingSupported                : (1 << 26), // 4000000
-          rtspPauseSupported                 : (1 << 25), // 2000000
-          streamingTransferModeSupported    : (1 << 24), // 1000000
-          interactiveTransferModeSupported : (1 << 23), // 800000
-          backgroundTransferModeSupported  : (1 << 22), // 400000
-          connectionStallingSupported           : (1 << 21), // 200000
-          dlnaVersion15Supported                   : (1 << 20) // 100000
+          senderPaced               : (1 << 31), // 0x80000000
+          lsopTimeBasedSeekSupported            : (1 << 30), // 0x40000000
+          lsopByteBasedSeekSupported            : (1 << 29), // 0x20000000
+          playcontainerSupported             : (1 << 28), // 0x10000000
+          s0IncreasingSupported                : (1 << 27), // 0x8000000
+          sNIncreasingSupported                : (1 << 26), // 0x4000000
+          rtspPauseSupported                 : (1 << 25), // 0x2000000
+          streamingTransferModeSupported    : (1 << 24), // 0x1000000
+          interactiveTransferModeSupported : (1 << 23), // 0x800000
+          backgroundTransferModeSupported  : (1 << 22), // 0x400000
+          connectionStallingSupported           : (1 << 21), // 0x200000
+          dlnaVersion15Supported                   : (1 << 20) // 0x100000
         };
 
         // (1 << 24) | (1 << 22) | (1 << 21) | (1 << 20)
