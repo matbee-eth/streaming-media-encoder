@@ -147,14 +147,6 @@ function DLNAProfile() {
     }
 
     /*
-    DLNA.ORG_PN= media profile
-    DLNA.ORG_OP=ab a : server supports TimeSeekRange [0/1], b:server supports RANGE [0/1] 
-    DLNA.ORG_PS= supported play speeds [-1/3,-1/2,-15,-2,-300,-30,-5,-60,1/3,1/2,15,2,300,30,60 ]
-    DLNA.ORG_CI=[0/1] media is transcoded
-    DLNA.ORG_FLAGS= binary flags with device parameters
-     */
-    
-    /*
     @matbee PICK ONE
     AVC_MP4_EU ->
        AVC_MP4_MP_SD_AAC_MULT5
@@ -168,6 +160,15 @@ function DLNAProfile() {
        AVC_MP4_MP_HD_1080i_AAC
        AVC_MP4_MP_HD_720p_AAC
   */
+ 
+
+    /*
+        DLNA.ORG_PN= media profile
+        DLNA.ORG_OP=ab a : server supports TimeSeekRange [0/1], b:server supports RANGE [0/1] 
+        DLNA.ORG_PS= supported play speeds [-1/3,-1/2,-15,-2,-300,-30,-5,-60,1/3,1/2,15,2,300,30,60 ]
+        DLNA.ORG_CI=[0/1] media is transcoded
+        DLNA.ORG_FLAGS= binary flags with device parameters
+    */
     this.transcodedMediaProfile = 'AVC_MP4_HP_HD_AAC';
 
     this.getcontentFeaturesHeader = function() {
@@ -179,24 +180,21 @@ function DLNAProfile() {
         // DLNA.ORG_FLAGS, padded with 24 trailing 0s
 
         var dlna_flags = {
-          senderPaced               : (1 << 31), // 0x80000000
-          lsopTimeBasedSeekSupported            : (1 << 30), // 0x40000000
-          lsopByteBasedSeekSupported            : (1 << 29), // 0x20000000
-          playcontainerSupported             : (1 << 28), // 0x10000000
-          s0IncreasingSupported                : (1 << 27), // 0x8000000
-          sNIncreasingSupported                : (1 << 26), // 0x4000000
-          rtspPauseSupported                 : (1 << 25), // 0x2000000
+          senderPaced                       : (1 << 31), // 0x80000000
+          lsopTimeBasedSeekSupported        : (1 << 30), // 0x40000000
+          lsopByteBasedSeekSupported        : (1 << 29), // 0x20000000
+          playcontainerSupported            : (1 << 28), // 0x10000000
+          s0IncreasingSupported             : (1 << 27), // 0x8000000
+          sNIncreasingSupported             : (1 << 26), // 0x4000000
+          rtspPauseSupported                : (1 << 25), // 0x2000000
           streamingTransferModeSupported    : (1 << 24), // 0x1000000
-          interactiveTransferModeSupported : (1 << 23), // 0x800000
-          backgroundTransferModeSupported  : (1 << 22), // 0x400000
-          connectionStallingSupported           : (1 << 21), // 0x200000
-          dlnaVersion15Supported                   : (1 << 20) // 0x100000
+          interactiveTransferModeSupported  : (1 << 23), // 0x800000
+          backgroundTransferModeSupported   : (1 << 22), // 0x400000
+          connectionStallingSupported       : (1 << 21), // 0x200000
+          dlnaVersion15Supported            : (1 << 20) // 0x100000
         };
-
-        // (1 << 24) | (1 << 22) | (1 << 21) | (1 << 20)
-
-        var flags = 'DLNA.ORG_FLAGS='; // ^
-
+        var supportedFlags = dlna_flags.senderPaced | dlna_flags.streamingTransferModeSupported | dlna_flags.playContainerSupported | dlna_flags.dlnaVersion15Supported;
+        var flags = 'DLNA.ORG_FLAGS='+(supportedFlags >>> 0).toString(16); 
         return ['http-get:*:',this.contentType,':',pn,op,cn,ps,flags,'000000000000000000000000'].join('')
     }
 
