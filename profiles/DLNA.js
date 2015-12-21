@@ -18,134 +18,6 @@ function DLNAProfile() {
         "mp3"
     ];
 
-    this.otherNativeFormats = {
-        'avi' : {
-            'AudioCodecs' : [ 'mp3', 'mp2'],
-            'VideoCodecs' : [ 'mpeg4', 'msmpeg4', 'msmpeg4v2' ],
-            'mpeg4' : {
-                'MimeType' : 'video/x-msvideo',
-                'FileExtension' : 'avi',
-                'MediaType' : 'video',
-            },
-            'msmpeg4' : {
-                'MimeType' : 'video/x-msvideo', 
-                'FileExtension' : 'avi',
-                'MediaType' : 'video',
-            },
-            'msmpeg4v2' : {
-                'MimeType' : 'video/x-msvideo',
-                'FileExtension' : 'avi',
-                'MediaType' : 'video',
-            },
-        },
-        'mp3' : {
-            'AudioCodecs' : [ 'mp3'],
-            'VideoCodecs' : [],
-            'mp3' : {
-                'MimeType' : 'audio/mpeg',
-                'FileExtension' : 'mp3',
-                'MediaType' : 'audio',
-            },
-        },
-        'mov' : {
-            'AudioCodecs' : [ 'mpeg4aac', 'aac'],
-            'VideoCodecs' : [ 'h264', 'mpeg4'],
-            'mpeg4aac' : {
-                'MimeType' : 'audio/mp4',
-                'FileExtension' : 'mp4', 
-                'MediaType' : 'audio',
-            },
-            'aac' : {
-                'MimeType' : 'audio/mp4',
-                'FileExtension' : 'mp4', 
-                'MediaType' : 'audio',
-            },
-            'h264' : {
-                'MimeType' : 'video/mp4',
-                'FileExtension' : 'mp4',
-                'MediaType' : 'video',
-            },
-            'mpeg4' : {
-                'MimeType' : 'video/mp4',
-                'FileExtension' : 'mp4',
-                'MediaType' : 'video',
-            },
-        },
-        'ac3' : {
-            'AudioCodecs' : [ 'ac3'],
-            'VideoCodecs' : [],
-            'ac3' : {
-                'MimeType' : 'audio/ac3',
-                'FileExtension' : 'ac3',
-                'MediaType' : 'audio',
-            },
-        },
-        'flac' : {
-            'AudioCodecs' : [ 'flac'],
-            'VideoCodecs' : [],
-            'flac' : {
-                'MimeType' : 'audio/flac',
-                'FileExtension' : 'flac',
-                'MediaType' : 'audio',
-            },
-        },
-        'ogg' : {
-            'AudioCodecs' : [ 'vorbis'],
-            'VideoCodecs' : [],
-            'vorbis' : {
-                'MimeType' : 'video/x-theora+ogg',
-                'FileExtension' : 'ogg',
-                'MediaType' : 'audio',
-            },
-        },
-        'wav' : {
-            'AudioCodecs' : [ 'pcm_s16le'],
-            'VideoCodecs' : [],
-            'pcm_s16le' : {
-                'MimeType' : 'audio/wav',
-                'FileExtension' : 'wav',
-                'MediaType' : 'audio',
-            },
-        },
-        'matroska' : {
-            'AudioCodecs' : [ 'ac3', 'dca', 'aac'],
-            'VideoCodecs' : [ 'h264', 'mpeg4'],
-            'h264' : {
-                'MimeType' : 'video/x-matroska',
-                'FileExtension' : 'mkv',
-                'MediaType' : 'video',
-            },
-            'mpeg4' : {
-                'MimeType' : 'video/x-matroska',
-                'FileExtension' : 'mkv',
-                'MediaType' : 'video',
-            },
-        },
-        'mpeg' : {
-            'AudioCodecs' : [ 'mp2', 'ac3'],
-            'VideoCodecs' : [ 'mpeg1video', 'mpeg2video'],
-            'mpeg1video' : {
-                'MimeType' : 'video/mpeg',
-                'FileExtension' : 'mpg',
-                'MediaType' : 'video',
-            },
-            'mpeg2video' : {
-                'MimeType' : 'video/mpeg',
-                'FileExtension' : 'mpg',
-                'MediaType' : 'video',
-            },
-        },
-        'flv' : {
-            'AudioCodecs' : [ 'mp3'],
-            'VideoCodecs' : [ 'vp6f'],
-            'vp6f' : {
-                'MimeType' : 'video/x-flv',
-                'FileExtension' : 'flv',
-                'MediaType' : 'video',
-            },
-        }
-    }
-
     /*
     @matbee PICK ONE
     AVC_MP4_EU ->
@@ -193,21 +65,23 @@ function DLNAProfile() {
           connectionStallingSupported       : (1 << 21), // 0x200000
           dlnaVersion15Supported            : (1 << 20) // 0x100000
         };
-        var supportedFlags = dlna_flags.senderPaced | dlna_flags.streamingTransferModeSupported | dlna_flags.playContainerSupported | dlna_flags.dlnaVersion15Supported;
+        var supportedFlags = dlna_flags.connectionStallingSupported | dlna_flags.streamingTransferModeSupported | dlna_flags.dlnaVersion15Supported;
         var flags = 'DLNA.ORG_FLAGS='+(supportedFlags >>> 0).toString(16); 
-        return ['http-get:*:',this.contentType,':',pn,op,cn,ps,flags,'000000000000000000000000'].join('')
-    }
+        return ['http-get:*:',this.contentType,':',pn,op,cn,ps,flags,'000000000000000000000000'].join('');
+    };
 
     this.contentType = 'video/mp4';
 
+    /**
+     * @type {Object}
+     */
     this.httpHeaders = {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'video/mp4',
-        'protocolInfo': 'http-get:*:video/mp4:*',
+        'protocolInfo': 'http-get:*:'+this.contentType+':*',
         'contentFeatures.dlna.org': this.getContentFeaturesHeader(),
         'transferMode.dlna.org': 'Streaming'
     };
-
 
 
     /*
@@ -219,22 +93,13 @@ function DLNAProfile() {
         getcontentFeatures.dlna.org
         contentFeatures.dlna.org
         transferMode.dlna.org
-        friendlyName.dlna.org
-        peerManager.dlna.org
         Available-Range.dlna.org
-        scid.dlna.org
         realTimeInfo.dlna.org
-        scmsFlag.dlna.org
-        WCT.dlna.org
         Max-Prate.dlna.org
         Event-Type.dlna.org
         Supported
-        Buffer-Info.dlna.org
-        rtp-h264-deint-buf-cap.dlna.org
-        rtp-aac-deint-buf-cap.dlna.org
-        rtp-amr-deint-buf-cap.dlna.org
-        rtp-amrwbplus-deint-buf-cap.dlna.org
         PRAGMA
+        > https://github.com/cmtsij/Vizio_XWR100_GPL/blob/e0b5d08ea08fd23400b4e85d772f83dcf16d999a/GTK/user/apps/dlna-GTK-DMS/HttpFiles/DlnaHttp.h
      */
     
     this.mimeTypeRemapHack = function(dmrFriendlyName, mime) {
@@ -244,9 +109,13 @@ function DLNAProfile() {
                 'video/x-avi' : 'video/x-msvideo',
                 'application/x-subrip': 'smi/caption'
             }
-        }
+        };
         return (dmrFriendlyName in hacks && mim in hacks[dmrFriendlyName]) ? hacks[dmrFriendlyName][mime] : mime; 
-    }
+    };
+
+    this.processSupportedProtocols = function(capabilities) {
+        console.log("Process capabilities!", capabilities);
+    };
 
     this.getFFmpegFlags = function (probeData, forceTranscode) {
         var analysis = this.transcodeNeeded(probeData),

@@ -7,7 +7,7 @@ finder.on('found', function(info, msg, desc){
 	 console.log("rendering to ", desc.device.friendlyName, 'loc: '+msg.location, info, msg, desc);  
 	// Instanciate a client with a device description URL (discovered by SSDP)
 	var client = new MediaRendererClient(msg.location);
-	client.getDeviceCapabilities(function(err, result) {
+	client.getSupportedProtocols(function(err, result) {
 	console.log('capabilities: ', result);
 	 process.exit();
 	});
@@ -15,7 +15,7 @@ finder.on('found', function(info, msg, desc){
 	// Load a stream with subtitles and play it immediately
 	var options = { 
 	  autoplay: true,
-	  contentType: 'video/mpeg',
+	  contentType: 'video/mp4',
 	  metadata: {
 	    title: 'Yo mama',
 	    creator: 'SchizoDuckie',
