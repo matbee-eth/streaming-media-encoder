@@ -10,9 +10,8 @@ function AppleTV() {
 
 }
 
-util.inhertis(AppleTV, BaseDevice);
 
 
-
+util.inherts(AppleTV, BaseDevice);
 
 module.exports = AppleTV;

@@ -83,6 +83,9 @@ function DLNAProfile() {
         'transferMode.dlna.org': 'Streaming'
     };
 
+    this.getHeaders= function() {
+        return this.httpHeaders;
+    }
 
     /*
         TimeSeekRange.dlna.org
