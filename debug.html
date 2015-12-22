@@ -1,0 +1,71 @@
+<html ng-app='streaming-media-server'>
+<head>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular.min.js"></script>
+
+<script>
+
+var app = angular.app("streaming-media-server");
+app.factory("Backend", ["$http", function($http) {
+
+	this.discover = function() {
+		return $http.get('/discover').then(function(response) {
+			return response;
+		});
+	};
+
+}]);
+
+app.controller("DebugController", ["Backend", function(Backend) {
+	var self = this;
+	this.devices = [];
+	this.profiles = [];
+
+	Backend.discover().then(function(results) {
+		self.devices = results;
+	});
+}]);
+
+
+</script>
+</head>
+
+<body ng-controller="DebugController as debug">
+
+<h1>streaming-media-server debug gui</h1>
+
+<h2>Discovered Device List</h2>
+
+<h3>ChromeCast:</h3>
+<ul ng-repeat="device in debug.devices.chromecast">
+	<li>Renderer name: {{device.name}}</li>
+	<li>Capabilities: {{device.capabilities}}</li>
+	<li>IP Address: {{device.address}}</li>
+</ul>
+
+<h3>DLNA:</h3>
+<ul ng-repeat="device in debug.devices.dlna">
+	<li>Renderer name: {{device.name}}</li>
+	<li>Capabilities: {{device.capabilities}}</li>
+	<li>IP Address: {{device.address}}</li>
+</ul>
+
+<h2>Available Device capability profiles</h2>
+<ul>
+
+</ul>
+
+
+<h2>Loaded media</h2>
+
+
+<ul>
+	<li>URL:</li>
+	<li>GUID: </li>
+	<li>Filename</li>
+	<li>Input video codec</li>
+	<li>Input audio codec</li>
+</ul>
+
+</body>
+</html>
