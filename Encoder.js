@@ -1,25 +1,12 @@
 var util = require('util'),
     Promise = require('bluebird'),
     express = require('express'),
+    
     EventEmitter = require('events'),
     Engine = require('./Engine'),
-    findOpenPort = require('./find-open-port'),
-    ffmpeg = require('fluent-ffmpeg'),
+   
     net = require('net'),
-    uuid = require('node-uuid'),
-    app = express(),
-    ffmpegServer,
-    ffmpegPort = 3001,
-    uuidRequest = {};
-
-
-findOpenPort(3001).then(function(port) {
-    ffmpegPort = port;
-    ffmpegServer = app.listen(port, function() {
-        _log('FFmpeg Webserver listening at %s', Encoder.getUrl());
-    });
-});
-
+    uuid = require('node-uuid');
 
 /**
  * The encoder is where the magic happens.
@@ -50,25 +37,20 @@ function Encoder() {
     };
 
     /**
-     * ffprobe gathers information from multimedia streams and prints it in human- and machine-readable fashion.
-     * this is needed by the engine to determine format info.
-     * @param  {Engine}   engine  encoding engine to pass data to
-     * @param  {object}   options ffprobe options, currently unused
-     * @param  {Function} cb callback when probe is ready
+     * Proxy forwarder for profile getFFmpegFlags
+     * @see BaseDeviceProfile.prototype.getFFmpegFlags
+     * @return {Promise} promise that resolves with inputOptions and outputOptions
      */
-    this.probe = function(engine, options, cb) {
-        _log("probing engine for data", engine, options);
-        return new Promise(function(resolve, reject) {
-          if(engine.hasProbed) {
-            resolve(engine.probeData);
-          } else {
-            ffmpeg.ffprobe(Encoder.getUrl(engine.id), function(err, metadata) {
-                engine.setProbeData(metadata);
-                resolve(metadata);
-            });
-          }
-        });
+    this.getFFmpegOptions = function() {
+        var logger = this._log;
+        if (!this.hasProbed) {
+            throw new Error("NO PROBE HAS BEEN DONE NOOB!");
+        }
+        logger("Engine.getFFmpegOptions");
+        return this._profile.getFFmpegFlags(this._probeData, this.forceTranscode);
     };
+
+    
 
     /**
      * Fetch probe media for info and start transcoding via ffmpeg
@@ -116,33 +98,42 @@ function Encoder() {
         return "http://127.0.0.1:" + ffmpegPort + "/" + (fileId || '');
     }
 
+    /**
+     * Proxy forwarder for BaseDeviceProfile.prototype.rescale
+     * @see BaseDeviceProfile.prototype.rescale
+     * @param  {int} size max video width
+     * @return {Engine} returns `this` for fluent interfacing
+     */
+    this.rescale = function(size) {
+        this._profile.rescale(size);
+        return this;
+    };
+
+    /**
+     * Proxy forwarder for BaseDeviceProfile.prototype.hardCodeSubtitle
+     * @see BaseDeviceProfile.prototype.hardCodeSubtitle
+     * @param  {string } full path to .srt file
+     * @return {Engine} returns `this` for fluent interfacing
+     */
+    this.hardCodeSubtitle = function(path) {
+        this._profile.hardCodeSubtitle(path);
+        return this;
+    };
+
+    /**
+     * Proxy forwarder for BaseDeviceProfile.prototype.correctAudioOffset
+     * @see BaseDeviceProfile.prototype.correctAudioOffset
+     * @param  {float} offset in seconds
+     * @return {Engine} returns `this` for fluent interfacing
+     */
+    this.correctAudioOffset = function(seconds) {
+        this._profile.correctAudioOffset(seconds);
+        return this;
+    };
+
 };
 
-/**
- * ffmpeg passthrough for GET requests to fetch a file
- * @param  {Request} req httprequest
- * @param  {Response} res http response
- */
-app.get('/:fileId', function(req, res) {
-    if (uuidRequest[req.params.fileId]) {
-        uuidRequest[req.params.fileId].onRequest(req, res);
-    } else {
-        res.end();
-    }
-});
 
-/**
- * ffmpeg passthrough for HEAD requests to fetch a file
- * @param  {Request} req httprequest
- * @param  {Response} res http response
- */
-app.head('/:fileId', function(req, res) {
-    if (uuidRequest[req.params.fileId]) {
-        uuidRequest[req.params.fileId].onHeadRequest(req, res);
-    } else {
-        res.end();
-    }
-}); 
 
 _log = function() {
   if(encoder.debug) {

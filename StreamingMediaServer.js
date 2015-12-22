@@ -1,4 +1,5 @@
-var Engine = require('./Engine');
+var Engine = require('./Engine'),
+	express = require('express');
 
 var app = express();
 
@@ -14,6 +15,7 @@ expressServer = app.listen(port, function() {
 
     console.log('streaming-media-encoder Webserver listening at http://%s:%s', host, port);
 });
+
 
 
 app.get('/debug', function(req,res) {
@@ -51,8 +53,15 @@ app.get('/cast/:deviceClass/:deviceName', function(req, res) {
 	if(req.query.magnet) {
 		media = new TorrentMedia(req.query.magnet);
 	}
+	// cast performs the media analyze
+	// and creating the new streamer for this media on devicename
 	Engine.cast(device, media).then(res.json);
 });
 
+
+app.get('/stream/:streamId', function(req,res) {
+	var streamer = Engine.getStreamer(streamId, app);
+	streamer.handle(req,res);
+});
 
 module.exports = app;

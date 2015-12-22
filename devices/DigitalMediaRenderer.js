@@ -3,11 +3,16 @@ var util = require('util'),
     BaseDeviceProfile = require('./BaseDevice');
 
 
-function DigitalMediaRenderer(client) {
+function DigitalMediaRenderer(client, info, msg, desc, supportedProtocols) {
+
 	
 	BaseDevice.call(this);
 	this.client = Promise.promisifyAll(client);
- 
+	this.info = info;
+	this.msg = msg;
+	this.desc = desc;
+	this.supportedProtocols = supportedProtocols;
+
 
 	this.cast = function(url, options) {
 		

@@ -1,8 +1,12 @@
+var uuid = require('node-uuid');
+
 /**
  * BaseDevice that defines shared functionality
  */
 function BaseDevice(client) {
 	this.client = client;
+	this.id = uuid.v4();
+       
 }
 
 /**

@@ -1,19 +1,22 @@
 var util = require('util'),
+	EventEmitter = require('events'),
 	// dlna
- 	RendererFinder = require('renderer-finder');
-	MediaRendererClient = require('upnp-mediarenderer-client');
+ 	RendererFinder = require('renderer-finder'),
+	MediaRendererClient = require('upnp-mediarenderer-client'),
+	DMRDevice = require('./devices/DigitalMediaRenderer'),
 	// chromecast
-	chromecasts = require('chromecasts')();
+	chromecasts = require('chromecasts')(),
+	ChromeCastDevice = require('./devices/ChromeCast');
 	// appletv
 
 function DeviceList() {
-
+	EventEmitter.call(this);
 	var self = this;
 
 	this.devices = {
-		ChromeCast : [],
+		CHROMECAST : [],
 		DLNA : [],
-		AppleTV: []
+		APPLETV: []
 	};
 
 	this.chromecastSearching = false;
@@ -24,6 +27,7 @@ function DeviceList() {
 	this.discover = function() {
 		this.findChromeCasts();
 		this.findDMRs();
+		this.emit("devicelist:discovering", this);
 	};
 
 	this.findChromeCasts = function() {
@@ -33,6 +37,7 @@ function DeviceList() {
 				player = new ChromeCastDevice(player);
 		    	if(self.devices.ChromeCast.indexOf(player) == -1) {
 		    		self.devices.ChromeCast.push(player);
+					self.emit("devicelist:newdevice", {type: "ChromeCast", device: player});
 		    	}
 			});
 		}
@@ -47,9 +52,10 @@ function DeviceList() {
 			finder.on('found', function(info, msg, desc){	
 				var client = new MediaRendererClient(msg.location);
 				client.getSupportedProtocols(function(err, protocols) {
-					player = new DMRDevice(client, info, msg, desc);
+					player = new DMRDevice(client, info, msg, desc, protocols);
 			    	if (self.devices.DLNA.indexOf(player) == -1) {
 			    		self.devices.DLNA.push(player);
+				    	self.emit("devicelist:newdevice", {type: "DigitalMediaRenderer", device: player});
 			    	}
 			    });
 			});
@@ -68,6 +74,6 @@ function DeviceList() {
 
 
 }
-
+util.inherits(DeviceList, EventEmitter);
 
 module.exports = new DeviceList();

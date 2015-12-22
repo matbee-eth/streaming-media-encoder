@@ -2,14 +2,13 @@
 // performs ffmpeg probe on it
 // extracts audio and video streams
 
-var ffmpeg = require('./FFmpegServer'),
+var ffmpegServer = require('./FFmpegServer'),
+	ffmpeg = require('ffmpeg-fluent'),
 	Promise = require('bluebird');
 
 
 function Analyzer() {
 
-	// todo: make this independent from engine
-	// 
 	/**
 	 * ffprobe gathers information from multimedia streams and prints it in human- and machine-readable fashion.
 	 * this is needed by the engine to determine format info.
@@ -31,6 +30,31 @@ function Analyzer() {
 	    });
 	};
 
+
+	this.canPlay = function() {
+	    if (!this.hasProbed) {
+	        return this.probe().then(function(metadata) {
+	            return this.canPlay(metadata);
+	        }, function(err) {
+	            throw new Error("Error during probe on profile!", err);
+	        });
+	    } else {
+	        return this._profile.canPlay(this._probeData);
+	    }
+	};
+
+	/**
+	 * Analyze video media with ffMpeg probe and determine if media needs transcoding
+	 * @see BaseProfile.prototype.transcodeNeeded
+	 * @return {object} BaseProfile.prototype.transcodeNeeded result
+	 */
+	this.analyze = function() {
+	    if (!this.hasProbed) {
+	        return this.probe().then(this.analyze.bind(this));
+	    } else {
+	        return this._profile.transcodeNeeded(this._probeData);
+	    }
+	};
 
 }
 
