@@ -24,8 +24,8 @@ Engine.prototype.getDeviceList = function() {
     return DeviceList;
 };
 
-Engine.prototype.getDevice = function(DeviceClass, DeviceName) {
-    return DeviceList.getDevice(DeviceClass, DeviceName);
+Engine.prototype.getDevice = function(DeviceGUID) {
+    return DeviceList.getDeviceByGUID(DeviceGUID);
 };
 
 Engine.prototype.createStreamer = function(Media, Device) {

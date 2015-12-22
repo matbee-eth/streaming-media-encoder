@@ -72,6 +72,18 @@ function DeviceList() {
 
 	};
 
+	this.getDeviceByGUID = function(guid) {
+		var found = null;
+		Object.keys(this.devices).map(function(deviceclass) {
+			this.devices[deviceclass].map(function(device) {
+				if(device.guid == guid) {
+					found = device;
+				}
+			});
+		});
+		return found;
+	};
+
 
 }
 util.inherits(DeviceList, EventEmitter);

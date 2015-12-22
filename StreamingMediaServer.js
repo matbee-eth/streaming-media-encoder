@@ -16,8 +16,6 @@ expressServer = app.listen(port, function() {
     console.log('streaming-media-encoder Webserver listening at http://%s:%s', host, port);
 });
 
-
-
 app.get('/debug', function(req,res) {
 	res.header('Content-Type: text/html');
 	res.send(fs.readFileSync(_dirname + '/debug.html'));
@@ -32,14 +30,14 @@ app.get('/discover', function(req, res) {
 	Engine.discover().then(res.json);
 });
 
-app.get('/control/:deviceClass/:deviceName', function(req,res) {
-	var device = Engine.getDevice(req.params.deviceClass, req.params.deviceName);
+app.get('/control/:deviceGUID', function(req,res) {
+	var device = Engine.getDeviceByGUID(req.params.deviceGUID);
 	device.control(req.query.action, req.query).then(res.json);
 });
 
-app.get('/cast/:deviceClass/:deviceName', function(req, res) {
+app.get('/cast/:deviceGUID', function(req, res) {
 
-	var device = Engine.getDevice(req.params.deviceClass, req.params.deviceName);
+	var device = Engine.getDevice(req.params.deviceGUID);
 	var media;
 
 	if(req.query.url) {
@@ -60,7 +58,7 @@ app.get('/cast/:deviceClass/:deviceName', function(req, res) {
 
 
 app.get('/stream/:streamId', function(req,res) {
-	var streamer = Engine.getStreamer(streamId, app);
+	var streamer = Engine.getStreamer(streamId, app) ;
 	streamer.handle(req,res);
 });
 
