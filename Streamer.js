@@ -67,6 +67,42 @@ Streamer.prototype.startEncoder = function(time) {
     });
 };
 
+Streamer.prototype.noTranscoding = function(req, res) {
+
+	req.connection.setTimeout(Number.MAX_SAFE_INTEGER);
+
+    fs.stat(activeFile, function (err, stats) {
+        var filesize = stats.size;
+
+        sendFile(activeFile, filesize);
+    });
+    function sendFile (filePath, filesize) {
+        var range;
+        var filename = require('path').basename(filePath);
+
+        //res.setHeader('Accept-Ranges', 'bytes');
+     
+        if (req.headers.range) {
+            range = rangeParser(filesize, req.headers.range)[0];
+            res.statusCode = 206;
+            // no support for multi-range reqs
+            range = rangeParser(filesize, req.headers.range)[0];
+            console.log('range %s', JSON.stringify(range));
+
+            res.setHeader(
+              'Content-Range',
+              'bytes ' + range.start + '-' + range.end + '/' + filesize
+            );
+            res.setHeader('Content-Length', range.end - range.start + 1);
+        } else {
+            res.setHeader('Content-Length', filesize);
+        }
+
+        console.log("Streaming Video Data", res);
+        // Stream the video into the video tag
+        pump(fs.createReadStream(filePath, range), res);
+    }
+}
 
 
 
