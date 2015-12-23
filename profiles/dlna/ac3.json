@@ -1,0 +1,65 @@
+{
+  "restrictions": {
+    "EAC3": {
+      "audio": {
+        "name": "audio/x-eac3",
+        "rate": [
+          "32000",
+          "44100",
+          "48000"
+        ],
+        "channels": {
+          "min": "1",
+          "max": "6"
+        },
+        "bitrate": {
+          "min": "32000",
+          "max": "6144000"
+        }
+      }
+    },
+    "AC3": {
+      "audio": {
+        "name": "audio/x-ac3",
+        "rate": [
+          "32000",
+          "44100",
+          "48000"
+        ],
+        "channels": {
+          "min": "1",
+          "max": "6"
+        },
+        "bitrate": {
+          "min": "64000",
+          "max": "640000"
+        }
+      }
+    },
+    "EAC3-3024": {
+      "audio": {
+        "parent": [
+          "EAC3"
+        ],
+        "bitrate": {
+          "min": "0",
+          "max": "3024000"
+        }
+      }
+    }
+  },
+  "profiles": {
+    "AC3": {
+      "mime": "audio/vnd.dolby.dd-raw",
+      "parent": [
+        "AC3"
+      ]
+    },
+    "EAC3": {
+      "mime": "audio/eac3",
+      "parent": [
+        "EAC3"
+      ]
+    }
+  }
+}

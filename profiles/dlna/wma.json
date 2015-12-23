@@ -1,0 +1,94 @@
+{
+  "restrictions": {
+    "WMA": {
+      "audio": {
+        "name": "audio/x-wma"
+      }
+    },
+    "WMA-ASF": {
+      "container": {
+        "name": "video/x-ms-asf"
+      }
+    }
+  },
+  "profiles": {
+    "WMABASE": {
+      "mime": "audio/x-ms-wma",
+      "parent": [
+        "WMA-ASF"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "WMA"
+            ],
+            "wmaversion": [
+              "1",
+              "2"
+            ],
+            "rate": {
+              "min": "0",
+              "max": "48000"
+            },
+            "bitrate": {
+              "min": "1",
+              "max": "192999"
+            }
+          }
+        ]
+      }
+    },
+    "WMAFULL": {
+      "mime": "audio/x-ms-wma",
+      "parent": [
+        "WMA-ASF"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "WMA"
+            ],
+            "wmaversion": [
+              "1",
+              "2"
+            ],
+            "rate": {
+              "min": "0",
+              "max": "48000"
+            }
+          }
+        ]
+      }
+    },
+    "WMAPRO": {
+      "mime": "audio/x-ms-wma",
+      "parent": [
+        "WMA-ASF"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "WMA"
+            ],
+            "wmaversion": "3",
+            "rate": {
+              "min": "0",
+              "max": "96000"
+            },
+            "channels": {
+              "min": "1",
+              "max": "8"
+            },
+            "bitrate": {
+              "min": "1",
+              "max": "1500000"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

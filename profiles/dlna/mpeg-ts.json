@@ -1,0 +1,392 @@
+{
+  "restrictions": {
+    "MPEG_TS_ISO": {
+      "container": {
+        "name": "video/mpegts",
+        "systemstream": "true",
+        "packetsize": "188"
+      }
+    },
+    "MPEG_TS": {
+      "container": {
+        "name": "video/mpegts",
+        "systemstream": "true",
+        "packetsize": "192"
+      }
+    },
+    "MPEG_TS_AUDIO_BASE": {
+      "audio": {
+        "channels": {
+          "min": "1",
+          "max": "6"
+        },
+        "bitrate": {
+          "min": "1",
+          "max": "448000"
+        }
+      }
+    },
+    "MPEG_TS_AUDIO": {
+      "audio": {
+        "parent": [
+          "MPEG_TS_AUDIO_BASE"
+        ],
+        "rate": "48000"
+      }
+    },
+    "MPEG_TS_AUDIO_EU": {
+      "audio": {
+        "parent": [
+          "MPEG_TS_AUDIO_BASE"
+        ],
+        "rate": [
+          "32000",
+          "44100",
+          "48000"
+        ]
+      }
+    },
+    "MPEG_TS_VIDEO": {
+      "video": {
+        "name": "video/mpeg",
+        "systemstream": "false",
+        "mpegversion": "2",
+        "profile": [
+          "simple",
+          "main"
+        ],
+        "level": [
+          "low",
+          "main",
+          "high-1440",
+          "high"
+        ],
+        "bitrate": {
+          "min": "1",
+          "max": "18881700"
+        }
+      }
+    },
+    "MPEG_TS_1920x1080": {
+      "video": {
+        "parent": [
+          "1920x1080"
+        ],
+        "framerate": [
+          "30000/1001",
+          "30/1",
+          "24000/1001",
+          "24/1"
+        ],
+        "pixel-aspect-ratio": [
+          "1/1",
+          "9/16"
+        ]
+      }
+    },
+    "MPEG_TS_1280x720": {
+      "video": {
+        "parent": [
+          "1280x720"
+        ],
+        "framerate": [
+          "30000/1001",
+          "30/1",
+          "24000/1001",
+          "24/1"
+        ],
+        "pixel-aspect-ratio": [
+          "1/1",
+          "9/16"
+        ]
+      }
+    },
+    "1440x1080": {
+      "video": {
+        "height": "1080",
+        "width": "1440",
+        "framerate": [
+          "30000/1001",
+          "30/1",
+          "24000/1001",
+          "24/1"
+        ],
+        "pixel-aspect-ratio": "4/3"
+      }
+    },
+    "1280x1080": {
+      "video": {
+        "height": "1080",
+        "width": "1280",
+        "framerate": [
+          "30000/1001",
+          "30/1",
+          "24000/1001",
+          "24/1"
+        ],
+        "pixel-aspect-ratio": "3/2"
+      }
+    }
+  },
+  "profiles": {
+    "MPEG_TS_SD_NA_BASE": {
+      "parent": [
+        "MPEG_TS_ISO"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "MPEG_TS_AUDIO"
+            ],
+            "name": "audio/x-ac3"
+          },
+          {
+            "parent": [
+              "MPEG_TS_AUDIO"
+            ],
+            "name": "audio/x-private1-ac3"
+          },
+          {
+            "parent": [
+              "MPEG_TS_AUDIO"
+            ],
+            "name": "audio/ac3"
+          }
+        ],
+        "video": [
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "720x480"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "704x480"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "640x480"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "480x480"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "544x480"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "352x480"
+            ]
+          }
+        ]
+      }
+    },
+    "MPEG_TS_SD_EU_BASE": {
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "MPEG_TS_AUDIO_EU"
+            ],
+            "name": "audio/x-ac3"
+          },
+          {
+            "parent": [
+              "MPEG_TS_AUDIO_EU"
+            ],
+            "name": "audio/x-private1-ac3"
+          },
+          {
+            "parent": [
+              "MPEG_TS_AUDIO_EU"
+            ],
+            "name": "audio/ac3"
+          },
+          {
+            "parent": [
+              "MPEG_TS_AUDIO_EU"
+            ],
+            "name": "audio/mpeg",
+            "mpegversion": [
+              "1",
+              "2"
+            ]
+          }
+        ],
+        "video": [
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "720x576"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "544x576"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "480x576"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "352x576"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "352x288"
+            ]
+          }
+        ]
+      }
+    },
+    "MPEG_TS_HD_NA_BASE": {
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "MPEG_TS_AUDIO"
+            ],
+            "name": "audio/x-ac3"
+          },
+          {
+            "parent": [
+              "MPEG_TS_AUDIO"
+            ],
+            "name": "audio/x-private1-ac3"
+          },
+          {
+            "parent": [
+              "MPEG_TS_AUDIO"
+            ],
+            "name": "audio/ac3"
+          }
+        ],
+        "video": [
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "MPEG_TS_1920x1080"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "MPEG_TS_1280x720"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "1440x1080"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_TS_VIDEO",
+              "1280x1080"
+            ]
+          }
+        ]
+      }
+    },
+    "MPEG_TS_SD_NA": {
+      "mime": "video/vnd.dlna.mpeg-tts",
+      "base-profile": "MPEG_TS_SD_NA_BASE",
+      "restriction": {
+        "container": [
+          {
+            "parent": [
+              "MPEG_TS"
+            ]
+          }
+        ]
+      }
+    },
+    "MPEG_TS_SD_NA_ISO": {
+      "mime": "video/mpeg",
+      "base-profile": "MPEG_TS_SD_NA_BASE",
+      "restriction": {
+        "container": [
+          {
+            "parent": [
+              "MPEG_TS_ISO"
+            ]
+          }
+        ]
+      }
+    },
+    "MPEG_TS_HD_NA": {
+      "mime": "video/vnd.dlna.mpeg-tts",
+      "base-profile": "MPEG_TS_HD_NA_BASE",
+      "restriction": {
+        "container": [
+          {
+            "parent": [
+              "MPEG_TS"
+            ]
+          }
+        ]
+      }
+    },
+    "MPEG_TS_HD_NA_ISO": {
+      "mime": "video/mpeg",
+      "base-profile": "MPEG_TS_HD_NA_BASE",
+      "restriction": {
+        "container": [
+          {
+            "parent": [
+              "MPEG_TS_ISO"
+            ]
+          }
+        ]
+      }
+    },
+    "MPEG_TS_SD_EU": {
+      "mime": "video/vnd.dlna.mpeg-tts",
+      "base-profile": "MPEG_TS_SD_EU_BASE",
+      "restriction": {
+        "container": [
+          {
+            "parent": [
+              "MPEG_TS"
+            ]
+          }
+        ]
+      }
+    },
+    "MPEG_TS_SD_EU_ISO": {
+      "mime": "video/mpeg",
+      "base-profile": "MPEG_TS_SD_EU_BASE",
+      "restriction": {
+        "container": [
+          {
+            "parent": [
+              "MPEG_TS_ISO"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

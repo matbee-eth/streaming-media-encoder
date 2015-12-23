@@ -1,0 +1,26 @@
+{
+  "restrictions": {
+    "LPCM": {
+      "audio": {
+        "name": "audio/x-private1-lpcm",
+        "depth": "16"
+      }
+    }
+  },
+  "profiles": {
+    "LPCM": {
+      "mime": "audio/L16;rate=48000;channels=2",
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "LPCM"
+            ],
+            "rate": "48000",
+            "channels": "2"
+          }
+        ]
+      }
+    }
+  }
+}

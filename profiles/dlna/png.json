@@ -1,0 +1,79 @@
+{
+  "restrictions": {
+    "PNG": {
+      "image": {
+        "name": "image/png"
+      }
+    }
+  },
+  "profiles": {
+    "PNG_SM_ICO": {
+      "mime": "image/png",
+      "restriction": {
+        "image": [
+          {
+            "parent": [
+              "PNG"
+            ],
+            "height": "48",
+            "width": "48"
+          }
+        ]
+      }
+    },
+    "PNG_LRG_ICO": {
+      "mime": "image/png",
+      "restriction": {
+        "image": [
+          {
+            "parent": [
+              "PNG"
+            ],
+            "height": "120",
+            "width": "120"
+          }
+        ]
+      }
+    },
+    "PNG_TN": {
+      "mime": "image/png",
+      "restriction": {
+        "image": [
+          {
+            "parent": [
+              "PNG"
+            ],
+            "height": {
+              "min": "1",
+              "max": "160"
+            },
+            "width": {
+              "min": "1",
+              "max": "160"
+            }
+          }
+        ]
+      }
+    },
+    "PNG_LRG": {
+      "mime": "image/png",
+      "restriction": {
+        "image": [
+          {
+            "parent": [
+              "PNG"
+            ],
+            "height": {
+              "min": "1",
+              "max": "4096"
+            },
+            "width": {
+              "min": "1",
+              "max": "4096"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

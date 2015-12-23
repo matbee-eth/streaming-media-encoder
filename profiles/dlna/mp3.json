@@ -1,0 +1,66 @@
+{
+  "restrictions": {
+    "ID3": {
+      "container": {
+        "name": "application/x-id3"
+      }
+    },
+    "MP3": {
+      "audio": {
+        "name": "audio/mpeg",
+        "mpegversion": "1",
+        "layer": "3",
+        "channels": {
+          "min": "1",
+          "max": "2"
+        },
+        "rate": [
+          "32000",
+          "44100",
+          "48000"
+        ],
+        "bitrate": {
+          "min": "32000",
+          "max": "320000"
+        }
+      }
+    },
+    "MP3X": {
+      "audio": {
+        "parent": [
+          "MP3"
+        ],
+        "mpegaudioversion": {
+          "min": "1",
+          "max": "2"
+        },
+        "rate": [
+          "16000",
+          "22050",
+          "24000",
+          "32000",
+          "44100",
+          "48000"
+        ],
+        "bitrate": {
+          "min": "8000",
+          "max": "320000"
+        }
+      }
+    }
+  },
+  "profiles": {
+    "MP3": {
+      "mime": "audio/mpeg",
+      "parent": [
+        "MP3"
+      ]
+    },
+    "MP3X": {
+      "mime": "audio/mpeg",
+      "parent": [
+        "MP3X"
+      ]
+    }
+  }
+}

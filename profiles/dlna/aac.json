@@ -1,0 +1,113 @@
+{
+  "restrictions": {
+    "AAC-ADTS": {
+      "audio": {
+        "stream-format": "adts"
+      }
+    },
+    "AAC-320": {
+      "audio": {
+        "parent": [
+          "AAC"
+        ],
+        "bitrate": {
+          "min": "0",
+          "max": "320000"
+        }
+      }
+    },
+    "AAC-576": {
+      "audio": {
+        "parent": [
+          "AAC"
+        ],
+        "bitrate": {
+          "min": "0",
+          "max": "576000"
+        }
+      }
+    },
+    "AAC-MULT5": {
+      "audio": {
+        "parent": [
+          "AAC"
+        ],
+        "level": [
+          "1",
+          "2",
+          "4"
+        ],
+        "channels": {
+          "min": "1",
+          "max": "6"
+        },
+        "bitrate": {
+          "min": "0",
+          "max": "1440000"
+        }
+      }
+    }
+  },
+  "profiles": {
+    "AAC_ADTS_320": {
+      "mime": "audio/vnd.dlna.adts",
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "AAC-ADTS",
+              "AAC-320"
+            ]
+          }
+        ]
+      }
+    },
+    "AAC_ISO_320": {
+      "mime": "audio/3gpp",
+      "parent": [
+        "3GP",
+        "AAC-320"
+      ]
+    },
+    "AAC_ADTS": {
+      "mime": "audio/vnd.dlna.adts",
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "AAC-ADTS",
+              "AAC-576"
+            ]
+          }
+        ]
+      }
+    },
+    "AAC_ISO": {
+      "mime": "audio/3gpp",
+      "parent": [
+        "3GP",
+        "AAC-576"
+      ]
+    },
+    "AAC_MULT5_ADTS": {
+      "mime": "audio/vnd.dlna.adts",
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "AAC-ADTS",
+              "AAC-MULT5"
+            ]
+          }
+        ]
+      }
+    },
+    "AAC_MULT5_ISO": {
+      "mime": "audio/3gpp",
+      "parent": [
+        "3GP",
+        "AAC-MULT5"
+      ]
+    }
+  }
+}

@@ -1,0 +1,1120 @@
+{
+  "restrictions": {
+    "AVC_BL_L3_AAC": {
+      "audio": {
+        "parent": [
+          "AAC"
+        ],
+        "bitrate": {
+          "min": "1",
+          "max": "256000"
+        }
+      }
+    },
+    "AVC_BL_C": {
+      "video": {
+        "name": "video/x-h264",
+        "profile": "constrained-baseline",
+        "pixel-aspect-ratio": [
+          "1/1",
+          "12/11",
+          "10/11",
+          "16/11",
+          "40/33",
+          "44/33",
+          "64/33",
+          "160/99",
+          "18/11",
+          "15/11",
+          "24/11",
+          "60/33",
+          "20/11",
+          "32/11",
+          "80/33"
+        ]
+      }
+    },
+    "AVC_BL_384": {
+      "video": {
+        "parent": [
+          "AVC_BL_C"
+        ],
+        "level": [
+          "1",
+          "1b",
+          "1.1",
+          "1.2"
+        ],
+        "bitrate": {
+          "min": "0",
+          "max": "384000"
+        }
+      }
+    },
+    "AVC_BL_L3L": {
+      "video": {
+        "parent": [
+          "AVC_BL_C"
+        ],
+        "level": [
+          "1",
+          "1b",
+          "1.1",
+          "1.2",
+          "1.3",
+          "2",
+          "2.1",
+          "2.2",
+          "3"
+        ],
+        "bitrate": {
+          "min": "1",
+          "max": "4500000"
+        }
+      }
+    },
+    "AVC_BL_L3": {
+      "video": {
+        "parent": [
+          "AVC_BL_L3L"
+        ],
+        "profile": "baseline",
+        "bitrate": {
+          "min": "1",
+          "max": "4000000"
+        }
+      }
+    },
+    "AVC_BL_625_D1": {
+      "video": {
+        "parent": [
+          "625_D1",
+          "25fps"
+        ]
+      }
+    },
+    "AVC_BL_525_D1": {
+      "video": {
+        "parent": [
+          "525_D1",
+          "29.97fps"
+        ]
+      }
+    },
+    "AVC_BL_VGA": {
+      "video": {
+        "parent": [
+          "VGA",
+          "30fps"
+        ]
+      }
+    },
+    "AVC_BL_VGA_16:9": {
+      "video": {
+        "parent": [
+          "VGA_16:9",
+          "30fps"
+        ]
+      }
+    },
+    "AVC_BL_CIF": {
+      "video": {
+        "parent": [
+          "CIF",
+          "15fps"
+        ]
+      }
+    },
+    "AVC_BL_525SIF": {
+      "video": {
+        "parent": [
+          "525SIF"
+        ],
+        "framerate": {
+          "min": "0/1",
+          "max": "18/1"
+        }
+      }
+    },
+    "AVC_BL_QVGA_4:3": {
+      "video": {
+        "parent": [
+          "QVGA_4:3"
+        ],
+        "framerate": {
+          "min": "0/1",
+          "max": "20/1"
+        }
+      }
+    },
+    "AVC_BL_QVGA_16:9": {
+      "video": {
+        "parent": [
+          "QVGA_16:9"
+        ],
+        "framerate": {
+          "min": "0/1",
+          "max": "26/1"
+        }
+      }
+    },
+    "AVC_BL_1/7_VGA_4:3": {
+      "video": {
+        "parent": [
+          "1/7_VGA_4:3",
+          "30fps"
+        ]
+      }
+    },
+    "AVC_BL_1/9_VGA_4:3": {
+      "video": {
+        "parent": [
+          "1/9_VGA_4:3",
+          "30fps"
+        ]
+      }
+    },
+    "AVC_BL_QCIF": {
+      "video": {
+        "parent": [
+          "QCIF",
+          "30fps"
+        ]
+      }
+    },
+    "AVC_BL_525QSIF": {
+      "video": {
+        "parent": [
+          "525QSIF",
+          "30fps"
+        ]
+      }
+    },
+    "AVC_BL_SQVGA_4:3": {
+      "video": {
+        "parent": [
+          "SQVGA_4:3",
+          "30fps"
+        ]
+      }
+    },
+    "AVC_BL_1/16_VGA_4:3": {
+      "video": {
+        "parent": [
+          "1/16_VGA_4:3",
+          "30fps"
+        ]
+      }
+    },
+    "AVC_BL_SQVGA_16:9": {
+      "video": {
+        "parent": [
+          "SQVGA_16:9",
+          "30fps"
+        ]
+      }
+    },
+    "AVC_BL_SQCIF": {
+      "video": {
+        "parent": [
+          "SQCIF",
+          "30fps"
+        ]
+      }
+    },
+    "AVC_BL_1/7_VGA_16:9": {
+      "video": {
+        "parent": [
+          "1/7_VGA_16:9",
+          "30fps"
+        ]
+      }
+    },
+    "AVC_MP": {
+      "video": {
+        "parent": [
+          "AVC_BL_C"
+        ],
+        "profile": [
+          "constrained-baseline",
+          "main"
+        ],
+        "level": [
+          "1",
+          "1b",
+          "1.1",
+          "1.2",
+          "1.3",
+          "2",
+          "2.1",
+          "2.2",
+          "3"
+        ],
+        "bitrate": {
+          "min": "1",
+          "max": "10000000"
+        }
+      }
+    },
+    "AVC_MP4_MP_HD_720p": {
+      "video": {
+        "parent": [
+          "AVC_MP"
+        ],
+        "bitrate": {
+          "min": "1",
+          "max": "14000000"
+        },
+        "level": [
+          "1",
+          "1b",
+          "1.1",
+          "1.2",
+          "1.3",
+          "2",
+          "2.1",
+          "2.2",
+          "3",
+          "3.1"
+        ]
+      }
+    },
+    "AVC_MP4_MP_HD_1080i": {
+      "video": {
+        "parent": [
+          "AVC_MP"
+        ],
+        "bitrate": {
+          "min": "1",
+          "max": "20000000"
+        },
+        "level": [
+          "1",
+          "1b",
+          "1.1",
+          "1.2",
+          "1.3",
+          "2",
+          "2.1",
+          "2.2",
+          "3",
+          "3.1",
+          "3.2",
+          "4"
+        ]
+      }
+    },
+    "AVC-L4": {
+      "video": {
+        "name": "video/x-h264",
+        "level": [
+          "1",
+          "1b",
+          "1.1",
+          "1.2",
+          "1.3",
+          "2",
+          "2.1",
+          "2.2",
+          "3",
+          "3.1",
+          "3.2",
+          "4"
+        ]
+      }
+    }
+  },
+  "profiles": {
+    "AVC_MP4_BL_CIF15": {
+      "parent": [
+        "MP4"
+      ],
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_CIF"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_525SIF"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_QVGA_4:3"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_QVGA_16:9"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_1/7_VGA_4:3"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_1/9_VGA_4:3"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_QCIF"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_525QSIF"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_SQVGA_4:3"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_1/16_VGA_4:3"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_SQVGA_16:9"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_SQCIF"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_384",
+              "AVC_BL_1/7_VGA_16:9"
+            ]
+          }
+        ]
+      }
+    },
+    "AVC_MP4_BL_CIF15_AAC_520": {
+      "mime": "video/mp4",
+      "base-profile": "AVC_MP4_BL_CIF15",
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "AAC"
+            ],
+            "bitrate": {
+              "min": "1",
+              "max": "128000"
+            }
+          }
+        ]
+      }
+    },
+    "AVC_MP4_BL_CIF15_AAC": {
+      "mime": "video/mp4",
+      "base-profile": "AVC_MP4_BL_CIF15",
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "AAC"
+            ],
+            "bitrate": {
+              "min": "1",
+              "max": "200000"
+            }
+          }
+        ]
+      }
+    },
+    "AVC_MP4_BL_L3L_SD_AAC": {
+      "mime": "video/mp4",
+      "parent": [
+        "MP4",
+        "AVC_BL_L3_AAC"
+      ],
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "AVC_BL_L3L",
+              "AVC_BL_625_D1"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_L3L",
+              "AVC_BL_525_D1"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_L3L",
+              "AVC_BL_VGA"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_L3L",
+              "AVC_BL_VGA_16:9"
+            ]
+          }
+        ]
+      }
+    },
+    "AVC_MP4_BL_L3_SD_AAC": {
+      "mime": "video/mp4",
+      "parent": [
+        "MP4",
+        "AVC_BL_L3_AAC"
+      ],
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "AVC_BL_L3",
+              "AVC_BL_625_D1"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_L3",
+              "AVC_BL_525_D1"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_L3",
+              "AVC_BL_VGA"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_BL_L3",
+              "AVC_BL_VGA_16:9"
+            ]
+          }
+        ]
+      }
+    },
+    "AVC_MP4_MP_SD": {
+      "parent": [
+        "MP4"
+      ],
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "AVC_MP",
+              "625_D1",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "525_D1",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "625_4SIF",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "525_4SIF",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "VGA",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "VGA_16:9",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "625_3/4D1",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "525_3/4D1",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "625_2/3D1",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "525_2/3D1",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "9/16_VGA_4:3",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "9/16_VGA_16:9",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "625_1/2D1",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "525_1/2D1",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "CIF",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "525SIF",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "QVGA_4:3",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "QVGA_16:9",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "1/7_VGA_4:3",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "1/9_VGA_4:3",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "QCIF",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "525QSIF",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "SQVGA_4:3",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "1/16_VGA_4:3",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "SQVGA_16:9",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "SQCIF",
+              "30fps"
+            ]
+          }
+        ]
+      }
+    },
+    "AVC_MP4_MP_SD_AAC_MULT5": {
+      "mime": "video/mp4",
+      "base-profile": "AVC_MP4_MP_SD",
+      "parent": [
+        "AAC-MULT5"
+      ]
+    },
+    "AVC_MP4_MP_SD_MPEG1_L3": {
+      "mime": "video/mp4",
+      "base-profile": "AVC_MP4_MP_SD",
+      "parent": [
+        "MP3"
+      ]
+    },
+    "AVC_MP4_MP_SD_AC3": {
+      "mime": "video/mp4",
+      "base-profile": "AVC_MP4_MP_SD",
+      "parent": [
+        "AC3"
+      ]
+    },
+    "AVC_MP4_MP_SD_EAC3": {
+      "mime": "video/mp4",
+      "parent": [
+        "MP4",
+        "EAC3-3024"
+      ],
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "AVC_MP",
+              "25fps"
+            ],
+            "width": {
+              "min": "1",
+              "max": "864"
+            },
+            "height": {
+              "min": "1",
+              "max": "480"
+            }
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "625_D1",
+              "50fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "525_D1",
+              "60fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "AVC_MP",
+              "VGA",
+              "30fps"
+            ]
+          }
+        ]
+      }
+    },
+    "AVC_MP4_MP_HD_720p_AAC": {
+      "mime": "video/mp4",
+      "parent": [
+        "MP4",
+        "AAC-576"
+      ],
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "AVC_MP4_MP_HD_720p",
+              "1280x720",
+              "30fps"
+            ]
+          },
+          {
+            "parent": [
+              "AVC_MP4_MP_HD_720p",
+              "VGA",
+              "60fps"
+            ]
+          }
+        ]
+      }
+    },
+    "AVC_MP4_MP_HD_1080i_AAC": {
+      "mime": "video/mp4",
+      "parent": [
+        "MP4",
+        "AAC-576"
+      ],
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "AVC_MP4_MP_HD_1080i",
+              "1920x1080",
+              "30fps"
+            ],
+            "interlaced": "true"
+          },
+          {
+            "parent": [
+              "AVC_MP4_MP_HD_1080i",
+              "1280x720",
+              "60fps"
+            ]
+          }
+        ]
+      }
+    },
+    "AVC_MKV_MP_HD": {
+      "parent": [
+        "MKV"
+      ],
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "AVC-L4"
+            ],
+            "bitrate": {
+              "min": "0",
+              "max": "20000000"
+            },
+            "profile": "main"
+          },
+          {
+            "used": "in-relaxed",
+            "parent": [
+              "upto1920x1152",
+              "60fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1920x1152",
+              "50fps"
+            ],
+            "interlaced": "true"
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1920x1152",
+              "25fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1920x1080",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1920x1080",
+              "60fps"
+            ],
+            "interlaced": "true"
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1280x720",
+              "60fps"
+            ]
+          }
+        ]
+      }
+    },
+    "AVC_MKV_HP_HD": {
+      "parent": [
+        "MKV"
+      ],
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "AVC-L4"
+            ],
+            "bitrate": {
+              "min": "0",
+              "max": "30000000"
+            },
+            "profile": [
+              "high",
+              "main"
+            ]
+          },
+          {
+            "used": "in-relaxed",
+            "parent": [
+              "upto1920x1152",
+              "60fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1920x1152",
+              "50fps"
+            ],
+            "interlaced": "true"
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1920x1152",
+              "25fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1920x1080",
+              "30fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1920x1080",
+              "60fps"
+            ],
+            "interlaced": "true"
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1280x720",
+              "60fps"
+            ]
+          }
+        ]
+      }
+    },
+    "AVC_MKV_MP_HD_AAC_MULT5": {
+      "mime": "video/x-matroska",
+      "base-profile": "AVC_MKV_MP_HD",
+      "parent": [
+        "AAC-MULT5"
+      ]
+    },
+    "AVC_MKV_HP_HD_AAC_MULT5": {
+      "mime": "video/x-matroska",
+      "base-profile": "AVC_MKV_HP_HD",
+      "parent": [
+        "AAC-MULT5"
+      ]
+    },
+    "AVC_MKV_MP_HD_AC3": {
+      "mime": "video/x-matroska",
+      "base-profile": "AVC_MKV_MP_HD",
+      "parent": [
+        "AC3"
+      ]
+    },
+    "AVC_MKV_HP_HD_AC3": {
+      "mime": "video/x-matroska",
+      "base-profile": "AVC_MKV_HP_HD",
+      "parent": [
+        "AC3"
+      ]
+    },
+    "AVC_MKV_MP_HD_MPEG1_L3": {
+      "mime": "video/x-matroska",
+      "base-profile": "AVC_MKV_MP_HD",
+      "parent": [
+        "MP3"
+      ]
+    },
+    "AVC_MKV_HP_HD_MPEG1_L3": {
+      "mime": "video/x-matroska",
+      "base-profile": "AVC_MKV_HP_HD",
+      "parent": [
+        "MP3"
+      ]
+    },
+    "AVC_MP4_HP_HD_EAC3": {
+      "mime": "video/mp4",
+      "parent": [
+        "MP4",
+        "AVC-L4",
+        "EAC3-3024"
+      ],
+      "restriction": {
+        "video": [
+          {
+            "profile": [
+              "high",
+              "main",
+              "baseline"
+            ],
+            "bitrate": {
+              "min": "0",
+              "max": "25000000"
+            }
+          },
+          {
+            "used": "in-relaxed",
+            "parent": [
+              "upto1920x1080",
+              "60fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1920x1080",
+              "59.94fps"
+            ],
+            "interlaced": "true"
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1920x1080",
+              "50fps"
+            ],
+            "interlaced": "true"
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1920x1080",
+              "29.97fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1920x1080",
+              "25fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1280x720",
+              "59.94fps"
+            ]
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "upto1280x720",
+              "50fps"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

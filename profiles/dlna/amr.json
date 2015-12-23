@@ -1,0 +1,39 @@
+{
+  "profiles": {
+    "AMR_3GPP": {
+      "mime": "audio/3gpp",
+      "base-profile": "AMR_3GPP",
+      "parent": [
+        "3GP"
+      ]
+    },
+    "AMR_WBplus": {
+      "mime": "audio/mp4",
+      "restriction": {
+        "container": [
+          {
+            "parent": [
+              "3GP"
+            ],
+            "profile": [
+              "basic",
+              "progressive-download"
+            ]
+          }
+        ],
+        "audio": [
+          {
+            "name": "audio/AMR-WB",
+            "rate": [
+              "8000",
+              "16000",
+              "24000",
+              "32000",
+              "48000"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

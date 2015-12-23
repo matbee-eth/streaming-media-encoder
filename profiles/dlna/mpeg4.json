@@ -1,0 +1,1209 @@
+{
+  "restrictions": {
+    "MPEG4V": {
+      "video": {
+        "name": "video/mpeg",
+        "mpegversion": "4",
+        "systemstream": "false"
+      }
+    },
+    "H263_P0_L10": {
+      "video": {
+        "parent": [
+          "15fps"
+        ],
+        "name": "video/x-h263",
+        "profile": "0",
+        "level": "10",
+        "pixel-aspect-ratio": [
+          "12/11",
+          "16/11"
+        ],
+        "bitrate": {
+          "min": "1",
+          "max": "64000"
+        }
+      }
+    },
+    "SP": {
+      "video": {
+        "parent": [
+          "MPEG4V",
+          "30fps"
+        ],
+        "profile": "simple",
+        "pixel-aspect-ratio": [
+          "1/1",
+          "12/11",
+          "10/11",
+          "16/11",
+          "40/33"
+        ]
+      }
+    },
+    "SP_64": {
+      "video": {
+        "parent": [
+          "SP"
+        ],
+        "level": [
+          "0",
+          "1"
+        ],
+        "bitrate": {
+          "min": "1",
+          "max": "64000"
+        }
+      }
+    },
+    "SP_128": {
+      "video": {
+        "parent": [
+          "SP"
+        ],
+        "level": [
+          "0b",
+          "2"
+        ],
+        "bitrate": {
+          "min": "1",
+          "max": "128000"
+        }
+      }
+    },
+    "SP_384": {
+      "video": {
+        "parent": [
+          "SP"
+        ],
+        "level": "3",
+        "bitrate": {
+          "min": "1",
+          "max": "384000"
+        }
+      }
+    },
+    "SP_4000": {
+      "video": {
+        "parent": [
+          "SP"
+        ],
+        "level": "4a",
+        "bitrate": {
+          "min": "1",
+          "max": "4000000"
+        }
+      }
+    },
+    "SP_8000": {
+      "video": {
+        "parent": [
+          "SP"
+        ],
+        "level": "5",
+        "bitrate": {
+          "min": "1",
+          "max": "8000000"
+        }
+      }
+    },
+    "SP_12000": {
+      "video": {
+        "parent": [
+          "SP"
+        ],
+        "level": "6",
+        "bitrate": {
+          "min": "1",
+          "max": "12000000"
+        }
+      }
+    },
+    "SP_L2": {
+      "video": {
+        "parent": [
+          "MPEG4V"
+        ],
+        "profile": "simple",
+        "level": [
+          "0",
+          "0b",
+          "1",
+          "2"
+        ],
+        "bitrate": {
+          "min": "1",
+          "max": "128000"
+        }
+      }
+    },
+    "SP_L3_VGA": {
+      "video": {
+        "parent": [
+          "MPEG4V",
+          "30fps"
+        ],
+        "profile": "simple",
+        "level": [
+          "0",
+          "0b",
+          "1",
+          "2",
+          "3"
+        ],
+        "bitrate": {
+          "min": "1",
+          "max": "3000000"
+        }
+      }
+    }
+  },
+  "profiles": {
+    "SP_L3": {
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "SP_64",
+              "CIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "525SIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "QVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "QVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "1/7_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "1/9_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "QCIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "525QSIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "SQVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "1/16_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "SQVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "SQCIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "CIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "525SIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "QVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "QVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "1/7_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "1/9_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "QCIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "525QSIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "SQVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "1/16_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "SQVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "SQCIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "CIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "525SIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "QVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "QVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "1/7_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "1/9_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "QCIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "525QSIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "SQVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "1/16_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "SQVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "SQCIF"
+            ]
+          }
+        ]
+      }
+    },
+    "SP_L5": {
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "SP_64",
+              "VGA"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "VGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "625_D1"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "525_D1"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "CIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "525SIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "QVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "QVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "1/7_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "1/9_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "QCIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "525QSIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "SQVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "1/16_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_64",
+              "SQVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "VGA"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "VGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "625_D1"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "525_D1"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "CIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "525SIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "QVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "QVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "1/7_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "1/9_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "QCIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "525QSIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "SQVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "1/16_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "SQVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "VGA"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "VGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "625_D1"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "525_D1"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "CIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "525SIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "QVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "QVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "1/7_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "1/9_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "QCIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "525QSIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "SQVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "1/16_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "SQVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "VGA"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "VGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "625_D1"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "525_D1"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "CIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "525SIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "QVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "QVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "1/7_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "1/9_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "QCIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "525QSIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "SQVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "1/16_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "SQVGA_16:9"
+            ]
+          }
+        ]
+      }
+    },
+    "SP_L6": {
+      "base-profile": "SP_L5",
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "SP_64",
+              "1280x720"
+            ]
+          },
+          {
+            "parent": [
+              "SP_128",
+              "1280x720"
+            ]
+          },
+          {
+            "parent": [
+              "SP_384",
+              "1280x720"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "VGA"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "VGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "625_D1"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "525_D1"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "CIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "525SIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "QVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "QVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "1/7_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "1/9_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "QCIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "525QSIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "SQVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "1/16_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "SQVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_4000",
+              "1280x720"
+            ]
+          },
+          {
+            "parent": [
+              "SP_8000",
+              "1280x720"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "VGA"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "VGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "625_D1"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "525_D1"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "CIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "525SIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "QVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "QVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "1/7_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "1/9_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "QCIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "525QSIF"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "SQVGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "1/16_VGA_4:3"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "SQVGA_16:9"
+            ]
+          },
+          {
+            "parent": [
+              "SP_12000",
+              "1280x720"
+            ]
+          }
+        ]
+      }
+    },
+    "SP_L3_MP4": {
+      "mime": "video/mp4",
+      "base-profile": "SP_L3",
+      "parent": [
+        "MP4"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "AAC"
+            ],
+            "bitrate": {
+              "min": "1",
+              "max": "216000"
+            }
+          }
+        ]
+      }
+    },
+    "SP_L3_MP4_AAC_LTP": {
+      "mime": "video/mp4",
+      "base-profile": "SP_L3",
+      "parent": [
+        "MP4"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "AAC"
+            ],
+            "profile": "ltp",
+            "bitrate": {
+              "min": "1",
+              "max": "216000"
+            }
+          }
+        ]
+      }
+    },
+    "SP_L3_VGA": {
+      "mime": "video/mp4",
+      "parent": [
+        "MP4"
+      ],
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "SP_L3_VGA",
+              "VGA"
+            ]
+          },
+          {
+            "parent": [
+              "SP_L3_VGA",
+              "VGA_16:9"
+            ]
+          }
+        ],
+        "audio": [
+          {
+            "parent": [
+              "AAC"
+            ],
+            "bitrate": {
+              "min": "1",
+              "max": "256000"
+            }
+          }
+        ]
+      }
+    },
+    "SP_L2_AAC": {
+      "mime": "video/mp4",
+      "parent": [
+        "MP4"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "AAC"
+            ],
+            "bitrate": {
+              "min": "1",
+              "max": "128000"
+            }
+          }
+        ],
+        "video": [
+          {
+            "parent": [
+              "SP_L2",
+              "CIF",
+              "15fps"
+            ],
+            "pixel-aspect-ratio": [
+              "12/11",
+              "16/11"
+            ]
+          },
+          {
+            "parent": [
+              "SP_L2",
+              "QVGA_4:3",
+              "15fps"
+            ],
+            "pixel-aspect-ratio": "1/1"
+          },
+          {
+            "parent": [
+              "SP_L2",
+              "QVGA_16:9",
+              "15fps"
+            ],
+            "pixel-aspect-ratio": "1/1"
+          },
+          {
+            "parent": [
+              "SP_L2",
+              "QCIF",
+              "30fps"
+            ],
+            "pixel-aspect-ratio": [
+              "12/11",
+              "16/11"
+            ]
+          },
+          {
+            "parent": [
+              "SP_L2",
+              "SQCIF",
+              "30fps"
+            ],
+            "pixel-aspect-ratio": [
+              "12/11",
+              "16/11"
+            ]
+          }
+        ]
+      }
+    },
+    "H263_P0_L10": {
+      "restriction": {
+        "video": [
+          {
+            "parent": [
+              "H263_P0_L10",
+              "QCIF"
+            ]
+          },
+          {
+            "parent": [
+              "H263_P0_L10",
+              "SQCIF"
+            ]
+          }
+        ]
+      }
+    },
+    "MPEG4_P2_MP4_SP_L5_AAC": {
+      "mime": "video/mp4",
+      "base-profile": "SP_L5",
+      "parent": [
+        "MP4"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "AAC"
+            ]
+          }
+        ]
+      }
+    },
+    "MPEG4_P2_MP4_SP_L6_AAC": {
+      "mime": "video/mp4",
+      "base-profile": "SP_L6",
+      "parent": [
+        "MP4"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "AAC"
+            ]
+          }
+        ]
+      }
+    },
+    "MPEG4_H263_MP4_P0_L10_AAC": {
+      "mime": "video/3gpp",
+      "base-profile": "H263_P0_L10",
+      "parent": [
+        "3GP"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "AAC"
+            ],
+            "bitrate": {
+              "min": "1",
+              "max": "86000"
+            }
+          }
+        ]
+      }
+    },
+    "MPEG4_H263_MP4_P0_L10_AAC_LTP": {
+      "mime": "video/3gpp",
+      "base-profile": "H263_P0_L10",
+      "parent": [
+        "3GP"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "AAC"
+            ],
+            "profile": "ltp",
+            "bitrate": {
+              "min": "1",
+              "max": "86000"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

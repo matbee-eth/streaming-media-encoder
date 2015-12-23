@@ -1,0 +1,179 @@
+{
+  "restrictions": {
+    "720x480": {
+      "video": {
+        "parent": [
+          "525_D1"
+        ],
+        "framerate": "30000/1001",
+        "pixel-aspect-ratio": [
+          "32/27",
+          "8/9"
+        ]
+      }
+    },
+    "704x480": {
+      "video": {
+        "parent": [
+          "525_4SIF"
+        ],
+        "framerate": [
+          "24000/1001",
+          "24/1",
+          "30000/1001",
+          "30/1",
+          "60000/1001",
+          "60/1"
+        ],
+        "pixel-aspect-ratio": [
+          "40/33",
+          "10/11"
+        ]
+      }
+    },
+    "640x480": {
+      "video": {
+        "parent": [
+          "VGA"
+        ],
+        "framerate": [
+          "24000/1001",
+          "24/1",
+          "30000/1001",
+          "30/1",
+          "60000/1001",
+          "60/1"
+        ],
+        "pixel-aspect-ratio": [
+          "1/1",
+          "4/3"
+        ]
+      }
+    },
+    "544x480": {
+      "video": {
+        "parent": [
+          "525_3/4D1"
+        ],
+        "framerate": "30000/1001",
+        "pixel-aspect-ratio": [
+          "80/51",
+          "20/17"
+        ]
+      }
+    },
+    "480x480": {
+      "video": {
+        "parent": [
+          "525_2/3D1"
+        ],
+        "framerate": "30000/1001",
+        "pixel-aspect-ratio": [
+          "16/9",
+          "4/3"
+        ]
+      }
+    },
+    "352x480": {
+      "video": {
+        "parent": [
+          "525_1/2D1"
+        ],
+        "framerate": "30000/1001",
+        "pixel-aspect-ratio": [
+          "80/33",
+          "20/11"
+        ]
+      }
+    },
+    "352x240": {
+      "video": {
+        "parent": [
+          "525SIF"
+        ],
+        "framerate": "30000/1001",
+        "pixel-aspect-ratio": [
+          "16/11",
+          "12/11"
+        ]
+      }
+    },
+    "EU_FPS": {
+      "video": {
+        "framerate": "25/1"
+      }
+    },
+    "720x576": {
+      "video": {
+        "parent": [
+          "625_D1",
+          "EU_FPS"
+        ],
+        "pixel-aspect-ratio": [
+          "64/45",
+          "16/15"
+        ]
+      }
+    },
+    "704x576": {
+      "video": {
+        "parent": [
+          "625_4SIF",
+          "EU_FPS"
+        ],
+        "pixel-aspect-ratio": [
+          "64/45",
+          "16/15"
+        ]
+      }
+    },
+    "544x576": {
+      "video": {
+        "parent": [
+          "625_3/4D1",
+          "EU_FPS"
+        ],
+        "pixel-aspect-ratio": [
+          "32/17",
+          "24/17"
+        ]
+      }
+    },
+    "480x576": {
+      "video": {
+        "parent": [
+          "625_2/3D1",
+          "EU_FPS"
+        ],
+        "pixel-aspect-ratio": [
+          "32/15",
+          "8/5"
+        ]
+      }
+    },
+    "352x576": {
+      "video": {
+        "parent": [
+          "625_1/2D1",
+          "EU_FPS"
+        ],
+        "pixel-aspect-ratio": [
+          "32/11",
+          "24/11"
+        ]
+      }
+    },
+    "352x288": {
+      "video": {
+        "parent": [
+          "CIF",
+          "EU_FPS"
+        ],
+        "pixel-aspect-ratio": [
+          "16/11",
+          "12/11"
+        ]
+      }
+    }
+  }
+}

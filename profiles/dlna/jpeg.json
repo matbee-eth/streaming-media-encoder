@@ -1,0 +1,119 @@
+{
+  "restrictions": {
+    "JPEG": {
+      "image": {
+        "name": "image/jpeg"
+      }
+    }
+  },
+  "profiles": {
+    "JPEG_SM_ICO": {
+      "mime": "image/jpeg",
+      "restriction": {
+        "image": [
+          {
+            "parent": [
+              "JPEG"
+            ],
+            "height": "48",
+            "width": "48"
+          }
+        ]
+      }
+    },
+    "JPEG_LRG_ICO": {
+      "mime": "image/jpeg",
+      "restriction": {
+        "image": [
+          {
+            "parent": [
+              "JPEG"
+            ],
+            "height": "120",
+            "width": "120"
+          }
+        ]
+      }
+    },
+    "JPEG_TN": {
+      "mime": "image/jpeg",
+      "restriction": {
+        "image": [
+          {
+            "parent": [
+              "JPEG"
+            ],
+            "height": {
+              "min": "1",
+              "max": "160"
+            },
+            "width": {
+              "min": "1",
+              "max": "160"
+            }
+          }
+        ]
+      }
+    },
+    "JPEG_SM": {
+      "mime": "image/jpeg",
+      "restriction": {
+        "image": [
+          {
+            "parent": [
+              "JPEG"
+            ],
+            "height": {
+              "min": "1",
+              "max": "480"
+            },
+            "width": {
+              "min": "1",
+              "max": "640"
+            }
+          }
+        ]
+      }
+    },
+    "JPEG_MED": {
+      "mime": "image/jpeg",
+      "restriction": {
+        "image": [
+          {
+            "parent": [
+              "JPEG"
+            ],
+            "height": {
+              "min": "1",
+              "max": "768"
+            },
+            "width": {
+              "min": "1",
+              "max": "1024"
+            }
+          }
+        ]
+      }
+    },
+    "JPEG_LRG": {
+      "mime": "image/jpeg",
+      "restriction": {
+        "image": [
+          {
+            "parent": [
+              "JPEG"
+            ],
+            "height": {
+              "min": "1",
+              "max": "4096"
+            },
+            "width": {
+              "min": "1",
+              "max": "4096"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "restrictions": {
+    "mpeg1": {
+      "video": {
+        "name": "video/mpeg",
+        "mpegversion": "1",
+        "bitrate": {
+          "min": "1150000",
+          "max": "1152000"
+        }
+      }
+    }
+  },
+  "profiles": {
+    "MPEG1": {
+      "mime": "video/mpeg",
+      "restriction": {
+        "container": [
+          {
+            "name": "video/mpeg",
+            "mpegversion": "1",
+            "systemstream": "true"
+          }
+        ],
+        "audio": [
+          {
+            "name": "audio/mpeg",
+            "mpegversion": "1",
+            "mpegaudioversion": "1",
+            "layer": "2",
+            "channels": "2",
+            "rate": "44100",
+            "bitrate": "224000"
+          }
+        ],
+        "video": [
+          {
+            "used": "in-strict",
+            "parent": [
+              "mpeg1",
+              "CIF"
+            ],
+            "framerate": "25/1"
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "mpeg1",
+              "525SIF"
+            ],
+            "framerate": "30000/1001"
+          },
+          {
+            "used": "in-strict",
+            "parent": [
+              "mpeg1",
+              "525SIF"
+            ],
+            "framerate": "24000/1001"
+          },
+          {
+            "used": "in-relaxed",
+            "parent": [
+              "mpeg1"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

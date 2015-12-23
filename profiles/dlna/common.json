@@ -1,0 +1,338 @@
+{
+  "restrictions": {
+    "MP4": {
+      "container": {
+        "name": "video/quicktime",
+        "variant": "iso"
+      }
+    },
+    "QT": {
+      "container": {
+        "name": "video/quicktime"
+      }
+    },
+    "3GP": {
+      "container": {
+        "name": "application/x-3gp"
+      }
+    },
+    "MKV": {
+      "container": {
+        "name": "video/x-matroska"
+      }
+    },
+    "AAC": {
+      "audio": {
+        "name": "audio/mpeg",
+        "mpegversion": [
+          "2",
+          "4"
+        ],
+        "profile": "lc",
+        "level": [
+          "1",
+          "2"
+        ],
+        "channels": {
+          "min": "1",
+          "max": "2"
+        },
+        "rate": [
+          "8000",
+          "11025",
+          "12000",
+          "16000",
+          "22050",
+          "24000",
+          "32000",
+          "44100",
+          "48000"
+        ]
+      }
+    },
+    "upto1920x1152": {
+      "video": {
+        "width": {
+          "min": "1",
+          "max": "1920"
+        },
+        "height": {
+          "min": "1",
+          "max": "1152"
+        }
+      }
+    },
+    "upto1920x1080": {
+      "video": {
+        "width": {
+          "min": "1",
+          "max": "1920"
+        },
+        "height": {
+          "min": "1",
+          "max": "1080"
+        }
+      }
+    },
+    "1920x1080": {
+      "video": {
+        "parent": [
+          "upto1920x1080"
+        ],
+        "width": "1920",
+        "height": "1080"
+      }
+    },
+    "upto1280x720": {
+      "video": {
+        "width": {
+          "min": "1",
+          "max": "1280"
+        },
+        "height": {
+          "min": "1",
+          "max": "720"
+        }
+      }
+    },
+    "1280x720": {
+      "video": {
+        "parent": [
+          "upto1280x720"
+        ],
+        "width": "1280",
+        "height": "720"
+      }
+    },
+    "625_D1": {
+      "video": {
+        "width": {
+          "min": "1",
+          "max": "720"
+        },
+        "height": {
+          "min": "1",
+          "max": "576"
+        }
+      }
+    },
+    "525_D1": {
+      "video": {
+        "width": "720",
+        "height": "480"
+      }
+    },
+    "625_4SIF": {
+      "video": {
+        "width": "704",
+        "height": "576"
+      }
+    },
+    "525_4SIF": {
+      "video": {
+        "width": "704",
+        "height": "480"
+      }
+    },
+    "VGA_16:9": {
+      "video": {
+        "width": "640",
+        "height": "360"
+      }
+    },
+    "VGA": {
+      "video": {
+        "width": "640",
+        "height": "480"
+      }
+    },
+    "625_3/4D1": {
+      "video": {
+        "width": "544",
+        "height": "576"
+      }
+    },
+    "525_3/4D1": {
+      "video": {
+        "width": "544",
+        "height": "480"
+      }
+    },
+    "625_2/3D1": {
+      "video": {
+        "width": "480",
+        "height": "576"
+      }
+    },
+    "525_2/3D1": {
+      "video": {
+        "width": "480",
+        "height": "480"
+      }
+    },
+    "525_1/2D1": {
+      "video": {
+        "width": "352",
+        "height": "480"
+      }
+    },
+    "625_1/2D1": {
+      "video": {
+        "width": "352",
+        "height": "576"
+      }
+    },
+    "9/16_VGA_4:3": {
+      "video": {
+        "width": "480",
+        "height": "360"
+      }
+    },
+    "9/16_VGA_16:9": {
+      "video": {
+        "width": "480",
+        "height": "270"
+      }
+    },
+    "CIF": {
+      "video": {
+        "width": {
+          "min": "1",
+          "max": "352"
+        },
+        "height": {
+          "min": "1",
+          "max": "288"
+        }
+      }
+    },
+    "525SIF": {
+      "video": {
+        "width": "352",
+        "height": "240"
+      }
+    },
+    "QVGA_4:3": {
+      "video": {
+        "width": "320",
+        "height": "240"
+      }
+    },
+    "QVGA_16:9": {
+      "video": {
+        "width": "320",
+        "height": "180"
+      }
+    },
+    "1/7_VGA_4:3": {
+      "video": {
+        "width": "240",
+        "height": "180"
+      }
+    },
+    "1/9_VGA_4:3": {
+      "video": {
+        "width": "208",
+        "height": "160"
+      }
+    },
+    "QCIF": {
+      "video": {
+        "width": "176",
+        "height": "144"
+      }
+    },
+    "525QSIF": {
+      "video": {
+        "width": "176",
+        "height": "120"
+      }
+    },
+    "SQVGA_4:3": {
+      "video": {
+        "width": "160",
+        "height": "120"
+      }
+    },
+    "1/16_VGA_4:3": {
+      "video": {
+        "width": "160",
+        "height": "112"
+      }
+    },
+    "SQVGA_16:9": {
+      "video": {
+        "width": "160",
+        "height": "90"
+      }
+    },
+    "SQCIF": {
+      "video": {
+        "width": "128",
+        "height": "96"
+      }
+    },
+    "1/7_VGA_16:9": {
+      "video": {
+        "width": "240",
+        "height": "135"
+      }
+    },
+    "15fps": {
+      "video": {
+        "framerate": {
+          "min": "0/1",
+          "max": "15/1"
+        }
+      }
+    },
+    "25fps": {
+      "video": {
+        "framerate": {
+          "min": "0/1",
+          "max": "25/1"
+        }
+      }
+    },
+    "29.97fps": {
+      "video": {
+        "framerate": {
+          "min": "0/1",
+          "max": "30000/1001"
+        }
+      }
+    },
+    "30fps": {
+      "video": {
+        "framerate": {
+          "min": "0/1",
+          "max": "30/1"
+        }
+      }
+    },
+    "50fps": {
+      "video": {
+        "framerate": {
+          "min": "0/1",
+          "max": "50/1"
+        }
+      }
+    },
+    "59.94fps": {
+      "video": {
+        "framerate": {
+          "min": "0/1",
+          "max": "60000/1001"
+        }
+      }
+    },
+    "60fps": {
+      "video": {
+        "framerate": {
+          "min": "0/1",
+          "max": "60/1"
+        }
+      }
+    }
+  }
+}

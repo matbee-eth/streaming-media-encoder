@@ -1,0 +1,201 @@
+{
+  "restrictions": {
+    "MPEG_PS": {
+      "container": {
+        "name": "video/mpeg",
+        "systemstream": "true",
+        "mpegversion": "2"
+      }
+    },
+    "MPEG_PS_VIDEO": {
+      "video": {
+        "name": "video/mpeg",
+        "systemstream": "false",
+        "mpegversion": "2",
+        "profile": [
+          "simple",
+          "main"
+        ],
+        "level": [
+          "low",
+          "main"
+        ],
+        "bitrate": {
+          "min": "1",
+          "max": "9800000"
+        }
+      }
+    },
+    "MPEG_PS_AUDIO": {
+      "audio": {
+        "rate": "48000"
+      }
+    }
+  },
+  "profiles": {
+    "MPEG_PS_PAL": {
+      "mime": "video/mpeg",
+      "parent": [
+        "MPEG_PS"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "MPEG_PS_AUDIO"
+            ],
+            "name": "audio/x-ac3"
+          },
+          {
+            "parent": [
+              "MPEG_PS_AUDIO"
+            ],
+            "name": "audio/x-private1-ac3"
+          },
+          {
+            "parent": [
+              "MPEG_PS_AUDIO"
+            ],
+            "name": "audio/ac3"
+          },
+          {
+            "parent": [
+              "MPEG_PS_AUDIO"
+            ],
+            "name": "audio/mpeg",
+            "mpegversion": [
+              "1",
+              "2"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_PS_AUDIO"
+            ],
+            "name": "audio/x-private1-lpcm"
+          }
+        ],
+        "video": [
+          {
+            "parent": [
+              "MPEG_PS_VIDEO",
+              "720x576"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_PS_VIDEO",
+              "704x576"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_PS_VIDEO",
+              "544x576"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_PS_VIDEO",
+              "480x576"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_PS_VIDEO",
+              "352x576"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_PS_VIDEO",
+              "352x288"
+            ]
+          }
+        ]
+      }
+    },
+    "MPEG_PS_NTSC": {
+      "mime": "video/mpeg",
+      "parent": [
+        "MPEG_PS"
+      ],
+      "restriction": {
+        "audio": [
+          {
+            "parent": [
+              "MPEG_PS_AUDIO"
+            ],
+            "name": "audio/x-ac3"
+          },
+          {
+            "parent": [
+              "MPEG_PS_AUDIO"
+            ],
+            "name": "audio/x-private1-ac3"
+          },
+          {
+            "parent": [
+              "MPEG_PS_AUDIO"
+            ],
+            "name": "audio/ac3"
+          },
+          {
+            "parent": [
+              "MPEG_PS_AUDIO"
+            ],
+            "name": "audio/mpeg",
+            "mpegversion": [
+              "1",
+              "2"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_PS_AUDIO"
+            ],
+            "name": "audio/x-private1-lpcm"
+          }
+        ],
+        "video": [
+          {
+            "parent": [
+              "MPEG_PS_VIDEO",
+              "720x480"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_PS_VIDEO",
+              "704x480"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_PS_VIDEO",
+              "480x480"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_PS_VIDEO",
+              "544x480"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_PS_VIDEO",
+              "352x480"
+            ]
+          },
+          {
+            "parent": [
+              "MPEG_PS_VIDEO",
+              "352x240"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
