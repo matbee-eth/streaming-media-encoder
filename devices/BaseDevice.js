@@ -6,6 +6,8 @@ var uuid = require('node-uuid');
 function BaseDevice(client) {
 	this.client = client;
 	this.id = uuid.v4();
+	this.name = 'Unknown';
+	this.ip = null;
        
 }
 
@@ -29,6 +31,23 @@ BaseDevice.prototype.pause = function(url, options) {
 
 BaseDevice.prototype.stop = function(url, options) {
 	throw new Error("STOP Not implemented!");
+};
+
+BaseDevice.prototype.toJSON = function() {
+	console.log("To JSON!", this.id);
+	var out = {}, self=this;
+	try {
+		Object.keys(this).map(function(key) {
+			if(key == 'client') return;
+			else {
+				out[key] = self[key];
+			}
+		});
+	} catch (E) {
+		console.error(E);
+		throw E;
+	}
+	return out;
 };
 
 

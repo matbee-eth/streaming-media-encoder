@@ -1,10 +1,13 @@
 var util = require('util'),
     Promise = require('bluebird');
-    BaseDevice = require('./BaseDevice');
+    BaseDeviceProfile = require('./BaseDevice');
 
 
 function ChromeCast(client) {
-	BaseDevice.call(this);
+	BaseDeviceProfile.call(this);
+	this.name = client.name;
+	this.ip = client.host;
+
 	this.client = Promise.promisifyAll(client);
  
 	this.cast = function(url, options) {
@@ -24,6 +27,6 @@ function ChromeCast(client) {
 	};
 }
 
-util.inherits(ChromeCast, BaseDevice);
+util.inherits(ChromeCast, BaseDeviceProfile);
 
 module.exports = ChromeCast;

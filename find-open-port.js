@@ -1,4 +1,5 @@
-var Promise = require('bluebird');
+var Promise = require('bluebird'),
+net = require('net');
 
 /**
  * scan the port range from the start port until we have an open port.

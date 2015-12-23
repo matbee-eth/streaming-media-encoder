@@ -14,11 +14,37 @@ var util = require('util'),
  * @param {uuid} id UUID for this engine instance
  * @param {string} url url where media can be found on the ffmpeg server
  */
-function Engine(profile, fileSize, id, url) {
+function Engine() {
     EventEmitter.call(this);
-    this.debug = profile.debug || false;
+    this.debug = true;
     this.streamers = {};
 }
+
+Engine.prototype.discover = function() {
+    return DeviceList.discover().then(function(devices) {
+        console.log("Fetched device list");
+        var d = {};
+                try {
+        Object.keys(devices).map(function(type) {
+            console.log(type);
+            d[type] = {};
+            Object.keys(devices[type]).map(function(guid) {
+                console.log(guid);
+                var dev = devices[type][guid];
+                if(!('toJSON' in dev)) {
+                    debugger;
+                }
+                console.log(devices, type, guid);
+                    d[type][guid] = dev.toJSON();
+            });
+        });
+                } catch (E) {
+                    throw E;
+                }
+        console.log("device list return: ", d);
+        return d;
+    });
+};
 
 Engine.prototype.getDeviceList = function() {
     return DeviceList;
@@ -55,4 +81,4 @@ Engine.prototype._log = function() {
 
 
 
-module.exports = Engine;
+module.exports = new Engine();

@@ -5,7 +5,7 @@ var util = require('util'),
 	MediaRendererClient = require('upnp-mediarenderer-client'),
 	DMRDevice = require('./devices/DigitalMediaRenderer'),
 	// chromecast
-	chromecasts = require('chromecasts')(),
+	chromecasts = require('chromecasts'),
 	ChromeCastDevice = require('./devices/ChromeCast');
 	// appletv
 
@@ -14,29 +14,36 @@ function DeviceList() {
 	var self = this;
 
 	this.devices = {
-		CHROMECAST : [],
-		DLNA : [],
-		APPLETV: []
+		CHROMECAST : {},
+		DLNA : {},
+		APPLETV: {}
 	};
 
 	this.chromecastSearching = false;
 	this.dlnaSearching = false;
 	this.appleTVSearching = false;
 
-
 	this.discover = function() {
+		console.log("Starting discovery");
 		this.findChromeCasts();
 		this.findDMRs();
 		this.emit("devicelist:discovering", this);
+		return new Promise(function(resolve) {
+			setTimeout(function() {
+				resolve(self.devices);
+			}, 500);
+		});
 	};
 
 	this.findChromeCasts = function() {
 		if(!this.chromecastSearching) {
+			console.log("Searching for chromecast devices");
 			this.chromecastSearching = true;
-			chromecasts.on('update', function (player) {
+			chromecasts().on('update', function (player) {
+				console.log("Found a chromecast", player.name);
 				player = new ChromeCastDevice(player);
-		    	if(self.devices.ChromeCast.indexOf(player) == -1) {
-		    		self.devices.ChromeCast.push(player);
+		    	if(!(player.id in self.devices.CHROMECAST)) {
+		    		self.devices.CHROMECAST[player.id] = player;
 					self.emit("devicelist:newdevice", {type: "ChromeCast", device: player});
 		    	}
 			});
@@ -46,15 +53,15 @@ function DeviceList() {
 	this.findDMRs = function() {
 		if(!this.dlnaSearching) {
 			this.dlnaSearching = true;
-
+			console.log("Searching for DLNA devices");
 			finder = new RendererFinder();
-
-			finder.on('found', function(info, msg, desc){	
+			finder.on('found', function(info, msg, desc){
+				console.log("Found a DLNA device: ", msg, info, desc);
 				var client = new MediaRendererClient(msg.location);
 				client.getSupportedProtocols(function(err, protocols) {
 					player = new DMRDevice(client, info, msg, desc, protocols);
-			    	if (self.devices.DLNA.indexOf(player) == -1) {
-			    		self.devices.DLNA.push(player);
+			    	if (!(player.id in self.devices.DLNA)) {
+			    		self.devices.DLNA[player.id] = player;
 				    	self.emit("devicelist:newdevice", {type: "DigitalMediaRenderer", device: player});
 			    	}
 			    });

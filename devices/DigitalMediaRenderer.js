@@ -4,9 +4,11 @@ var util = require('util'),
 
 
 function DigitalMediaRenderer(client, info, msg, desc, supportedProtocols) {
+	BaseDeviceProfile.call(this);
 
-	
-	BaseDevice.call(this);
+	this.id = desc.device.UDN.replace('uuid:', '');
+	this.name = desc.device.friendlyName;
+	this.ip = info.address;
 	this.client = Promise.promisifyAll(client);
 	this.info = info;
 	this.msg = msg;
@@ -77,5 +79,7 @@ function DigitalMediaRenderer(client, info, msg, desc, supportedProtocols) {
 	});
 
 }
+
+util.inherits(DigitalMediaRenderer, BaseDeviceProfile);
 
 module.exports = DigitalMediaRenderer;

@@ -1,7 +1,9 @@
 var Engine = require('./Engine'),
-	express = require('express');
-
-var app = express();
+	express = require('express'),
+	ip = require('my-local-ip'),
+	findOpenPort = require('./find-open-port'),
+	expressServer = null,
+	app = express();
 
 /**
  * This example starts an express server and serves one url: "/request-from-chromecast"
@@ -9,11 +11,12 @@ var app = express();
  * to have the video automagically transcoded through FFMPEG
  */
 
-expressServer = app.listen(port, function() {
-    var host = expressServer.address().address;
-    var port = expressServer.address().port;
+findOpenPort(3000).then(function(port) {
+	expressServer = app.listen(port, function() {
+	    var port = expressServer.address().port;
 
-    console.log('streaming-media-encoder Webserver listening at http://%s:%s', host, port);
+	    console.log('streaming-media-encoder Webserver listening at http://%s:%s', ip(), port);
+	});
 });
 
 app.get('/debug', function(req,res) {
@@ -25,9 +28,18 @@ app.get('/debug-info', function(req,res) {
 	res.json(Engine);
 });
 
-
 app.get('/discover', function(req, res) {
-	Engine.discover().then(res.json);
+	console.log("starting discovery");
+	Engine.discover().then(function(devices) {
+		console.log('500ms discovery done', devices);
+		res.json(devices);
+	}).catch(function(E) {
+		throw E;
+	});
+});
+
+app.get('/devicelist', function(req, res) {
+	res.json(Engine.getDeviceList());
 });
 
 app.get('/control/:deviceGUID', function(req,res) {
@@ -37,7 +49,7 @@ app.get('/control/:deviceGUID', function(req,res) {
 
 app.get('/cast/:deviceGUID', function(req, res) {
 
-	var device = Engine.getDevice(req.params.deviceGUID);
+	var device = Engine.getDeviceByGUID(req.params.deviceGUID);
 	var media;
 
 	if(req.query.url) {
@@ -53,7 +65,11 @@ app.get('/cast/:deviceGUID', function(req, res) {
 	}
 	// cast performs the media analyze
 	// and creating the new streamer for this media on devicename
-	Engine.cast(device, media).then(res.json);
+	var options = {
+		title: '#ripmatbee',
+		subtitles: './../matbee.srt'
+	};
+	Engine.cast(device, media, options).then(res.json);
 });
 
 
