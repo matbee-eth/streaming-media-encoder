@@ -1,19 +1,24 @@
+<!doctype html>
 <html ng-app='streaming-media-server'>
 <head>
-
+<link href="static/gui.css" rel="stylesheet" type='text/css' />
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,100,900' rel='stylesheet' type='text/css'>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular.min.js"></script>
 
 <script>
 
-var app = angular.app("streaming-media-server");
+var app = angular.module("streaming-media-server", []);
 app.factory("Backend", ["$http", function($http) {
 
-	this.discover = function() {
-		return $http.get('/discover').then(function(response) {
-			return response;
-		});
+	var service = {
+		discover : function() {
+			return $http.get('/discover').then(function(response) {
+				return response.data;
+			});
+		}
 	};
-
+	return service;
 }]);
 
 app.controller("DebugController", ["Backend", function(Backend) {
@@ -32,29 +37,56 @@ app.controller("DebugController", ["Backend", function(Backend) {
 
 <body ng-controller="DebugController as debug">
 
-<h1>streaming-media-server debug gui</h1>
+<h1>Streaming Media Server Debug Interface</h1>
 
-<h2>Discovered Device List</h2>
 
-<h3>ChromeCast:</h3>
-<ul ng-repeat="device in debug.devices.chromecast">
+<div class="menu" style="position: fixed; left: 0px; width: 200px; height:100%">
+
+<a id="discover" ng-click="debug.discover();"> <i class="material-icons">network_check</i> Discover Devices</a>
+
+<a id="discover" ng-click="debug.discover();"> <i class="material-icons">tap_and_play</i> Cast a Video</a>
+
+<a id="input" ng-click="debug.discover();"> <i class="material-icons">router</i> Active streams</a>
+
+<a id="input" ng-click="debug.discover();"> <i class="material-icons">movie_filter</i> Active encoders</a>
+
+<a id="input" ng-click="debug.discover();"> <i class="material-icons">timeline</i> Debug Info</a>
+
+</div>
+
+
+<div class="content" style="position:fixed; left:200px; right:0px; top:150px; bottom:0px;">
+
+<h1><i class="material-icons">devices</i> Discovered Devices</h1>
+
+<div style="float: left; width:calc(50% - 200px); margin: 40px; padding:40px; min-height: 100px; border: 1px solid white; border-radius: 15px;"> 
+<h1><i class="material-icons">cast_connected</i> ChromeCast</h1>
+<ul ng-repeat="device in debug.devices.CHROMECAST">
 	<li>Renderer name: {{device.name}}</li>
-	<li>Capabilities: {{device.capabilities}}</li>
-	<li>IP Address: {{device.address}}</li>
+	<li>IP Address: {{device.ip}}</li>
 </ul>
 
-<h3>DLNA:</h3>
-<ul ng-repeat="device in debug.devices.dlna">
-	<li>Renderer name: {{device.name}}</li>
-	<li>Capabilities: {{device.capabilities}}</li>
-	<li>IP Address: {{device.address}}</li>
-</ul>
+</div>
 
+<div style="float: left; width:calc(50% - 200px); margin: 40px; padding: 40px; min-height: 100px;  border: 1px solid white; border-radius: 15px;"> 
+
+
+<h1><i class="material-icons">important_devices</i> DLNA</h1>
+<ul ng-repeat="device in debug.devices.DLNA">
+	<li>Renderer name: {{device.name}}</li>
+	<li>IP Address: {{device.ip}}</li>
+</ul>
+</div>
+
+<div style="float: left; width: calc(100% - 200px); margin: 40px;">
 <h2>Available Device capability profiles</h2>
 <ul>
 
 </ul>
 
+</div>
+
+<div style="float: left; width: calc(100% - 200px)">
 
 <h2>Loaded media</h2>
 
@@ -66,6 +98,9 @@ app.controller("DebugController", ["Backend", function(Backend) {
 	<li>Input video codec</li>
 	<li>Input audio codec</li>
 </ul>
+
+</div>
+
 
 </body>
 </html>
