@@ -63,9 +63,11 @@ Engine.prototype.registerStreamer = function(Stream, app) {
 };
 
 Engine.prototype.cast = function(Device, Media, options) {
-    var Profile = Analyzer.analyze(Media);
-    var streamer = this.createStreamer(Media, Profile, Device);
-    Device.cast(streamer.getUrl(), options);
+    Analyzer.analyze(Media).then(function(Profile) {
+        Media.setMediaProfile(Profile);
+        var streamer = this.createStreamer(Media, Device);
+        Device.cast(streamer.getUrl(), options);
+    });
 };
 
 util.inherits(Engine, EventEmitter);

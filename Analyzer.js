@@ -7,10 +7,10 @@ var ffmpegServer = require('./FFmpegServer'),
     Promise = require('bluebird');
 
 
-function Analyzer() {
+function Analyzer(Media) {
+    var self = this;
 
-    "http://127.0.0.1:" + ffmpegPort + "/"
-
+    this.media = Media;
 
     /**
      * ffprobe gathers information from multimedia streams and prints it in human- and machine-readable fashion.
@@ -22,14 +22,10 @@ function Analyzer() {
     this.analyze = function(engine, options, cb) {
         _log("probing engine for data", engine, options);
         return new Promise(function(resolve, reject) {
-            if (engine.hasProbed) {
-                resolve(engine.probeData);
-            } else {
-                ffmpeg.ffprobe(Encoder.getUrl(engine.id), function(err, metadata) {
-                    engine.setProbeData(metadata);
-                    resolve(metadata);
-                });
-            }
+            ffmpeg.ffprobe(Engine.get(engine.id), function(err, metadata) {
+                self.media.setMediaProfile(metadata);
+                resolve(metadata);
+            });
         });
     };
 
@@ -58,7 +54,6 @@ function Analyzer() {
             return this._profile.transcodeNeeded(this._probeData);
         }
     };
-
 }
 
 

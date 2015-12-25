@@ -7,9 +7,10 @@ var util = require('util'),
  * - hooks up events that kicks off the encoder when needed
  * - commands the device profile to send the correct response headers for the Media
  */
-function Streamer(streamId, Encoder) {
+function Streamer(StreamId, Media, Profile, Device) {
+    this.media = Media;
     this.streamId = streamId;
-    this.encoder = Encoder;
+    this.encoder = new Encoder(Media, Device);
 }
 
 Streamer.prototype.getUrl = function() {

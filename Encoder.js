@@ -13,28 +13,10 @@ var util = require('util'),
  * Communicates with a device specific profile via an express server with ffmpeg
  * provides streamable output that can be piped directly into (for instance) Express
  */
-function Encoder() {
-    this.debug = false;
+function Encoder(Media, Device) {
 
-    this.profiles = {
-        "CHROMECAST": require('./profiles/Chromecast.js'),
-        "DLNA": require('./profiles/DLNA.js'),
-        // "APPLETV": require('./profiles/AppleTV.js')
-    };
-
-    /**
-     * build a decoding engine for a device profile
-     * @param  {Profile} profile  one of encoder.profiles
-     * @param  {int} fileSize size of the file to process
-     * @return {Engine} engine that knows how to decode video for device profile
-     */
-    this.profile = function(profile, fileSize) {
-        // generate ID
-        var id = uuid.v4();
-        var engine = new Engine(profile, fileSize, id, this.getUrl(id));
-        uuidRequest[id] = engine;
-        return engine;
-    };
+    this.media = Media;
+    this.device = Device;
 
     /**
      * Proxy forwarder for profile getFFmpegFlags
@@ -43,11 +25,11 @@ function Encoder() {
      */
     this.getFFmpegOptions = function() {
         var logger = this._log;
-        if (!this.hasProbed) {
+        if (!this.media.getMediaProfile()) {
             throw new Error("NO PROBE HAS BEEN DONE NOOB!");
         }
         logger("Engine.getFFmpegOptions");
-        return this._profile.getFFmpegFlags(this._probeData, this.forceTranscode);
+        return this.media.getMediaProfile().getFFmpegFlags();
     };
 
 
