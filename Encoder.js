@@ -1,10 +1,10 @@
 var util = require('util'),
     Promise = require('bluebird'),
     express = require('express'),
-    
+
     EventEmitter = require('events'),
     Engine = require('./Engine'),
-   
+
     net = require('net'),
     uuid = require('node-uuid');
 
@@ -50,7 +50,7 @@ function Encoder() {
         return this._profile.getFFmpegFlags(this._probeData, this.forceTranscode);
     };
 
-    
+
 
     /**
      * Fetch probe media for info and start transcoding via ffmpeg
@@ -62,19 +62,19 @@ function Encoder() {
         engine.forceTranscode = options.force;
         if (!engine.hasProbed) {
             return Encoder.probe(engine, {}).then(function(metadata) {
-              return Encoder.encode(engine, options);
+                return Encoder.encode(engine, options);
             });
         } else {
             return engine.getFFmpegOptions(Encoder.getUrl(engine.id)).then(function(inputOptions, outputOptions) {
                 _log('Got FFmpeg options :', inputOptions, outputOptions);
-                
+
                 var command = ffmpeg(Encoder.getUrl(engine.id));
                 if (options.startTime) {
                     command.seekInput(options.startTime);
                 }
 
                 command.on('start', function(commandLine) {
-                   _log('Spawned Ffmpeg with command: ', commandLine);
+                    _log('Spawned Ffmpeg with command: ', commandLine);
                 }).on('error', function() {
                     console.error(arguments);
                 });
@@ -84,10 +84,12 @@ function Encoder() {
 
                 return command;
             }, function(err) {
-              throw new Error('Encoder: Error on getting FFmpegOptions: ', err);
+                throw new Error('Encoder: Error on getting FFmpegOptions: ', err);
             });
         }
     },
+
+
 
     /**
      * Fetch loopback url for file or return base url
@@ -136,10 +138,10 @@ function Encoder() {
 
 
 _log = function() {
-  if(encoder.debug) {
-    console.log("ENCODER: ");
-    console.log.apply(this, arguments);
-  }
+    if (encoder.debug) {
+        console.log("ENCODER: ");
+        console.log.apply(this, arguments);
+    }
 };
 
 var encoder = new Encoder();

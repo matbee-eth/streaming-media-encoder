@@ -1,49 +1,25 @@
-var util = require('util');
+var util = require('util'),
+    Engine = require('./Engine');
 
 /**
  * The streamer handles the HTTP communication part for streaming
- * - Fetches info about the desired stream id from the engine 
+ * - Fetches info about the desired stream id from the engine
  * - hooks up events that kicks off the encoder when needed
  * - commands the device profile to send the correct response headers for the Media
  */
 function Streamer(streamId, Encoder) {
-	this.streamId = streamId;
-	this.encoder = Encoder;
+    this.streamId = streamId;
+    this.encoder = Encoder;
 }
 
+Streamer.prototype.getUrl = function() {
+    return this.encoder.getUrl() + '/' + this.streamId;
+};
+
 Streamer.prototype.handle = function(request, response) {
-	// handle request headers
-	// attach streamneeded stuff
-	// pipe stuff from onRequest below 
-};
-
-
-Streamer.prototype.onHeadRequest = function (req, res) {
-    this._log("onHeadRequest", req, res);
-    res.end();
-};
-
-Streamer.prototype.onRequest = function(req, res) {
-    res.setHeader('Accept-Ranges', 'bytes');
-    res.setHeader('Content-Type', this.contentType);
-    res.statusCode = 200;
-    var range;
-    if (req.headers.range) {
-        range = rangeParser(this._fileSize, req.headers.range)[0];
-        res.setHeader(
-          'Content-Range',
-          'bytes ' + range.start + '-' + range.end + '/' + this._fileSize
-        );
-        res.setHeader('Content-Length', range.end - range.start + 1);
-    } else {
-        res.setHeader('Content-Length', this._fileSize);
-    }
-    this.emit("streamNeeded", range.start, range.end, function (stream) {
-        stream.pipe(res);
-        stream.on('end', function () {
-            res.end();
-        });
-    });
+    // handle request headers
+    // attach streamneeded stuff
+    // pipe stuff from onRequest below 
 };
 
 
@@ -69,19 +45,20 @@ Streamer.prototype.startEncoder = function(time) {
 
 Streamer.prototype.noTranscoding = function(req, res) {
 
-	req.connection.setTimeout(Number.MAX_SAFE_INTEGER);
+    req.connection.setTimeout(Number.MAX_SAFE_INTEGER);
 
-    fs.stat(activeFile, function (err, stats) {
+    fs.stat(activeFile, function(err, stats) {
         var filesize = stats.size;
 
         sendFile(activeFile, filesize);
     });
-    function sendFile (filePath, filesize) {
+
+    function sendFile(filePath, filesize) {
         var range;
         var filename = require('path').basename(filePath);
 
         //res.setHeader('Accept-Ranges', 'bytes');
-     
+
         if (req.headers.range) {
             range = rangeParser(filesize, req.headers.range)[0];
             res.statusCode = 206;
@@ -90,8 +67,8 @@ Streamer.prototype.noTranscoding = function(req, res) {
             console.log('range %s', JSON.stringify(range));
 
             res.setHeader(
-              'Content-Range',
-              'bytes ' + range.start + '-' + range.end + '/' + filesize
+                'Content-Range',
+                'bytes ' + range.start + '-' + range.end + '/' + filesize
             );
             res.setHeader('Content-Length', range.end - range.start + 1);
         } else {
