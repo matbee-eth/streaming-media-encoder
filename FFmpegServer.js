@@ -19,44 +19,15 @@ FFMpegServer = function() {
         });
     });
 
-    this.onHeadRequest = function(req, res) {
-        this._log("onHeadRequest", req, res);
-        res.end();
-    };
-
-    this.onRequest = function(req, res) {
-        res.setHeader('Accept-Ranges', 'bytes');
-        res.setHeader('Content-Type', this.contentType);
-        res.statusCode = 200;
-        var range;
-        if (req.headers.range) {
-            range = rangeParser(this._fileSize, req.headers.range)[0];
-            res.setHeader(
-                'Content-Range',
-                'bytes ' + range.start + '-' + range.end + '/' + this._fileSize
-            );
-            res.setHeader('Content-Length', range.end - range.start + 1);
-        } else {
-            res.setHeader('Content-Length', this._fileSize);
-        }
-        this.emit("streamNeeded", range.start, range.end, function(stream) {
-            stream.pipe(res);
-            stream.on('end', function() {
-                res.end();
-            });
-        });
-    };
-
-
-
     /**
      * ffmpeg passthrough for GET requests to fetch a file
      * @param  {Request} req httprequest
      * @param  {Response} res http response
      */
-    app.get('/:fileId', function(req, res) {
-        if (uuidRequest[req.params.fileId]) {
-            uuidRequest[req.params.fileId].onRequest(req, res);
+    this.app.get('/:fileId', function(req, res) {
+        var streamer = Engine.getStreamer(req.params.fileId);
+        if (streamer) {
+            streamer.handle('GET', req, res);
         } else {
             res.end();
         }
@@ -67,9 +38,10 @@ FFMpegServer = function() {
      * @param  {Request} req httprequest
      * @param  {Response} res http response
      */
-    app.head('/:fileId', function(req, res) {
-        if (uuidRequest[req.params.fileId]) {
-            uuidRequest[req.params.fileId].onHeadRequest(req, res);
+    this.app.head('/:fileId', function(req, res) {
+        var streamer = Engine.getStreamer(req.params.fileId);
+        if (streamer) {
+            streamer.handle('HEAD', req, res);
         } else {
             res.end();
         }
@@ -85,7 +57,7 @@ FFMpegServer = function() {
     };
 
 
-}
+};
 
 
 module.exports = new FFMpegServer();

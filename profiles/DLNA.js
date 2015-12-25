@@ -1,6 +1,6 @@
 var util = require('util'),
     Promise = require('bluebird');
-    BaseDeviceProfile = require('./BaseDeviceProfile');
+BaseDeviceProfile = require('./BaseDeviceProfile');
 
 function DLNAProfile() {
     BaseDeviceProfile.call(this);
@@ -32,7 +32,7 @@ function DLNAProfile() {
        AVC_MP4_MP_HD_1080i_AAC
        AVC_MP4_MP_HD_720p_AAC
   */
- 
+
 
     /*
         DLNA.ORG_PN= media profile
@@ -44,7 +44,7 @@ function DLNAProfile() {
     this.transcodedMediaProfile = 'AVC_MP4_HP_HD_AAC';
 
     this.getcontentFeaturesHeader = function() {
-        var pn = 'DLNA.ORG_PN='+this.transcodedMediaProfile+';';
+        var pn = 'DLNA.ORG_PN=' + this.transcodedMediaProfile + ';';
         var op = 'DLNA.ORG_OP=10;'; // we only support time seek ranges for now
         var cn = 'DLNA.ORG_CI=1;'; // always transcoded for now
         var ps = 'DLNA.ORG_PS=1'; // play speed normal supported for now
@@ -52,22 +52,22 @@ function DLNAProfile() {
         // DLNA.ORG_FLAGS, padded with 24 trailing 0s
 
         var dlna_flags = {
-          senderPaced                       : (1 << 31), // 0x80000000
-          lsopTimeBasedSeekSupported        : (1 << 30), // 0x40000000
-          lsopByteBasedSeekSupported        : (1 << 29), // 0x20000000
-          playcontainerSupported            : (1 << 28), // 0x10000000
-          s0IncreasingSupported             : (1 << 27), // 0x8000000
-          sNIncreasingSupported             : (1 << 26), // 0x4000000
-          rtspPauseSupported                : (1 << 25), // 0x2000000
-          streamingTransferModeSupported    : (1 << 24), // 0x1000000
-          interactiveTransferModeSupported  : (1 << 23), // 0x800000
-          backgroundTransferModeSupported   : (1 << 22), // 0x400000
-          connectionStallingSupported       : (1 << 21), // 0x200000
-          dlnaVersion15Supported            : (1 << 20) // 0x100000
+            senderPaced: (1 << 31), // 0x80000000
+            lsopTimeBasedSeekSupported: (1 << 30), // 0x40000000
+            lsopByteBasedSeekSupported: (1 << 29), // 0x20000000
+            playcontainerSupported: (1 << 28), // 0x10000000
+            s0IncreasingSupported: (1 << 27), // 0x8000000
+            sNIncreasingSupported: (1 << 26), // 0x4000000
+            rtspPauseSupported: (1 << 25), // 0x2000000
+            streamingTransferModeSupported: (1 << 24), // 0x1000000
+            interactiveTransferModeSupported: (1 << 23), // 0x800000
+            backgroundTransferModeSupported: (1 << 22), // 0x400000
+            connectionStallingSupported: (1 << 21), // 0x200000
+            dlnaVersion15Supported: (1 << 20) // 0x100000
         };
         var supportedFlags = dlna_flags.connectionStallingSupported | dlna_flags.streamingTransferModeSupported | dlna_flags.dlnaVersion15Supported;
-        var flags = 'DLNA.ORG_FLAGS='+(supportedFlags >>> 0).toString(16); 
-        return ['http-get:*:',this.contentType,':',pn,op,cn,ps,flags,'000000000000000000000000'].join('');
+        var flags = 'DLNA.ORG_FLAGS=' + (supportedFlags >>> 0).toString(16);
+        return [pn, op, cn, ps, flags, '000000000000000000000000'].join('');
     };
 
     this.contentType = 'video/mp4';
@@ -78,12 +78,12 @@ function DLNAProfile() {
     this.httpHeaders = {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'video/mp4',
-        'protocolInfo': 'http-get:*:'+this.contentType+':*',
+        'protocolInfo': 'http-get:*:' + this.contentType + ':*',
         'contentFeatures.dlna.org': this.getContentFeaturesHeader(),
         'transferMode.dlna.org': 'Streaming'
     };
 
-    this.getHeaders= function() {
+    this.getHeaders = function() {
         return this.httpHeaders;
     }
 
@@ -104,23 +104,23 @@ function DLNAProfile() {
         PRAGMA
         > https://github.com/cmtsij/Vizio_XWR100_GPL/blob/e0b5d08ea08fd23400b4e85d772f83dcf16d999a/GTK/user/apps/dlna-GTK-DMS/HttpFiles/DlnaHttp.h
      */
-    
+
     this.mimeTypeRemapHack = function(dmrFriendlyName, mime) {
         var hacks = {
-            'Samsung DTV DMR' : {
-                'video/x-matroska' : 'video/x-mkv',
-                'video/x-avi' : 'video/x-msvideo',
+            'Samsung DTV DMR': {
+                'video/x-matroska': 'video/x-mkv',
+                'video/x-avi': 'video/x-msvideo',
                 'application/x-subrip': 'smi/caption'
             }
         };
-        return (dmrFriendlyName in hacks && mim in hacks[dmrFriendlyName]) ? hacks[dmrFriendlyName][mime] : mime; 
+        return (dmrFriendlyName in hacks && mim in hacks[dmrFriendlyName]) ? hacks[dmrFriendlyName][mime] : mime;
     };
 
     this.processSupportedProtocols = function(capabilities) {
         console.log("Process capabilities!", capabilities);
     };
 
-    this.getFFmpegFlags = function (probeData, forceTranscode) {
+    this.getFFmpegOptions = function(probeData, forceTranscode) {
         var analysis = this.transcodeNeeded(probeData),
             canPlay = analysis.needsTranscoding,
             formatNeedsTranscoding = analysis.formatNeedsTranscoding,
@@ -131,19 +131,19 @@ function DLNAProfile() {
 
         if (analysis.isVideoMedia) {
             if (audioNeedsTranscoding || audioShiftCorrect) {
-                if(audioShiftCorrect) {
+                if (audioShiftCorrect) {
                     inputOptions.push(audioShiftCorrect);
                 }
                 outputOptions.push("-acodec aac");
             } else {
                 outputOptions.push("-acodec copy");
             }
-            
+
             if (videoNeedsTranscoding || rescaleVideo || subtitle) {
-                if(subtitle) {
+                if (subtitle) {
                     outputOptions.push(subtitle);
                 }
-                if(rescaleVideo) {
+                if (rescaleVideo) {
                     outputOptions.push(rescaleVideo);
                 }
                 outputOptions.push("-vcodec libx264");

@@ -6,7 +6,8 @@ var util = require('util'),
     Engine = require('./Engine'),
 
     net = require('net'),
-    uuid = require('node-uuid');
+    uuid = require('node-uuid'),
+    ffmpeg = require('fluent-ffmpeg');
 
 /**
  * The encoder is where the magic happens.
@@ -17,6 +18,8 @@ function Encoder(Media, Device) {
 
     this.media = Media;
     this.device = Device;
+
+    this.device.setContentType(this.media.getContentType);
 
     /**
      * Proxy forwarder for profile getFFmpegFlags
@@ -32,45 +35,29 @@ function Encoder(Media, Device) {
         return this.media.getMediaProfile().getFFmpegFlags();
     };
 
+    this.streamRange = function(start, end) {
+        return this.media.getFFmpegOptions(Encoder.getUrl(engine.id)).then(function(inputOptions, outputOptions) {
+            _log('Got FFmpeg options :', inputOptions, outputOptions);
 
+            var command = ffmpeg(Encoder.getUrl(engine.id));
+            if (options.startTime) {
+                command.seekInput(options.startTime);
+            }
 
-    /**
-     * Fetch probe media for info and start transcoding via ffmpeg
-     * @param  {Engine}   engine  device specific engine to use
-     * @param  {object}   options Options: (currently only startTime and force )
-     * @param  {Function} cb      callback to execute on encoding progress
-     */
-    this.encode = function(engine, options) {
-        engine.forceTranscode = options.force;
-        if (!engine.hasProbed) {
-            return Encoder.probe(engine, {}).then(function(metadata) {
-                return Encoder.encode(engine, options);
+            command.on('start', function(commandLine) {
+                _log('Spawned Ffmpeg with command: ', commandLine);
+            }).on('error', function() {
+                console.error(arguments);
             });
-        } else {
-            return engine.getFFmpegOptions(Encoder.getUrl(engine.id)).then(function(inputOptions, outputOptions) {
-                _log('Got FFmpeg options :', inputOptions, outputOptions);
 
-                var command = ffmpeg(Encoder.getUrl(engine.id));
-                if (options.startTime) {
-                    command.seekInput(options.startTime);
-                }
+            command.inputOptions(inputOptions);
+            command.outputOptions(outputOptions);
 
-                command.on('start', function(commandLine) {
-                    _log('Spawned Ffmpeg with command: ', commandLine);
-                }).on('error', function() {
-                    console.error(arguments);
-                });
-
-                command.inputOptions(inputOptions);
-                command.outputOptions(outputOptions);
-
-                return command;
-            }, function(err) {
-                throw new Error('Encoder: Error on getting FFmpegOptions: ', err);
-            });
-        }
-    },
-
+            return command;
+        }, function(err) {
+            throw new Error('Encoder: Error on getting FFmpegOptions: ', err);
+        });
+    };
 
 
     /**
@@ -80,7 +67,7 @@ function Encoder(Media, Device) {
      */
     this.getUrl = function(fileId) {
         return "http://127.0.0.1:" + ffmpegPort + "/" + (fileId || '');
-    }
+    };
 
     /**
      * Proxy forwarder for BaseDeviceProfile.prototype.rescale
