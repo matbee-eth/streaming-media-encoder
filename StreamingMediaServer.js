@@ -46,24 +46,27 @@ app.get('/devicelist', function(req, res) {
 });
 
 app.get('/control/:deviceGUID', function(req, res) {
-    var device = Engine.getDeviceByGUID(req.params.deviceGUID);
+    var device = Engine.getDevice(req.params.deviceGUID);
     device.control(req.query.action, req.query).then(res.json);
 });
 
 app.get('/cast/:deviceGUID', function(req, res) {
 
-    var device = Engine.getDeviceByGUID(req.params.deviceGUID);
+    var device = Engine.getDevice(req.params.deviceGUID);
     var media;
 
     if (req.query.url) {
+        var HTTPMedia = require('./media/HTTPMedia');
         media = new HTTPMedia(req.query.path);
     }
 
     if (req.query.path) {
-        media = new LocalFileMedia(req.query.path);
+        var FileMedia = require('./media/FileMedia');
+        media = new FileMedia(req.query.path);
     }
 
     if (req.query.magnet) {
+        var TorrentMedia = require('./media/TorrentMedia');
         media = new TorrentMedia(req.query.magnet);
     }
     // cast performs the media analyze
@@ -77,7 +80,7 @@ app.get('/cast/:deviceGUID', function(req, res) {
 
 
 app.get('/stream/:streamId', function(req, res) {
-    var streamer = Engine.getStreamer(streamId, app);
+    var streamer = Engine.getStreamer(streamId);
     streamer.handle(req, res);
 });
 

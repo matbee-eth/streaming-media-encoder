@@ -33,6 +33,7 @@ BaseMedia.prototype.getMediaProfile = function() {
 };
 
 BaseMedia.prototype.setMediaProfile = function(profile) {
+    console.log("Base Media Profile set for ", this.filename, profile);
     this.profile = profile;
     this.isAnalyzed = true;
     return this;

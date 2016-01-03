@@ -15,14 +15,13 @@ function Analyzer(Media) {
     /**
      * ffprobe gathers information from multimedia streams and prints it in human- and machine-readable fashion.
      * this is needed by the engine to determine format info.
-     * @param  {Engine}   engine  encoding engine to pass data to
-     * @param  {object}   options ffprobe options, currently unused
-     * @param  {Function} cb callback when probe is ready
      */
-    this.analyze = function(engine, options, cb) {
-        _log("probing engine for data", engine, options);
+    this.analyze = function() {
+        console.log("Performing FFMPEG probe");
         return new Promise(function(resolve, reject) {
-            ffmpeg.ffprobe(Engine.get(engine.id), function(err, metadata) {
+            console.log("Get URL for media: ", self.media, ffmpegServer.getUrl(self.media));
+            ffmpeg.ffprobe(ffmpegServer.getUrl(self.media), function(err, metadata) {
+                console.log("FFProbe returned metadata: ", metadata);
                 self.media.setMediaProfile(metadata);
                 resolve(metadata);
             });
@@ -42,18 +41,6 @@ function Analyzer(Media) {
         }
     };
 
-    /**
-     * Analyze video media with ffMpeg probe and determine if media needs transcoding
-     * @see BaseProfile.prototype.transcodeNeeded
-     * @return {object} BaseProfile.prototype.transcodeNeeded result
-     */
-    this.analyze = function() {
-        if (!this.hasProbed) {
-            return this.probe().then(this.analyze.bind(this));
-        } else {
-            return this._profile.transcodeNeeded(this._probeData);
-        }
-    };
 }
 
 

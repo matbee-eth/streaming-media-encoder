@@ -1,6 +1,6 @@
 var util = require('util'),
-    Promise = require('bluebird');
-BaseDeviceProfile = require('./BaseDevice');
+    Promise = require('bluebird'),
+    BaseDeviceProfile = require('./BaseDevice');
 
 
 function DigitalMediaRenderer(client, info, msg, desc, supportedProtocols) {

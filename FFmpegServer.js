@@ -4,18 +4,18 @@ var findOpenPort = require('./find-open-port'),
     Engine = require('./Engine');
 
 
-FFMpegServer = function() {
+FFMpegServer = function(Engine) {
 
     var self = this;
-
+    this.engine = Engine;
     this.port = 3001;
     this.server = null;
     this.app = express();
 
     findOpenPort(3001).then(function(port) {
         self.port = port;
-        self.server = app.listen(port, function() {
-            _log('FFmpeg Webserver listening at %s', self.getUrl());
+        self.server = self.app.listen(port, function() {
+            console.log('FFmpeg Webserver listening at %s', self.getUrl());
         });
     });
 
@@ -25,7 +25,8 @@ FFMpegServer = function() {
      * @param  {Response} res http response
      */
     this.app.get('/:fileId', function(req, res) {
-        var streamer = Engine.getStreamer(req.params.fileId);
+        console.log('ENGINE!', this.engine);
+        var streamer = require('./Engine').getStreamer(req.params.fileId);
         if (streamer) {
             streamer.handle('GET', req, res);
         } else {
@@ -53,11 +54,11 @@ FFMpegServer = function() {
      * @return {string} url
      */
     this.getUrl = function(Media) {
-        return "http://127.0.0.1:" + this.getUrl() + "/" + (Media ? Media.getID() : '');
+        return "http://127.0.0.1:" + this.port + "/" + (Media ? Media.id : '');
     };
 
 
 };
 
 
-module.exports = new FFMpegServer();
+module.exports = new FFMpegServer(Engine);

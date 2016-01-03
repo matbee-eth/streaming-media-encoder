@@ -5,7 +5,7 @@ var util = require('util'),
 function FileMedia(filename) {
     BaseMedia.call(this);
     this.filename = filename;
-    this.filesize = fs.statSync(filename);
+    this.filesize = fs.statSync(filename).size;
 
     this.streamNeeded = function(startByte, endByte, cb) {
         console.info("streamNeeded", startByte, endByte);

@@ -6,7 +6,9 @@ var util = require('util'),
     DMRDevice = require('./devices/DigitalMediaRenderer'),
     // chromecast
     chromecasts = require('chromecasts'),
-    ChromeCastDevice = require('./devices/ChromeCast');
+    ChromeCastDevice = require('./devices/ChromeCast'),
+
+    HTML5Device = require('./devices/HTML5');
 // appletv
 
 function DeviceList() {
@@ -14,6 +16,7 @@ function DeviceList() {
     var self = this;
 
     this.devices = {
+        HTML5: {},
         CHROMECAST: {},
         DLNA: {},
         APPLETV: {}
@@ -22,9 +25,11 @@ function DeviceList() {
     this.chromecastSearching = false;
     this.dlnaSearching = false;
     this.appleTVSearching = false;
+    this.HTML5Searching = false;
 
     this.discover = function() {
         console.log("Starting discovery");
+        this.createHTML5Device();
         this.findChromeCasts();
         this.findDMRs();
         this.emit("devicelist:discovering", this);
@@ -33,6 +38,20 @@ function DeviceList() {
                 resolve(self.devices);
             }, 1000);
         });
+    };
+
+    this.createHTML5Device = function() {
+        if (!this.HTML5Searching) {
+            this.HTML5Searching = true;
+            var player = new HTML5Device();
+            if (!(player.id in self.devices.HTML5)) {
+                self.devices.HTML5[player.id] = player;
+                self.emit("devicelist:newdevice", {
+                    type: "HTML5",
+                    device: player
+                });
+            }
+        }
     };
 
     this.findChromeCasts = function() {
@@ -88,9 +107,9 @@ function DeviceList() {
     this.getDeviceByGUID = function(guid) {
         var found = null;
         Object.keys(this.devices).map(function(deviceclass) {
-            this.devices[deviceclass].map(function(device) {
-                if (device.guid == guid) {
-                    found = device;
+            Object.keys(self.devices[deviceclass]).map(function(id) {
+                if (id == guid) {
+                    found = self.devices[deviceclass][guid];
                 }
             });
         });

@@ -1,8 +1,8 @@
 var util = require('util'),
     EventEmitter = require('events'),
+    uuid = require('node-uuid'),
     pump = require('pump'),
     rangeParser = require('range-parser'),
-    ffmpeg = require('fluent-ffmpeg'),
     Promise = require('bluebird'),
     DeviceList = require('./DeviceList'),
     Streamer = require('./Streamer'),
@@ -19,68 +19,72 @@ function Engine() {
     EventEmitter.call(this);
     this.debug = true;
     this.streamers = {};
+
+    var self = this;
+
+    this.discover = function() {
+        return DeviceList.discover().then(function(devices) {
+            var d = {};
+            try {
+                Object.keys(devices).map(function(type) {
+                    console.log(type);
+                    d[type] = {};
+                    Object.keys(devices[type]).map(function(guid) {
+                        var dev = devices[type][guid];
+                        d[type][guid] = dev.toJSON();
+                    });
+                });
+            } catch (E) {
+                throw E;
+            }
+            return d;
+        });
+    };
+
+    this.getDeviceList = function() {
+        return DeviceList;
+    };
+
+    this.getDevice = function(DeviceGUID) {
+        return DeviceList.getDeviceByGUID(DeviceGUID);
+    };
+
+    this.createStreamer = function(Media, Device) {
+        var id = uuid.v4();
+        this.streamers[id] = new Streamer(id, Media, Device);
+        return this.streamers[id];
+    };
+
+    this.getStreamer = function(StreamGUID) {
+        return this.streamers[StreamGUID];
+    };
+
+    this.registerStreamer = function(Stream) {
+        this.streamers[Stream.guid] = Stream;
+    };
+
+    this.cast = function(Device, Media, options) {
+        var analyzer = new Analyzer(Media);
+        return analyzer.analyze().then(function(Profile) {
+            Media.setMediaProfile(Profile);
+            var streamer = self.createStreamer(Media, Device);
+            return Device.cast(streamer.getUrl(), options);
+        });
+    };
+
+
+    this._log = function() {
+        if (this.debug) {
+            console.log("ENGINE: ");
+            console.log.apply(this, arguments);
+        }
+    };
 }
 
-Engine.prototype.discover = function() {
-    return DeviceList.discover().then(function(devices) {
-        var d = {};
-        try {
-            Object.keys(devices).map(function(type) {
-                console.log(type);
-                d[type] = {};
-                Object.keys(devices[type]).map(function(guid) {
-                    var dev = devices[type][guid];
-                    d[type][guid] = dev.toJSON();
-                });
-            });
-        } catch (E) {
-            throw E;
-        }
-        return d;
-    });
-};
 
-Engine.prototype.getDeviceList = function() {
-    return DeviceList;
-};
-
-Engine.prototype.getDevice = function(DeviceGUID) {
-    return DeviceList.getDeviceByGUID(DeviceGUID);
-};
-
-Engine.prototype.createStreamer = function(Media, Profile, Device) {
-    var id = uuid.v4();
-    this.streamers[id] = new Streamer(id, Media, Profile, Device);
-    return this.streamers[id];
-};
-
-Engine.prototype.getStreamer = function(StreamGUID, app) {
-    return this.streamers[StreamGUID];
-};
-
-Engine.prototype.registerStreamer = function(Stream, app) {
-    this.streamers[Stream.guid] = Stream;
-};
-
-Engine.prototype.cast = function(Device, Media, options) {
-    Analyzer.analyze(Media).then(function(Profile) {
-        Media.setMediaProfile(Profile);
-        var streamer = this.createStreamer(Media, Device);
-        Device.cast(streamer.getUrl(), options);
-    });
-};
 
 util.inherits(Engine, EventEmitter);
 
-Engine.prototype._log = function() {
-    if (this.debug) {
-        console.log("ENGINE: ");
-        console.log.apply(this, arguments);
-    }
-};
 
-
-
-
-
+console.log("CREATING NEW ENGINE!");
 module.exports = new Engine();

@@ -1,5 +1,6 @@
 var util = require('util'),
     Engine = require('./Engine'),
+    Encoder = require('./Encoder'),
     METHOD_GET = 'GET',
     METHOD_HEAD = 'HEAD';
 
@@ -9,7 +10,7 @@ var util = require('util'),
  * - hooks up events that kicks off the encoder when needed
  * - commands the device profile to send the correct response headers for the Media
  */
-function Streamer(StreamId, Media, Profile, Device) {
+function Streamer(StreamId, Media, Device) {
     this.id = StreamId;
     this.encoder = new Encoder(Media, Device);
     this.contentType = this.encoder.getContentType();
@@ -136,7 +137,7 @@ Streamer.prototype.noTranscoding = function(req, res) {
         // Stream the video into the video tag
         pump(fs.createReadStream(filePath, range), res);
     }
-}
+};
 
 
 

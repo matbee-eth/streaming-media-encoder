@@ -8,12 +8,17 @@ function BaseDevice(client) {
     this.id = uuid.v4();
     this.name = 'Unknown';
     this.ip = null;
+    this.contentType = null;
 
 }
+
+BaseDevice.prototype.setContentType = function(type) {
+    this.contentType = type;
+};
 
 BaseDevice.prototype.handleSeek = function(req, res) {
     throw new Error("HANDLESEEK Not Implemented!");
-}
+};
 
 /**
  * cast media to a device
@@ -36,6 +41,8 @@ BaseDevice.prototype.pause = function(url, options) {
 BaseDevice.prototype.stop = function(url, options) {
     throw new Error("STOP Not implemented!");
 };
+
+
 
 BaseDevice.prototype.toJSON = function() {
     console.log("To JSON!", this.id);

@@ -7,7 +7,8 @@ var util = require('util'),
 
     net = require('net'),
     uuid = require('node-uuid'),
-    ffmpeg = require('fluent-ffmpeg');
+    ffmpeg = require('fluent-ffmpeg'),
+    FFMpegServer = require('./FFmpegServer');
 
 /**
  * The encoder is where the magic happens.
@@ -18,7 +19,11 @@ function Encoder(Media, Device) {
 
     this.media = Media;
     this.device = Device;
-    this.device.setContentType(this.media.getContentType);
+
+    this.getContentType = function() {
+        return 'video/mp4';
+    };
+
 
     /**
      * Proxy forwarder for profile getFFmpegFlags
@@ -26,11 +31,10 @@ function Encoder(Media, Device) {
      * @return {Promise} promise that resolves with inputOptions and outputOptions
      */
     this.getFFmpegOptions = function() {
-        var logger = this._log;
         if (!this.media.getMediaProfile()) {
             throw new Error("NO PROBE HAS BEEN DONE NOOB!");
         }
-        logger("Engine.getFFmpegOptions");
+        console.log("Engine.getFFmpegOptions");
         return this.media.getMediaProfile().getFFmpegFlags();
     };
 
@@ -42,7 +46,7 @@ function Encoder(Media, Device) {
      */
     this.streamRange = function(start, end) {
         return this.media.getFFmpegOptions(Encoder.getUrl(engine.id)).then(function(inputOptions, outputOptions) {
-            _log('Got FFmpeg options :', inputOptions, outputOptions);
+            console.log('Got FFmpeg options :', inputOptions, outputOptions);
 
             var command = ffmpeg(Encoder.getUrl(engine.id));
             if (options.startTime) {
@@ -50,7 +54,7 @@ function Encoder(Media, Device) {
             }
 
             command.on('start', function(commandLine) {
-                _log('Spawned Ffmpeg with command: ', commandLine);
+                console.log('Spawned Ffmpeg with command: ', commandLine);
             }).on('error', function() {
                 console.error(arguments);
             });
@@ -71,7 +75,7 @@ function Encoder(Media, Device) {
      * @return {string} url
      */
     this.getUrl = function(fileId) {
-        return "http://127.0.0.1:" + ffmpegPort + "/" + (fileId || '');
+        return FFMpegServer.getUrl(this.media);
     };
 
     /**
@@ -107,16 +111,7 @@ function Encoder(Media, Device) {
         return this;
     };
 
-};
+}
 
 
-
-_log = function() {
-    if (encoder.debug) {
-        console.log("ENCODER: ");
-        console.log.apply(this, arguments);
-    }
-};
-
-var encoder = new Encoder();
-module.exports = encoder;
+module.exports = Encoder;
