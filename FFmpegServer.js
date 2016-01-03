@@ -1,13 +1,11 @@
 var findOpenPort = require('./find-open-port'),
     ffmpeg = require('fluent-ffmpeg'),
-    express = require('express'),
-    Engine = require('./Engine');
+    express = require('express');
 
 
-FFMpegServer = function(Engine) {
+FFMpegServer = function() {
 
     var self = this;
-    this.engine = Engine;
     this.port = 3001;
     this.server = null;
     this.app = express();
@@ -25,7 +23,7 @@ FFMpegServer = function(Engine) {
      * @param  {Response} res http response
      */
     this.app.get('/:fileId', function(req, res) {
-        console.log('ENGINE!', this.engine);
+        console.log('ENGINE!', require('./Engine'));
         var streamer = require('./Engine').getStreamer(req.params.fileId);
         if (streamer) {
             streamer.handle('GET', req, res);
@@ -40,7 +38,7 @@ FFMpegServer = function(Engine) {
      * @param  {Response} res http response
      */
     this.app.head('/:fileId', function(req, res) {
-        var streamer = Engine.getStreamer(req.params.fileId);
+        var streamer = require('./Engine').getStreamer(req.params.fileId);
         if (streamer) {
             streamer.handle('HEAD', req, res);
         } else {
@@ -61,4 +59,4 @@ FFMpegServer = function(Engine) {
 };
 
 
-module.exports = new FFMpegServer(Engine);
+module.exports = new FFMpegServer();

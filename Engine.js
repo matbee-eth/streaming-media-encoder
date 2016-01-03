@@ -87,4 +87,7 @@ util.inherits(Engine, EventEmitter);
 
 
 console.log("CREATING NEW ENGINE!");
-module.exports = new Engine();
+var engine = new Engine();
+
+
+module.exports = engine;
