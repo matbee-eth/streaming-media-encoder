@@ -75,7 +75,9 @@ app.get('/cast/:deviceGUID', function(req, res) {
         title: '#ripmatbee',
         subtitles: './../matbee.srt'
     };
-    Engine.cast(device, media, options).then(res.json);
+    Engine.cast(device, media, options).then(function(result) {
+        res.json(result);
+    });
 });
 
 
