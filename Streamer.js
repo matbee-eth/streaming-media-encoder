@@ -11,7 +11,6 @@ var util = require('util'),
  */
 function Streamer(StreamId, Media, Profile, Device) {
     this.id = StreamId;
-    this.media = Media;
     this.encoder = new Encoder(Media, Device);
     this.contentType = this.encoder.getContentType();
 
@@ -26,6 +25,7 @@ Streamer.prototype.getUrl = function() {
  * @param  {string} type     Request type (GET / HEAD)
  * @param  {[type]} req  [description]
  * @param  {[type]} res [description]
+ * @return {Object} range with start and end
  */
 Streamer.prototype.handle = function(type, req, res) {
 
@@ -83,36 +83,23 @@ Streamer.prototype.handlePlaybackSpeed = function(req, res) {
 };
 
 Streamer.prototype.handleRangeHeaders = function(req, res) {
+    var range = {
+        start: 0,
+        end: this.encoder.media.filesize - 1
+    };
+
     res.setHeader('Accept-Ranges', 'bytes');
     if (req.headers.range) {
         res.statusCode = 206;
-        var range = rangeParser(this._fileSize, req.headers.range)[0];
-        res.setHeader('Content-Range', 'bytes ' + range.start + '-' + range.end + '/' + this._fileSize);
+        range = rangeParser(this.encoder.media.filesize, req.headers.range)[0];
+        res.setHeader('Content-Range', 'bytes ' + range.start + '-' + range.end + '/' + this.encoder.media.filesize);
         res.setHeader('Content-Length', range.end - range.start + 1);
     } else {
-        res.setHeader('Content-Length', this.media.filesize);
+        res.setHeader('Content-Length', this.encoder.media.filesize);
     }
+    return range;
 };
 
-/**
- * Start a new transcoding process (any leftovers will automatically die off)
- * @param  {timestamp} time starttime to play at hh:mm:ss
- * @return void
- */
-Streamer.prototype.startEncoder = function(time) {
-    this.encoder.encode(engine, {
-        force: true,
-        startTime: time || "00:00:00",
-    }, function(stream) {
-        stream.pipe(res, {
-            end: true
-        });
-        stream.on("end", function() {
-            console.log("stream ended, nothing more to do.");
-            res.end();
-        });
-    });
-};
 
 Streamer.prototype.noTranscoding = function(req, res) {
 

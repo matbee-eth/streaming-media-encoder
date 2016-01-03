@@ -18,7 +18,6 @@ function Encoder(Media, Device) {
 
     this.media = Media;
     this.device = Device;
-
     this.device.setContentType(this.media.getContentType);
 
     /**
@@ -35,6 +34,12 @@ function Encoder(Media, Device) {
         return this.media.getMediaProfile().getFFmpegFlags();
     };
 
+    /**
+     * [streamRange description]
+     * @param  {[type]} start start byte
+     * @param  {[type]} end   end byte
+     * @return {ffmpeg}       fluent-ffmpeg instance
+     */
     this.streamRange = function(start, end) {
         return this.media.getFFmpegOptions(Encoder.getUrl(engine.id)).then(function(inputOptions, outputOptions) {
             _log('Got FFmpeg options :', inputOptions, outputOptions);
