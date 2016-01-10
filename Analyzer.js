@@ -21,7 +21,7 @@ function Analyzer(Media) {
         return new Promise(function(resolve, reject) {
             console.log("Get URL for media: ", self.media, ffmpegServer.getUrl(self.media));
             ffmpeg.ffprobe(ffmpegServer.getUrl(self.media), function(err, metadata) {
-                console.log("FFProbe returned metadata: ", metadata);
+                console.log("FFProbe returned metadata: ", metadata, err);
                 self.media.setMediaProfile(metadata);
                 resolve(metadata);
             });

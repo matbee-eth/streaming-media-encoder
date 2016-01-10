@@ -82,8 +82,8 @@ app.get('/cast/:deviceGUID', function(req, res) {
 
 
 app.get('/stream/:streamId', function(req, res) {
-    var streamer = Engine.getStreamer(streamId);
-    streamer.handle(req, res);
+    var streamer = Engine.getStreamer(req.params.streamId);
+    streamer.handle(req.method, req, res);
 });
 
 module.exports = app;

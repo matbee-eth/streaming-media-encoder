@@ -1,6 +1,6 @@
 var Promise = require('bluebird');
 
-Promise.onPossiblyUnhandledRejection(function(error){
+Promise.onPossiblyUnhandledRejection(function(error) {
     throw error;
 });
 
@@ -14,3 +14,4 @@ Promise.config({
 });
 
 var server = require('./StreamingMediaServer');
+require('./Engine').discover();

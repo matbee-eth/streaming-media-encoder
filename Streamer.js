@@ -18,7 +18,7 @@ function Streamer(StreamId, Media, Device) {
 }
 
 Streamer.prototype.getUrl = function() {
-    return this.encoder.getUrl() + '/' + this.id;
+    return require('./FFmpegServer').getUrl() + '/' + this.id;
 };
 
 /**
@@ -29,12 +29,13 @@ Streamer.prototype.getUrl = function() {
  * @return {Object} range with start and end
  */
 Streamer.prototype.handle = function(type, req, res) {
-
+    console.log("STREAMER   Handle: ", type);
     res.setHeader('Content-Type', this.encoder.getContentType());
     req.connection.setTimeout(Number.MAX_SAFE_INTEGER);
 
     switch (type) {
         case METHOD_GET:
+            console.log('Processing GET method!', req);
             var range = this.handleRangeHeaders(req, res);
             var seekTime = this.handleSeek(req, res);
             var playbackSpeed = this.handlePlaybackSpeed(req, res);
