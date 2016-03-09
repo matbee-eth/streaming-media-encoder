@@ -1,6 +1,9 @@
 var util = require('util'),
     Promise = require('bluebird');
-    BaseDeviceProfile = require('./BaseDeviceProfile');
+    BaseDeviceProfile = require('./BaseDeviceProfile')
+    audioShiftCorrect = false,
+    rescaleVideo = false,
+    subtitle = false;
 
 function ChromeCastProfile() {
     BaseDeviceProfile.call(this);
@@ -36,7 +39,7 @@ function ChromeCastProfile() {
 
         if (analysis.isVideoMedia) {
             if (audioNeedsTranscoding || audioShiftCorrect) {
-                if(audioShiftCorrect) {
+                if (audioShiftCorrect) {
                     inputOptions.push(audioShiftCorrect);
                 }
                     outputOptions.push("-acodec aac"); // "-acodec libfdk_aac" -> requires custom ffmpeg build from src!
@@ -70,10 +73,10 @@ function ChromeCastProfile() {
             }
         }
         return new Promise(function(resolve) {
-            resolve(inputOptions, outputOptions);
+            resolve({ input: inputOptions, output: outputOptions });
         });
     };
 }
-util.inhertis(ChromeCastProfile, BaseDeviceProfile);
+util.inherits(ChromeCastProfile, BaseDeviceProfile);
 
 module.exports = new ChromeCastProfile();
