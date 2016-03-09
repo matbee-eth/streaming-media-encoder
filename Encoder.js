@@ -16,7 +16,11 @@ var util = require('util'),
 findOpenPort(3001).then(function(port) {
     ffmpegPort = port;
     ffmpegServer = app.listen(port, function() {
-        _log('FFmpeg Webserver listening at %s', Encoder.getUrl());
+// i don't know why you guys wore logging this, but you won't anymore
+// as you can't have Encoder() outside it's function
+
+//        _log('FFmpeg Webserver listening at %s', Encoder.getUrl());
+//        console.log('FFmpeg Webserver listening at %s', Encoder.getUrl());
     });
 });
 
@@ -31,7 +35,7 @@ function Encoder() {
 
     this.profiles = {
         "CHROMECAST": require('./profiles/Chromecast.js'),
-        "DLNA": require('./profiles/DLNA.js'),
+//        "DLNA": require('./profiles/DLNA.js'),
         // "APPLETV": require('./profiles/AppleTV.js')
     };
 
@@ -58,12 +62,13 @@ function Encoder() {
      */
     this.probe = function(engine, options, cb) {
         _log("probing engine for data", engine, options);
+        var Enc = this;
         return new Promise(function(resolve, reject) {
           if(engine.hasProbed) {
             resolve(engine.probeData);
           } else {
-            ffmpeg.ffprobe(Encoder.getUrl(engine.id), function(err, metadata) {
-                engine.setProbeData(metadata);
+            ffmpeg(Enc.getUrl(engine.id)).ffprobe(function(err, metadata) {
+                engine.probe(metadata);
                 resolve(metadata);
             });
           }
@@ -78,33 +83,36 @@ function Encoder() {
      */
     this.encode = function(engine, options) {
         engine.forceTranscode = options.force;
-        if (!engine.hasProbed) {
-            return Encoder.probe(engine, {}).then(function(metadata) {
-              return Encoder.encode(engine, options);
-            });
-        } else {
-            return engine.getFFmpegOptions(Encoder.getUrl(engine.id)).then(function(inputOptions, outputOptions) {
-                _log('Got FFmpeg options :', inputOptions, outputOptions);
-                
-                var command = ffmpeg(Encoder.getUrl(engine.id));
-                if (options.startTime) {
-                    command.seekInput(options.startTime);
-                }
-
-                command.on('start', function(commandLine) {
-                   _log('Spawned Ffmpeg with command: ', commandLine);
-                }).on('error', function() {
-                    console.error(arguments);
+        var Enc = this;
+        return new Promise(function(resolve) {
+            if (!engine.hasProbed) {
+                Enc.probe(engine, {}).then(function(metadata) {
+                  resolve(Enc.encode(engine, options));
                 });
-
-                command.inputOptions(inputOptions);
-                command.outputOptions(outputOptions);
-
-                return command;
-            }, function(err) {
-              throw new Error('Encoder: Error on getting FFmpegOptions: ', err);
-            });
-        }
+            } else {
+                engine.getFFmpegOptions(Enc.getUrl(engine.id)).then(function(iOptions) {
+                    _log('Got FFmpeg options :', iOptions.input, iOptions.output);
+                    
+                    var command = ffmpeg(Enc.getUrl(engine.id));
+                    if (options.startTime) {
+                        command.seekInput(options.startTime);
+                    }
+    
+                    command.on('start', function(commandLine) {
+                       _log('Spawned Ffmpeg with command: ', commandLine);
+                    }).on('error', function() {
+                        console.error(arguments);
+                    });
+    
+                    command.inputOptions(iOptions.input);
+                    command.outputOptions(iOptions.output);
+    
+                    resolve(command);
+                }, function(err) {
+                  reject(new Error('Encoder: Error on getting FFmpegOptions: ', err));
+                });
+            }
+        });
     },
 
     /**
@@ -146,8 +154,8 @@ app.head('/:fileId', function(req, res) {
 
 _log = function() {
   if(encoder.debug) {
-    console.log("ENCODER: ");
-    console.log.apply(this, arguments);
+// wtf is "console.log.apply" ?! this doesn't work, deal with it
+//    console.log.apply(this, arguments);
   }
 };
 

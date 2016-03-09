@@ -22,8 +22,8 @@ expressServer = app.listen(port, function() {
 //player.play('http://'+ip()+':9090/stream-with-transcode', {title: '#ripmatbee', type: 'video/mp4'});
 // http://192.168.0.196:9090/stream-with-transcode
 // 
-curl -H 'Content-Type: text/xml; charset=utf-8' -H 'SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#SetAVTransportURI"' -d '<?xml version="1.0″ encoding="utf-8″?><s:Envelope s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><u:SetAVTransportURI xmlns:u="urn:schemas-upnp-org:service:AVTransport:1″><InstanceID>0</InstanceID><CurrentURI><![CDATA[http://192.168.0.196:9090/stream-with-transcode]]></CurrentURI><CurrentURIMetaData></CurrentURIMetaData></u:SetAVTransportURI></s:Body></s:Envelope>' 'http://192.168.0.105:59772/AVTransport/21fc4817-b8f7-ee43-1461-68a55e55fce0/control.xml'
-curl -H 'Content-Type: text/xml; charset=utf-8' -H 'SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#Play"' -d '<?xml version="1.0″ encoding="utf-8″?><s:Envelope s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><u:Play xmlns:u="urn:schemas-upnp-org:service:AVTransport:1″><InstanceID>0</InstanceID><Speed>1</Speed></u:Play></s:Body></s:Envelope>' 'http://192.168.0.105:59772/AVTransport/21fc4817-b8f7-ee43-1461-68a55e55fce0/control.xml'
+//curl -H 'Content-Type: text/xml; charset=utf-8' -H 'SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#SetAVTransportURI"' -d '<?xml version="1.0″ encoding="utf-8″?><s:Envelope s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><u:SetAVTransportURI xmlns:u="urn:schemas-upnp-org:service:AVTransport:1″><InstanceID>0</InstanceID><CurrentURI><![CDATA[http://192.168.0.196:9090/stream-with-transcode]]></CurrentURI><CurrentURIMetaData></CurrentURIMetaData></u:SetAVTransportURI></s:Body></s:Envelope>' 'http://192.168.0.105:59772/AVTransport/21fc4817-b8f7-ee43-1461-68a55e55fce0/control.xml'
+//curl -H 'Content-Type: text/xml; charset=utf-8' -H 'SOAPAction: "urn:schemas-upnp-org:service:AVTransport:1#Play"' -d '<?xml version="1.0″ encoding="utf-8″?><s:Envelope s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><u:Play xmlns:u="urn:schemas-upnp-org:service:AVTransport:1″><InstanceID>0</InstanceID><Speed>1</Speed></u:Play></s:Body></s:Envelope>' 'http://192.168.0.105:59772/AVTransport/21fc4817-b8f7-ee43-1461-68a55e55fce0/control.xml'
 
 
 var activeFile;
@@ -34,7 +34,7 @@ function mediaSelected(filePath) {
 var chromecasts = require('chromecasts')();
 
 chromecasts.on('update', function (player) {
-  //player.play('http://'+ip()+':9090/stream-with-transcode', {title: '#ripmatbee', type: 'video/mp4'});
+    player.play('http://'+ip()+':9090/stream-with-transcode', {title: '#ripmatbee', type: 'video/mp4'});
     console.log('http://'+ip()+':9090/stream-with-transcode', {title: '#ripmatbee', type: 'video/mp4'});
 
 });
@@ -62,7 +62,7 @@ app.get("/stream-with-transcode", function(req, res) {
     });
     encoder.encode(engine, {
         force: true
-    }, function(stream) {
+    }).then(function(stream) {
         stream.pipe(res, {
             end: true
         });

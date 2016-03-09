@@ -29,8 +29,9 @@ util.inherits(Engine, EventEmitter);
 
 Engine.prototype._log = function() {
   if(this.debug) {
-    console.log("ENGINE: ");
-    console.log.apply(this, arguments);
+// nope nope nope
+
+//    console.log.apply(this, arguments);
   }
 };
 
@@ -43,6 +44,7 @@ Engine.prototype.onRequest = function(req, res) {
     res.setHeader('Accept-Ranges', 'bytes');
     res.setHeader('Content-Type', this.contentType);
     res.statusCode = 200;
+
     var range;
     if (req.headers.range) {
         range = rangeParser(this._fileSize, req.headers.range)[0];
@@ -54,12 +56,14 @@ Engine.prototype.onRequest = function(req, res) {
     } else {
         res.setHeader('Content-Length', this._fileSize);
     }
-    this.emit("streamNeeded", range.start, range.end, function (stream) {
-        stream.pipe(res);
-        stream.on('end', function () {
-            res.end();
+    if (range) {
+        this.emit("streamNeeded", range.start, range.end, function (stream) {
+            stream.pipe(res);
+            stream.on('end', function () {
+                res.end();
+            });
         });
-    });
+    }
 };
 
 /**
@@ -116,12 +120,12 @@ Engine.prototype.probe = function() {
         }.bind(this));
     } else {
         return new Promise(function(resolve, reject) {
-            ffmpeg.ffprobe(this.url, function(err, metadata) {
+            ffmpeg(this.url).ffprobe(function(err, metadata) {
                 this.hasProbed = true;
                 this._probeData = metadata;
                 resolve(metadata);
             }.bind(this));
-        });
+        }.bind(this));
     }
 };
 
