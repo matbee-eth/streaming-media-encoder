@@ -1,6 +1,10 @@
-var Promise = require('bluebird');
+import Promise from 'bluebird'
 
-Promise.onPossiblyUnhandledRejection(function(error) {
+import StreamingMediaServer from './StreamingMediaServer'
+import Engine from './Engine'
+
+
+Promise.onPossiblyUnhandledRejection((error) => {
     throw error;
 });
 
@@ -13,5 +17,4 @@ Promise.config({
     cancellation: true
 });
 
-var server = require('./StreamingMediaServer');
-require('./Engine').discover();
+Engine.discover()
