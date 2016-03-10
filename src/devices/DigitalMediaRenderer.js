@@ -1,24 +1,57 @@
-var util = require('util'),
-    Promise = require('bluebird'),
-    BaseDeviceProfile = require('./BaseDevice');
+import Promise from 'bluebird'
+import BaseDeviceProfile from './BaseDevice'
 
+export default class DigitalMediaRenderer extends BaseDeviceProfile {
+    constructor(client, info, msg, desc, supportedProtocols) {
+        super()
 
-function DigitalMediaRenderer(client, info, msg, desc, supportedProtocols) {
-    BaseDeviceProfile.call(this);
+        this.client = Promise.promisifyAll(client)
+        this.ip = info.address
+        this.id = desc.device.UDN.replace('uuid:', '')
+        this.name = desc.device.friendlyName
+        this.info = info
+        this.msg = msg
+        this.desc = desc
+        this.supportedProtocols = supportedProtocols
 
-    this.id = desc.device.UDN.replace('uuid:', '');
-    this.name = desc.device.friendlyName;
-    this.ip = info.address;
-    this.client = Promise.promisifyAll(client);
-    this.info = info;
-    this.msg = msg;
-    this.desc = desc;
-    this.supportedProtocols = supportedProtocols;
+        this._initClientListeners(client)
+    }
 
+    _initClientListeners(client) {
+        client.on('status', (status) => {
+            // Reports the full state of the AVTransport service the first time it fires,
+            // then reports diffs. Can be used to maintain a reliable copy of the
+            // service internal state.
+            console.log(status);
+        })
 
-    this.cast = function(url, options) {
+        client.on('loading', () => {
+            console.log('------> loading', arguments);
+        })
 
-        opts = {
+        client.on('playing', () => {
+            console.log('playing')
+
+            client.getPosition((err, position) => {
+                console.log(position) // Current position in seconds
+            })
+
+            client.getDuration((err, duration) => {
+                console.log(duration) // Media duration in seconds
+            })
+        });
+
+        client.on('paused', () => {
+            console.log('paused')
+        })
+
+        client.on('stopped', (args) => {
+            console.log('stopped', args)
+        })
+    }
+
+    cast(url, options) {
+        const opts = {
             autoplay: true,
             contentType: 'video/mp4',
             metadata: {
@@ -27,68 +60,24 @@ function DigitalMediaRenderer(client, info, msg, desc, supportedProtocols) {
                 type: 'video', // can be 'video', 'audio' or 'image'
             }
         };
-
-        this.client.loadAsync(url, options);
-    };
-
-    this.handleSeek = function(req, res) {
-        var ret = '00:00:00';
-        ['TimeSeekRange.dlna.org', 'X-Seek-Range'].map(function(header) {
-            var val = req.header(header);
-            if (val) ret = val;
-        });
-        return ret;
-    };
-
-    this.play = function() {
-        return this.client.playAsync();
-    };
+        this.client.loadAsync(url, options)
+    }
 
 
-    this.pause = function() {
-        return this.client.pauseAsync();
-    };
+    handleSeek(req, res) {
+        let ret = '00:00:00'
 
-    this.stop = function() {
-        return this.client.stopAsync();
-    };
+        ['TimeSeekRange.dlna.org', 'X-Seek-Range'].map(header => {
+            const val = req.header(header)
+            if (val) ret = val
+        })
+        return ret
+    }
 
-    // Seek to 10 minutes
-    //client.seek(10 * 60);
 
-    client.on('status', function(status) {
-        // Reports the full state of the AVTransport service the first time it fires,
-        // then reports diffs. Can be used to maintain a reliable copy of the
-        // service internal state.
-        console.log(status);
-    });
+    play = this.client.playAsync();
 
-    client.on('loading', function() {
-        console.log('------> loading', arguments);
-    });
+    pause = this.client.pauseAsync();
 
-    client.on('playing', function() {
-        console.log('playing');
-
-        client.getPosition(function(err, position) {
-            console.log(position); // Current position in seconds
-        });
-
-        client.getDuration(function(err, duration) {
-            console.log(duration); // Media duration in seconds
-        });
-    });
-
-    client.on('paused', function() {
-        console.log('paused');
-    });
-
-    client.on('stopped', function(args) {
-        console.log('stopped', arguments);
-    });
-
+    stop = this.client.stopAsync();
 }
-
-util.inherits(DigitalMediaRenderer, BaseDeviceProfile);
-
-module.exports = DigitalMediaRenderer;
