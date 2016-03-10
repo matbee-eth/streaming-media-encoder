@@ -1,28 +1,25 @@
-var util = require('util'),
-    Promise = require('bluebird'),
-    express = require('express'),
+import net from 'net'
+import { v4 as uuid } from 'node-uuid'
+import ffmpeg from 'fluent-ffmpeg'
+import util from 'util'
+import express from 'express'
 
-    EventEmitter = require('events'),
-    Engine = require('./Engine'),
+import Engine from './Engine'
+import FFMpegServer from './FFmpegServer'
 
-    net = require('net'),
-    uuid = require('node-uuid'),
-    ffmpeg = require('fluent-ffmpeg'),
-    FFMpegServer = require('./FFmpegServer');
 
 /**
  * The encoder is where the magic happens.
  * Communicates with a device specific profile via an express server with ffmpeg
  * provides streamable output that can be piped directly into (for instance) Express
  */
-function Encoder(Media, Device) {
+export default class Encoder {
+    constructor(Media, Device) {
+        this.media = Media;
+        this.device = Device;
+    }
 
-    this.media = Media;
-    this.device = Device;
-
-    this.getContentType = function() {
-        return 'video/mp4';
-    };
+    static getContentType = () => 'video/mp4';
 
 
     /**
@@ -30,13 +27,14 @@ function Encoder(Media, Device) {
      * @see BaseDeviceProfile.prototype.getFFmpegFlags
      * @return {Promise} promise that resolves with inputOptions and outputOptions
      */
-    this.getFFmpegOptions = function() {
+    getFFmpegOptions() {
         if (!this.media.getMediaProfile()) {
             throw new Error("NO PROBE HAS BEEN DONE NOOB!");
         }
         console.log("Engine.getFFmpegOptions");
         return this.media.getMediaProfile().getFFmpegFlags();
-    };
+    }
+
 
     /**
      * [streamRange description]
@@ -44,29 +42,26 @@ function Encoder(Media, Device) {
      * @param  {[type]} end   end byte
      * @return {ffmpeg}       fluent-ffmpeg instance
      */
-    this.streamRange = function(start, end) {
-        return this.media.getFFmpegOptions(Encoder.getUrl(engine.id)).then(function(inputOptions, outputOptions) {
-            console.log('Got FFmpeg options :', inputOptions, outputOptions);
+    streamRange(start, end) {
+        return this.media.getFFmpegOptions(Encoder.getUrl(engine.id)).then((inputOptions, outputOptions) => {
+            console.log('Got FFmpeg options :', inputOptions, outputOptions)
 
-            var command = ffmpeg(Encoder.getUrl(engine.id));
-            if (options.startTime) {
-                command.seekInput(options.startTime);
-            }
+            var command = ffmpeg(Encoder.getUrl(engine.id))
+            if (options.startTime)
+                command.seekInput(options.startTime)
 
-            command.on('start', function(commandLine) {
-                console.log('Spawned Ffmpeg with command: ', commandLine);
-            }).on('error', function() {
-                console.error(arguments);
-            });
+            command
+                .on('start', commandLine => console.log('Spawned Ffmpeg with command: ', commandLine))
+                .on('error', () => console.error(arguments))
 
-            command.inputOptions(inputOptions);
-            command.outputOptions(outputOptions);
+            command.inputOptions(inputOptions)
+            command.outputOptions(outputOptions)
 
-            return command;
-        }, function(err) {
-            throw new Error('Encoder: Error on getting FFmpegOptions: ', err);
-        });
-    };
+            return command
+        }, err => {
+            throw new Error('Encoder: Error on getting FFmpegOptions: ', err)
+        })
+    }
 
 
     /**
@@ -74,9 +69,8 @@ function Encoder(Media, Device) {
      * @param  {string} fileId Optional fileId to append
      * @return {string} url
      */
-    this.getUrl = function(fileId) {
-        return FFMpegServer.getUrl(this.media);
-    };
+    getUrl = fileId => FFMpegServer.getUrl(this.media);
+
 
     /**
      * Proxy forwarder for BaseDeviceProfile.prototype.rescale
@@ -84,10 +78,11 @@ function Encoder(Media, Device) {
      * @param  {int} size max video width
      * @return {Engine} returns `this` for fluent interfacing
      */
-    this.rescale = function(size) {
-        this._profile.rescale(size);
-        return this;
-    };
+    rescale(size) {
+        this._profile.rescale(size)
+        return this
+    }
+
 
     /**
      * Proxy forwarder for BaseDeviceProfile.prototype.hardCodeSubtitle
@@ -95,10 +90,11 @@ function Encoder(Media, Device) {
      * @param  {string } full path to .srt file
      * @return {Engine} returns `this` for fluent interfacing
      */
-    this.hardCodeSubtitle = function(path) {
-        this._profile.hardCodeSubtitle(path);
-        return this;
-    };
+    hardCodeSubtitle(subPath) {
+        this._profile.hardCodeSubtitle(subPath)
+        return this
+    }
+
 
     /**
      * Proxy forwarder for BaseDeviceProfile.prototype.correctAudioOffset
@@ -106,12 +102,8 @@ function Encoder(Media, Device) {
      * @param  {float} offset in seconds
      * @return {Engine} returns `this` for fluent interfacing
      */
-    this.correctAudioOffset = function(seconds) {
-        this._profile.correctAudioOffset(seconds);
-        return this;
-    };
-
+    correctAudioOffset(seconds) {
+        this._profile.correctAudioOffset(seconds)
+        return this
+    }
 }
-
-
-module.exports = Encoder;
