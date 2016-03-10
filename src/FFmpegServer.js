@@ -13,7 +13,7 @@ class FFMpegServer {
 
         findOpenPort(3001).then(port => {
             this.port = port
-            this.server = this.app.listen(port, () console.log('FFmpeg Webserver listening at %s', this.getUrl()))
+            this.server = this.app.listen(port, () => console.log('FFmpeg Webserver listening at %s', this.getUrl()))
         })
 
 
