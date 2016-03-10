@@ -1,5 +1,3 @@
-
-
 /**
  * Base device profile to be extended with device specific implementations.
  */
