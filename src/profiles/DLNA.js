@@ -1,19 +1,15 @@
-var util = require('util'),
-    Promise = require('bluebird');
-BaseDeviceProfile = require('./BaseDeviceProfile');
+import BaseDeviceProfile from './BaseDeviceProfile'
 
-function DLNAProfile() {
-    BaseDeviceProfile.call(this);
-
-    this.audioNeedsTranscodingCodecs = [
+class DLNAProfile extends BaseDeviceProfile {
+    static audioNeedsTranscodingCodecs = [
         "aac"
     ];
 
-    this.videoNeedsTranscodingCodecs = [
+    static videoNeedsTranscodingCodecs = [
         "h264"
     ];
 
-    this.validFormats = [
+    static validFormats = [
         "mp4,m4a",
         "mp3"
     ];
@@ -33,7 +29,6 @@ function DLNAProfile() {
        AVC_MP4_MP_HD_720p_AAC
   */
 
-
     /*
         DLNA.ORG_PN= media profile
         DLNA.ORG_OP=ab a : server supports TimeSeekRange [0/1], b:server supports RANGE [0/1] 
@@ -41,17 +36,31 @@ function DLNAProfile() {
         DLNA.ORG_CI=[0/1] media is transcoded
         DLNA.ORG_FLAGS= binary flags with device parameters
     */
-    this.transcodedMediaProfile = 'AVC_MP4_HP_HD_AAC';
 
-    this.getcontentFeaturesHeader = function() {
-        var pn = 'DLNA.ORG_PN=' + this.transcodedMediaProfile + ';';
-        var op = 'DLNA.ORG_OP=10;'; // we only support time seek ranges for now
-        var cn = 'DLNA.ORG_CI=1;'; // always transcoded for now
-        var ps = 'DLNA.ORG_PS=1'; // play speed normal supported for now
+    static transcodedMediaProfile = 'AVC_MP4_HP_HD_AAC';
+
+    static contentType = 'video/mp4';
+
+    /**
+     * @type {Object}
+     */
+    httpHeaders = {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'video/mp4',
+        'protocolInfo': `http-get:*:${this.contentType}:*`,
+        'contentFeatures.dlna.org': this.getContentFeaturesHeader(),
+        'transferMode.dlna.org': 'Streaming'
+    };
+
+    getcontentFeaturesHeader() {
+        const pn `DLNA.ORG_PN=${this.transcodedMediaProfile};`
+        const op = 'DLNA.ORG_OP=10;'; // we only support time seek ranges for now
+        const cn = 'DLNA.ORG_CI=1;'; // always transcoded for now
+        const ps = 'DLNA.ORG_PS=1'; // play speed normal supported for now
 
         // DLNA.ORG_FLAGS, padded with 24 trailing 0s
 
-        var dlna_flags = {
+        const dlna_flags = {
             senderPaced: (1 << 31), // 0x80000000
             lsopTimeBasedSeekSupported: (1 << 30), // 0x40000000
             lsopByteBasedSeekSupported: (1 << 29), // 0x20000000
@@ -65,26 +74,10 @@ function DLNAProfile() {
             connectionStallingSupported: (1 << 21), // 0x200000
             dlnaVersion15Supported: (1 << 20) // 0x100000
         };
-        var supportedFlags = dlna_flags.connectionStallingSupported | dlna_flags.streamingTransferModeSupported | dlna_flags.dlnaVersion15Supported;
-        var flags = 'DLNA.ORG_FLAGS=' + (supportedFlags >>> 0).toString(16);
-        return [pn, op, cn, ps, flags, '000000000000000000000000'].join('');
-    };
+        const supportedFlags = dlna_flags.connectionStallingSupported | dlna_flags.streamingTransferModeSupported | dlna_flags.dlnaVersion15Supported
+        const flags = `DLNA.ORG_FLAGS=${(supportedFlags >>> 0).toString(16)}`
 
-    this.contentType = 'video/mp4';
-
-    /**
-     * @type {Object}
-     */
-    this.httpHeaders = {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'video/mp4',
-        'protocolInfo': 'http-get:*:' + this.contentType + ':*',
-        'contentFeatures.dlna.org': this.getContentFeaturesHeader(),
-        'transferMode.dlna.org': 'Streaming'
-    };
-
-    this.getHeaders = function() {
-        return this.httpHeaders;
+        return [pn, op, cn, ps, flags, '000000000000000000000000'].join('')
     }
 
     /*
@@ -105,74 +98,67 @@ function DLNAProfile() {
         > https://github.com/cmtsij/Vizio_XWR100_GPL/blob/e0b5d08ea08fd23400b4e85d772f83dcf16d999a/GTK/user/apps/dlna-GTK-DMS/HttpFiles/DlnaHttp.h
      */
 
-    this.mimeTypeRemapHack = function(dmrFriendlyName, mime) {
-        var hacks = {
+    mimeTypeRemapHack(dmrFriendlyName, mime) {
+        const hacks = {
             'Samsung DTV DMR': {
                 'video/x-matroska': 'video/x-mkv',
                 'video/x-avi': 'video/x-msvideo',
                 'application/x-subrip': 'smi/caption'
             }
-        };
-        return (dmrFriendlyName in hacks && mim in hacks[dmrFriendlyName]) ? hacks[dmrFriendlyName][mime] : mime;
-    };
+        }
+        return (dmrFriendlyName in hacks && mim in hacks[dmrFriendlyName]) ? hacks[dmrFriendlyName][mime] : mime
+    }
 
-    this.processSupportedProtocols = function(capabilities) {
-        console.log("Process capabilities!", capabilities);
-    };
+    processSupportedProtocols(capabilities) {
+        console.log("Process capabilities!", capabilities)
+    }
 
-    this.getFFmpegOptions = function(probeData, forceTranscode) {
-        var analysis = this.transcodeNeeded(probeData),
-            canPlay = analysis.needsTranscoding,
-            formatNeedsTranscoding = analysis.formatNeedsTranscoding,
-            audioNeedsTranscoding = analysis.audioNeedsTranscoding,
-            videoNeedsTranscoding = analysis.videoNeedsTranscoding,
-            outputOptions = [],
-            inputOptions = [];
+    getFFmpegOptions(probeData, forceTranscode) {
+        const analysis = this.transcodeNeeded(probeData)
+        const { needsTranscoding, formatNeedsTranscoding, audioNeedsTranscoding, videoNeedsTranscoding, isVideoMedia, isAudioMedia } = analysis
 
-        if (analysis.isVideoMedia) {
+        let outputOptions = []
+        let inputOptions = []
+
+        if (isVideoMedia) {
             if (audioNeedsTranscoding || audioShiftCorrect) {
                 if (audioShiftCorrect) {
-                    inputOptions.push(audioShiftCorrect);
+                    inputOptions.push(audioShiftCorrect)
                 }
-                outputOptions.push("-acodec aac");
+                outputOptions.push("-acodec aac")
             } else {
-                outputOptions.push("-acodec copy");
+                outputOptions.push("-acodec copy")
             }
 
             if (videoNeedsTranscoding || rescaleVideo || subtitle) {
                 if (subtitle) {
-                    outputOptions.push(subtitle);
+                    outputOptions.push(subtitle)
                 }
                 if (rescaleVideo) {
-                    outputOptions.push(rescaleVideo);
+                    outputOptions.push(rescaleVideo)
                 }
-                outputOptions.push("-vcodec libx264");
+                outputOptions.push("-vcodec libx264")
             } else {
-                outputOptions.push("-vcodec copy");
+                outputOptions.push("-vcodec copy")
             }
 
-            outputOptions.push("-copyts");
-            outputOptions.push("-preset ultrafast");
-            outputOptions.push("-tune zerolatency");
-            outputOptions.push("-crf 28");
-            outputOptions.push("-bsf:v h264_mp4toannexb");
-            outputOptions.push("-f mp4");
-        } else if (analysis.isAudioMedia) {
-            console.log("VALID AUDIO?", audioNeedsTranscoding);
+            outputOptions.push("-copyts")
+            outputOptions.push("-preset ultrafast")
+            outputOptions.push("-tune zerolatency")
+            outputOptions.push("-crf 28")
+            outputOptions.push("-bsf:v h264_mp4toannexb")
+            outputOptions.push("-f mp4")
+        } else if (isAudioMedia) {
+            console.log("VALID AUDIO?", audioNeedsTranscoding)
             if (audioNeedsTranscoding) {
-                outputOptions.push("-acodec libvorbis");
-                outputOptions.push("-f ogg");
+                outputOptions.push("-acodec libvorbis")
+                outputOptions.push("-f ogg")
             } else {
-                outputOptions.push("-f " + probeData.format.format_name);
+                outputOptions.push("-f " + probeData.format.format_name)
             }
         }
-        return new Promise(function(resolve) {
-            resolve(inputOptions, outputOptions);
-        });
-    };
-
+        return new Promise(resolve => resolve(inputOptions, outputOptions))
+    }
 }
 
-util.inherits(DLNAProfile, BaseDeviceProfile);
-
-module.exports = new DLNAProfile();
+export default new DLNAProfile()
