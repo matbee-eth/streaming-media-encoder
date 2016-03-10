@@ -1,11 +1,10 @@
-var util = require('util'),
-    BaseMedia = require('./BaseMedia');
+import BaseMedia from './BaseMedia'
 
-function HTTPMedia(url) {
-    BaseMedia.call(this);
-    this.filename = url;
-    this.filesize = 0;
+export default class HTTPMedia extends BaseMedia {
+    constructor(url) {
+        super()
+
+        this.filename = url
+        this.filesize = 0
+    }
 }
-util.inherits(HTTPMedia, BaseMedia);
-
-module.exports = HTTPMedia;
