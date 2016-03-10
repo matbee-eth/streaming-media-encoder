@@ -23,7 +23,7 @@ export default class ChromeCastProfile extends BaseDeviceProfile {
 
     getFFmpegFlags(probeData, forceTranscode) {
         const analysis = this.transcodeNeeded(probeData)
-        const { canPlay, formatNeedsTranscoding, audioNeedsTranscoding, videoNeedsTranscoding, isAudioMedia, isVideoMedia } = analysis
+        const { needsTranscoding, formatNeedsTranscoding, audioNeedsTranscoding, videoNeedsTranscoding, isAudioMedia, isVideoMedia } = analysis
 
         let outputOptions = []
         let inputOptions = []
