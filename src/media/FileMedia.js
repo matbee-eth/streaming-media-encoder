@@ -1,23 +1,17 @@
-var util = require('util'),
-    fs = require('fs'),
-    BaseMedia = require('./BaseMedia');
+import fs from 'fs'
+import BaseMedia from './BaseMedia'
 
-function FileMedia(filename) {
-    BaseMedia.call(this);
-    this.filename = filename;
-    this.filesize = fs.statSync(filename).size;
 
-    this.streamNeeded = function(startByte, endByte, cb) {
-        console.info("streamNeeded", startByte, endByte);
-        cb(fs.createReadStream(this.filename, {
-            start: startByte,
-            end: endByte
-        }));
-    };
+export default class FileMedia extends BaseMedia {
+    constructor(filename) {
+        super()
 
+        this.filename = filename
+        this.filesize = fs.statSync(filename).size
+    }
+
+    streamNeeded(start, end, cb) {
+        console.info("streamNeeded", start, end)
+        cb(fs.createReadStream(this.filename, { start, end }))
+    }
 }
-
-
-util.inherits(FileMedia, BaseMedia);
-
-module.exports = FileMedia;
