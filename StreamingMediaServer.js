@@ -1,10 +1,17 @@
-var Engine = require('./Engine'),
-    fs = require('fs'),
-    express = require('express'),
-    ip = require('my-local-ip'),
-    findOpenPort = require('./find-open-port'),
-    expressServer = null,
-    app = express();
+import Engine from './Engine'
+import fs from 'fs'
+import express from 'express'
+import ip from 'my-local-ip'
+import findOpenPort from './find-open-port'
+
+import HTTPMedia from './media/HTTPMedia'
+import FileMedia from './media/FileMedia'
+import TorrentMedia from './media/TorrentMedia'
+
+
+const app = express()
+let expressServer = null
+
 
 /**
  * This example starts an express server and serves one url: "/request-from-chromecast"
@@ -12,78 +19,59 @@ var Engine = require('./Engine'),
  * to have the video automagically transcoded through FFMPEG
  */
 
-findOpenPort(3000).then(function(port) {
-    expressServer = app.listen(port, function() {
-        var port = expressServer.address().port;
+findOpenPort(3000).then((port) => expressServer = app.listen(port, () => console.log('streaming-media-encoder Webserver listening at http://%s:%s', ip(), expressServer.address().port)))
 
-        console.log('streaming-media-encoder Webserver listening at http://%s:%s', ip(), port);
-    });
-});
+app.use('/static', express.static(__dirname + '/static'))
 
-app.use('/static', express.static(__dirname + '/static'));
+app.get('/debug', (req, res) => {
+    res.header('Content-Type: text/html')
+    res.sendFile(__dirname + '/debug.html')
+})
 
-app.get('/debug', function(req, res) {
-    res.header('Content-Type: text/html');
-    res.sendFile(__dirname + '/debug.html');
-});
+app.get('/debug-info', (req, res) => res.json(Engine));
 
-app.get('/debug-info', function(req, res) {
-    res.json(Engine);
-});
+app.get('/discover', (req, res) => {
+    console.log("starting discovery")
+    Engine.discover()
+        .then((devices) => {
+            console.log('1000ms discovery done', devices)
+            res.json(devices)
+        })
+        .catch(E => {
+            throw E
+        })
+})
 
-app.get('/discover', function(req, res) {
-    console.log("starting discovery");
-    Engine.discover().then(function(devices) {
-        console.log('1000ms discovery done', devices);
-        res.json(devices);
-    }).catch(function(E) {
-        throw E;
-    });
-});
+app.get('/devicelist', (req, res) => res.json(Engine.getDeviceList()))
 
-app.get('/devicelist', function(req, res) {
-    res.json(Engine.getDeviceList());
-});
+app.get('/control/:deviceGUID', (req, res) => Engine.getDevice(req.params.deviceGUID).control(req.query.action, req.query).then(res.json))
 
-app.get('/control/:deviceGUID', function(req, res) {
-    var device = Engine.getDevice(req.params.deviceGUID);
-    device.control(req.query.action, req.query).then(res.json);
-});
+app.get('/cast/:deviceGUID', (req, res) => {
 
-app.get('/cast/:deviceGUID', function(req, res) {
+    const device = Engine.getDevice(req.params.deviceGUID)
+    let media
 
-    var device = Engine.getDevice(req.params.deviceGUID);
-    var media;
+    if (req.query.url)
+        media = new HTTPMedia(req.query.path)
 
-    if (req.query.url) {
-        var HTTPMedia = require('./media/HTTPMedia');
-        media = new HTTPMedia(req.query.path);
-    }
+    if (req.query.path)
+        media = new FileMedia(req.query.path)
 
-    if (req.query.path) {
-        var FileMedia = require('./media/FileMedia');
-        media = new FileMedia(req.query.path);
-    }
+    if (req.query.magnet)
+        media = new TorrentMedia(req.query.magnet)
 
-    if (req.query.magnet) {
-        var TorrentMedia = require('./media/TorrentMedia');
-        media = new TorrentMedia(req.query.magnet);
-    }
     // cast performs the media analyze
     // and creating the new streamer for this media on devicename
-    var options = {
+    const options = {
         title: '#ripmatbee',
         subtitles: './../matbee.srt'
     };
-    Engine.cast(device, media, options).then(function(result) {
-        res.json(result);
-    });
-});
+    Engine.cast(device, media, options)
+        .then(result => res.json(result))
+})
 
 
-app.get('/stream/:streamId', function(req, res) {
-    var streamer = Engine.getStreamer(req.params.streamId);
-    streamer.handle(req.method, req, res);
-});
+app.get('/stream/:streamId', (req, res) => Engine.getStreamer(req.params.streamId).handle(req.method, req, res));
 
-module.exports = app;
+
+export default app
