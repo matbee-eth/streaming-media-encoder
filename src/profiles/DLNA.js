@@ -53,7 +53,7 @@ class DLNAProfile extends BaseDeviceProfile {
     };
 
     getcontentFeaturesHeader() {
-        const pn `DLNA.ORG_PN=${this.transcodedMediaProfile};`
+        const pn = `DLNA.ORG_PN=${this.transcodedMediaProfile};`
         const op = 'DLNA.ORG_OP=10;'; // we only support time seek ranges for now
         const cn = 'DLNA.ORG_CI=1;'; // always transcoded for now
         const ps = 'DLNA.ORG_PS=1'; // play speed normal supported for now
