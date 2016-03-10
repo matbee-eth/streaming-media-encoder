@@ -20,7 +20,7 @@ class Engine extends EventEmitter {
     streamers = {};
 
     discover = () => DeviceList.discover().then(devices => {
-        const d = {}
+        let d = {}
         try {
             Object.keys(devices).map(type => {
                 console.log(type)
