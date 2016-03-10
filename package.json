@@ -5,7 +5,9 @@
   "description": "",
   "main": "dist/Encoder.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "babel": "rimraf ./dist && babel ./src --out-dir ./dist",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "npm run babel"
   },
   "author": "acidhax",
   "license": "ISC",
@@ -24,6 +26,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "my-local-ip": "^1.0.0",
     "renderer-finder": "0.1.3",
+    "rimraf": "^2.5.2",
     "upnp-mediarenderer-client": "https://github.com/SchizoDuckie/node-upnp-mediarenderer-client.git#patch-1"
   }
 }
