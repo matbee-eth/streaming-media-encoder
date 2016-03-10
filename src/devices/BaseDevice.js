@@ -1,66 +1,59 @@
-var uuid = require('node-uuid');
+import { v4 as uuid } from 'node-uuid'
 
 /**
  * BaseDevice that defines shared functionality
  */
-function BaseDevice(client) {
-    this.client = client;
-    this.id = uuid.v4();
-    this.name = 'Unknown';
-    this.ip = null;
-    this.contentType = null;
 
-}
-
-BaseDevice.prototype.setContentType = function(type) {
-    this.contentType = type;
-};
-
-BaseDevice.prototype.handleSeek = function(req, res) {
-    throw new Error("HANDLESEEK Not Implemented!");
-};
-
-/**
- * cast media to a device
- * @param  {string} url     url to transcoder to use
- * @param  {object} options options like media mime type, title, etc.
- * @return {Promise}         Promise that resolves with result
- */
-BaseDevice.prototype.cast = function(url, options) {
-    throw new Error("CAST Not implemented!");
-};
-
-BaseDevice.prototype.play = function(url, options) {
-    throw new Error("PLAY Not implemented!");
-};
-
-BaseDevice.prototype.pause = function(url, options) {
-    throw new Error("PAUSE Not implemented!");
-};
-
-BaseDevice.prototype.stop = function(url, options) {
-    throw new Error("STOP Not implemented!");
-};
-
-
-
-BaseDevice.prototype.toJSON = function() {
-    console.log("To JSON!", this.id);
-    var out = {},
-        self = this;
-    try {
-        Object.keys(this).map(function(key) {
-            if (key == 'client') return;
-            else {
-                out[key] = self[key];
-            }
-        });
-    } catch (E) {
-        console.error(E);
-        throw E;
+export default class BaseDevice {
+    constructor(client) {
+        this.client = client
     }
-    return out;
-};
 
+    static id = uuid();
 
-module.exports = BaseDevice;
+    name = 'Unknown';
+    ip = null;
+    contentType = null;
+
+    setContentType = type => this.contentType = type;
+
+    handleSeek(req, res) {
+        throw new Error("HANDLESEEK Not Implemented!")
+    }
+
+    /**
+     * cast media to a device
+     * @param  {string} url     url to transcoder to use
+     * @param  {object} options options like media mime type, title, etc.
+     * @return {Promise}         Promise that resolves with result
+     */
+    cast(url, options) {
+        throw new Error("CAST Not implemented!")
+    }
+
+    play() {
+        throw new Error("PLAY Not implemented!")
+    }
+
+    pause() {
+        throw new Error("PAUSE Not implemented!");
+    }
+
+    stop() {
+        throw new Error("STOP Not implemented!");
+    }
+
+    toJSON() {
+        let out = {}
+        try {
+            Object.keys(this).map((key) => {
+                if (key == 'client') return
+                else out[key] = this[key]
+            })
+        } catch (E) {
+            console.error(E);
+            throw E
+        }
+        return out
+    }
+}
