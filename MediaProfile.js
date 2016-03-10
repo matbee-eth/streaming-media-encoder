@@ -3,11 +3,10 @@
 // contains info on media's video/audio streams and types
 
 
-function MediaProfile(Media, Profile) {
 
-	this.media = Media;
-	this.profile = Profile;
+export default class MediaProfile {
+    constructor(Media, Profile) {
+        this.media = Media
+        this.profile = Profile
+    }
 }
-
-
-module.exports = MediaProfile;
