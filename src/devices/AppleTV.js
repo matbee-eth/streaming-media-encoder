@@ -1,17 +1,3 @@
-var util = require('util'),
-    Promise = require('bluebird');
-    BaseDeviceProfile = require('./BaseDevice');
-
-
-
-function AppleTV() {
-
-
+export default class AppleTV extends BaseDeviceProfile {
 
 }
-
-
-
-util.inherts(AppleTV, BaseDevice);
-
-module.exports = AppleTV;
