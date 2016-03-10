@@ -1,23 +1,16 @@
-var util = require('util'),
-    Promise = require('bluebird');
-BaseDeviceProfile = require('./BaseDevice');
+import BaseDeviceProfile from './BaseDevice'
 
 
-function HTML5() {
-    BaseDeviceProfile.call(this);
-    this.id = 'HTML5';
-    this.name = 'HTML5 Stream';
+export default class HTML5 extends BaseDeviceProfile {
 
-    this.cast = function(url, options) {
-        console.log("load url on HTML5: ", url, options);
+    static id = 'HTML5';
+    static name = 'HTML5 Stream';
+
+    cast(url, options) {
+        console.log("load url on HTML5: ", url, options)
         return {
-            url: url,
-            options: options
-        };
-    };
-
+            url,
+            options
+        }
+    }
 }
-
-util.inherits(HTML5, BaseDeviceProfile);
-
-module.exports = HTML5;
