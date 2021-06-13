@@ -1,3 +1,23 @@
-node_modules/
+#windows
+.DS_Store
+.swp
+
+# Cache
+cache
+
+# Tests
+.test
 *.mp4
 *.avi
+
+
+# IDEs
+.idea
+
+#node
+node_modules
+npm-debug.log
+
+#compile tasks
+dist
+
